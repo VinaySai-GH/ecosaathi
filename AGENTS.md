@@ -247,6 +247,39 @@ Never combine two files into one code block.
 
 ---
 
+## GIT COMMITS
+
+Commit after every meaningful unit of work — a screen done, a service wired up,
+a bug fixed, a type file written. Don't batch everything into one big commit.
+
+**Write commits like a human on the team, not like a machine logging output.**
+
+Good examples:
+```
+add neeru manual entry screen with equivalency display
+fix water history chart not showing last month's data
+wire up greenspot service to real API (remove mock flag)
+add hostel leaderboard with live scores
+update scoring constants — RKT streak bonus now 50pts
+fix: cert generation crashed when kl_used was null
+```
+
+Bad examples (don't write these):
+```
+feat: implement NeeruManualEntryScreen component with equivalency calculation
+chore: update shared/constants/index.ts with new scoring values
+refactor: restructure folder hierarchy per AGENTS.md specification
+```
+
+Rules:
+- Lowercase, no period at the end
+- Start with a verb: add, fix, update, wire up, remove, rename, move
+- One idea per commit — if you need "and", split it into two commits
+- If fixing a bug, say what broke and what you did: "fix cert crash when usage is 0"
+- Prefix with `fix:` only for actual bugs. Everything else — no prefix needed.
+
+---
+
 ## PROGRESS
 
 ### Done
