@@ -249,34 +249,33 @@ Never combine two files into one code block.
 
 ## GIT COMMITS
 
-Commit after every meaningful unit of work — a screen done, a service wired up,
-a bug fixed, a type file written. Don't batch everything into one big commit.
+Commit after every meaningful unit of work — a screen done, a service wired up, a bug fixed, a type file written. Don't batch everything into one big commit.
 
-**Write commits like a human on the team, not like a machine logging output.**
+**Write commits exactly like a tired but enthusiastic human developer messaging their team on Slack. Do NOT use conventional commits or machine-like strict formatting.**
 
 Good examples:
 ```
-add neeru manual entry screen with equivalency display
-fix water history chart not showing last month's data
-wire up greenspot service to real API (remove mock flag)
-add hostel leaderboard with live scores
-update scoring constants — RKT streak bonus now 50pts
-fix: cert generation crashed when kl_used was null
+finally got the neeru ui working with the animations
+fixed that annoying tsconfig typescript error
+downgraded to sdk 52 so we can actually use expo go lol
+added the tips cards for the result screen
+just built the tab navigator shell
 ```
 
-Bad examples (don't write these):
+Bad examples (NEVER use these robotic formats):
 ```
-feat: implement NeeruManualEntryScreen component with equivalency calculation
-chore: update shared/constants/index.ts with new scoring values
-refactor: restructure folder hierarchy per AGENTS.md specification
+feat: implement NeeruManualEntryScreen component
+chore: update shared/constants/index.ts
+fix(ts): update extends path in tsconfig
+Update equivalency data
 ```
 
-Rules:
-- Lowercase, no period at the end
-- Start with a verb: add, fix, update, wire up, remove, rename, move
-- One idea per commit — if you need "and", split it into two commits
-- If fixing a bug, say what broke and what you did: "fix cert crash when usage is 0"
-- Prefix with `fix:` only for actual bugs. Everything else — no prefix needed.
+Rules for the AI:
+- ALL LOWERCASE. 
+- No periods at the end.
+- Use casual phrasing ("finally got", "fixed that annoying", "just built", "lol", "wow").
+- NEVER use prefixes like `feat:`, `chore:`, `fix:`, or `docs:`.
+- Speak entirely informally like a real human student hacking on a project at 2 AM.
 
 ---
 
