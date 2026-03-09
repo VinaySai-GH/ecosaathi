@@ -283,16 +283,33 @@ Rules:
 ## PROGRESS
 
 ### Done
-- [ ] nothing yet
+- [x] Repo setup and folder structure
+- [x] Clean architecture and design system (`shared/constants/theme.ts`)
+- [x] Neeru manual entry screen + equivalency calculator UI
+- [x] Neeru static datasets (equivalencies, cities, water tips)
+- [x] Bottom tab navigation setup
 
 ### In Progress
-- [ ] Repo setup and folder structure
+- [ ] Connect Neeru UI to backend (swap mock data for real API)
 
 ### Next
 - [ ] MongoDB schemas (User, WaterLog, Spot, BotUser, Answer)
 - [ ] Auth routes (register + login)
-- [ ] Neeru manual entry screen + equivalency calculator
+- [ ] Neeru integration (charts and real data)
 - [ ] Green Spot map with seed pins
+
+---
+
+## HARD RULES & LEARNINGS
+
+### 1. Expo SDK version
+**Always use Expo SDK 52.** Do not run `npx expo upgrade` or install the `@latest` version of `expo` (which is 55+). The "Expo Go" app on the Play Store only supports SDK 52. Upgrading it breaks the user's ability to scan the QR code and test the app on their physical device. If installing new Expo packages, use `npx expo install <pkg>` to ensure they match SDK 52.
+
+### 2. TypeScript Strictness
+The project uses strict TypeScript compilation (`"strict": true`). Do not use smart/curly apostrophes (like `’` or `‘`) inside string literals in `.ts` files as it causes TypeScript Parser errors (`error TS1005: ':' expected`). Stick to plain ASCII straight quotes (`'`).
+
+### 3. IDE Sync Issues
+If `node_modules` is ever completely wiped and reinstalled, the IDE might throw `File 'expo/tsconfig.base' not found`. The fix is to add the explicit `.json` extension in `tsconfig.json`: `"extends": "expo/tsconfig.base.json"`.
 
 <!-- Update this section as you build. The AI reads it to avoid 
 rebuilding things that already exist. -->
