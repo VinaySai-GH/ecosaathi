@@ -1,0 +1,2 @@
+﻿Need to install the following packages:
+expo-doctor@1.18.11
