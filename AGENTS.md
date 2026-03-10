@@ -302,7 +302,7 @@ Rules for the AI:
 ## HARD RULES & LEARNINGS
 
 ### 1. Expo SDK version
-**Always use Expo SDK 52.** Do not run `npx expo upgrade` or install the `@latest` version of `expo` (which is 55+). The "Expo Go" app on the Play Store only supports SDK 52. Upgrading it breaks the user's ability to scan the QR code and test the app on their physical device. If installing new Expo packages, use `npx expo install <pkg>` to ensure they match SDK 52.
+**Always use Expo SDK 54.** Do not run `npx expo upgrade` or install the `@latest` version of `expo` (which is 55+). The "Expo Go" app on the Play Store only supports SDK 54. Upgrading it breaks the user's ability to scan the QR code and test the app on their physical device. If installing new Expo packages, use `npx expo install <pkg>` to ensure they match SDK 54.
 
 ### 2. TypeScript Strictness
 The project uses strict TypeScript compilation (`"strict": true`). Do not use smart/curly apostrophes (like `’` or `‘`) inside string literals in `.ts` files as it causes TypeScript Parser errors (`error TS1005: ':' expected`). Stick to plain ASCII straight quotes (`'`).
