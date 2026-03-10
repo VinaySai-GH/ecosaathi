@@ -302,7 +302,7 @@ Rules for the AI:
 ## HARD RULES & LEARNINGS
 
 ### 1. Expo SDK version
-**Always use Expo SDK 54.** This version is special because it requires **React 19** and **React Native 0.81**. Do not attempt to downgrade these to version 18/0.78 as it causes major version mismatches. Also, ensure `react-native-worklets` is installed as a peer dependency for Reanimated v4. If installing new Expo packages, always use `npx expo install <pkg>` to let the CLI handle versioning.
+**Always use Expo SDK 54.** While SDK 54 is the target, ensure it stays on **React 18.3.1** and **React Native 0.78.0**. Do not attempt to use React 19 or RN 0.81 as it causes major version mismatches and "incompatible" errors in Expo Go. If installing new Expo packages, always use `npx expo install <pkg>` to let the CLI handle versioning.
 
 ### 2. TypeScript Strictness
 The project uses strict TypeScript compilation (`"strict": true`). Do not use smart/curly apostrophes (like `’` or `‘`) inside string literals in `.ts` files as it causes TypeScript Parser errors (`error TS1005: ':' expected`). Stick to plain ASCII straight quotes (`'`).
