@@ -111,7 +111,6 @@ export default function NeeruResultScreen({ navigation, route }: Props): React.J
             setIsSaving(false);
         }
     }, [kl, month, year, cityLabel]);
-
     return (
         <SafeAreaView style={styles.safe} edges={['top']}>
             <StatusBar barStyle="light-content" backgroundColor={Colors.bg} />
@@ -193,7 +192,6 @@ export default function NeeruResultScreen({ navigation, route }: Props): React.J
                         {isSaving ? 'Saving...' : isSaved ? '✅ Saved to your trend' : '💾 Save to my Monthly Trend'}
                     </Text>
                 </TouchableOpacity>
-
                 {/* Share button */}
                 <TouchableOpacity style={styles.shareBtn} activeOpacity={0.8} onPress={handleShare}>
                     <LinearGradient
