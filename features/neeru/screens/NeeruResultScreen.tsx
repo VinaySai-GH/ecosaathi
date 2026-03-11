@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import {
     View,
     Text,
@@ -7,9 +7,12 @@ import {
     StyleSheet,
     Animated,
     StatusBar,
+    Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import ViewShot, { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 
@@ -17,9 +20,11 @@ import { Colors, Typography, Spacing, Radius } from '../../../shared/constants/t
 import EquivalencyCard from '../components/EquivalencyCard';
 import BenchmarkBar from '../components/BenchmarkBar';
 import TipCard from '../components/TipCard';
+import ShareCard from '../components/ShareCard';
 import { pickEquivalencies } from '../data/equivalencies';
 import { findCity, getBenchmarkStatus } from '../data/cities';
 import { pickTips } from '../data/tips';
+import { submitWaterLog } from '../neeru.service';
 import type { NeeruStackParamList } from './NeeruHomeScreen';
 
 const MONTH_NAMES = [
@@ -39,6 +44,10 @@ export default function NeeruResultScreen({ navigation, route }: Props): React.J
     const equivalencies = pickEquivalencies(kl);
     const tips = pickTips(status, city.isWaterStressed);
 
+    const [isSaving, setIsSaving] = React.useState(false);
+    const [isSaved, setIsSaved] = React.useState(false);
+
+    const shareRef = useRef<ViewShot>(null);
     const headerOpacity = useRef(new Animated.Value(0)).current;
     const headerTranslate = useRef(new Animated.Value(-20)).current;
 
@@ -54,6 +63,54 @@ export default function NeeruResultScreen({ navigation, route }: Props): React.J
     const statusMsg = isOver
         ? `You used ${(kl - city.benchmark_kl).toFixed(1)} KL more than ${cityLabel}'s guideline`
         : `You're ${(city.benchmark_kl - kl).toFixed(1)} KL under ${cityLabel}'s guideline`;
+
+    const handleShare = useCallback(async () => {
+        try {
+            const uri = await captureRef(shareRef, {
+                format: 'png',
+                quality: 1,
+            });
+            const isAvailable = await Sharing.isAvailableAsync();
+            if (!isAvailable) {
+                Alert.alert('Sharing not available', 'Sharing is not supported on this device.');
+                return;
+            }
+            await Sharing.shareAsync(uri, {
+                mimeType: 'image/png',
+                dialogTitle: 'Share your Water Report',
+            });
+        } catch (err: unknown) {
+            Alert.alert('Oops', 'Could not share your report. Try again.');
+        }
+    }, [kl, cityLabel, month, year, status]);
+
+    const handleSave = useCallback(async (overwrite = false) => {
+        setIsSaving(true);
+        try {
+            await submitWaterLog(kl, month, year, cityLabel, overwrite);
+            setIsSaved(true);
+        } catch (error: any) {
+            // Check if backend returned our 409 Conflict flag telling us data exists
+            if (error.status === 409 && error.data?.exists) {
+                Alert.alert(
+                    'Record Exists',
+                    `You already logged ${error.data.existingKl} KL for ${MONTH_NAMES[month - 1]} ${year}. Do you want to overwrite it with ${kl} KL?`,
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                            text: 'Overwrite',
+                            style: 'destructive',
+                            onPress: () => handleSave(true)
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert('Save Failed', error.message || 'Could not save water log');
+            }
+        } finally {
+            setIsSaving(false);
+        }
+    }, [kl, month, year, cityLabel]);
 
     return (
         <SafeAreaView style={styles.safe} edges={['top']}>
@@ -125,24 +182,49 @@ export default function NeeruResultScreen({ navigation, route }: Props): React.J
                     <TipCard key={tip.id} tip={tip} index={i} />
                 ))}
 
-                {/* Share placeholder */}
-                <TouchableOpacity style={styles.shareBtn} activeOpacity={0.8}>
+                {/* Save to Trend CTA */}
+                <TouchableOpacity
+                    style={[styles.saveBtn, isSaved && styles.saveBtnSuccess]}
+                    activeOpacity={0.8}
+                    onPress={() => handleSave(false)}
+                    disabled={isSaving || isSaved}
+                >
+                    <Text style={styles.saveBtnText}>
+                        {isSaving ? 'Saving...' : isSaved ? '✅ Saved to your trend' : '💾 Save to my Monthly Trend'}
+                    </Text>
+                </TouchableOpacity>
+
+                {/* Share button */}
+                <TouchableOpacity style={styles.shareBtn} activeOpacity={0.8} onPress={handleShare}>
                     <LinearGradient
-                        colors={['#1a3f2b', '#0f2d1e']}
+                        colors={[Colors.accent, '#4ab860']}
                         style={styles.shareBtnInner}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                     >
                         <Text style={styles.shareBtnIcon}>📤</Text>
                         <View>
-                            <Text style={styles.shareBtnTitle}>Share My Water Report</Text>
-                            <Text style={styles.shareBtnSub}>Coming soon — Instagram story card</Text>
+                            <Text style={[styles.shareBtnTitle, { color: Colors.bg }]}>Share My Water Report</Text>
+                            <Text style={[styles.shareBtnSub, { color: Colors.bg, opacity: 0.7 }]}>WhatsApp, Instagram & more</Text>
                         </View>
                     </LinearGradient>
                 </TouchableOpacity>
 
                 <View style={{ height: Spacing.xxl }} />
             </ScrollView>
+
+            {/* Hidden card for capture — positioned off-screen */}
+            <ViewShot ref={shareRef} options={{ format: 'png', quality: 1 }} style={styles.hiddenCard}>
+                <ShareCard
+                    kl={kl}
+                    cityLabel={cityLabel}
+                    month={month}
+                    year={year}
+                    equivalency={equivalencies[0]!}
+                    benchmarkKl={city.benchmark_kl}
+                    status={status}
+                />
+            </ViewShot>
         </SafeAreaView>
     );
 }
@@ -185,19 +267,34 @@ const styles = StyleSheet.create({
     statusPillText: { ...Typography.label },
 
     sectionHeading: {
+        ...Typography.caption,
+        color: Colors.textDim,
+        textAlign: 'center',
+        marginTop: Spacing.xl,
+    },
+
+    saveBtn: {
+        backgroundColor: Colors.surface,
+        borderRadius: Radius.lg,
+        padding: Spacing.lg,
+        alignItems: 'center',
+        marginTop: Spacing.xl,
+        borderWidth: 1,
+        borderColor: Colors.border,
+    },
+    saveBtnSuccess: {
+        backgroundColor: Colors.successDim,
+        borderColor: Colors.success,
+    },
+    saveBtnText: {
         ...Typography.h3,
         color: Colors.text,
-        marginBottom: Spacing.md,
-        marginTop: Spacing.sm,
     },
 
     shareBtn: {
         marginTop: Spacing.lg,
         borderRadius: Radius.lg,
         overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: Colors.border,
-        borderStyle: 'dashed',
     },
     shareBtnInner: {
         flexDirection: 'row',
@@ -208,4 +305,10 @@ const styles = StyleSheet.create({
     shareBtnIcon: { fontSize: 28 },
     shareBtnTitle: { ...Typography.h3, color: Colors.text },
     shareBtnSub: { ...Typography.caption, color: Colors.textMuted, marginTop: 2 },
+
+    hiddenCard: {
+        position: 'absolute',
+        left: -9999,
+        top: 0,
+    },
 });

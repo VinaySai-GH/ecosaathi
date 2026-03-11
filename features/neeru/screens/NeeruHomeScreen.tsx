@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing, Radius } from '../../../shared/constants/theme';
 import { CITIES, DEFAULT_CITY } from '../data/cities';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useAuth } from '../../../shared/context/AuthContext';
 
 export type NeeruStackParamList = {
     NeeruHome: undefined;
@@ -38,6 +39,7 @@ export default function NeeruHomeScreen({ navigation }: Props): React.JSX.Elemen
     const [cityDropOpen, setCityDropOpen] = useState(false);
     const [monthDropOpen, setMonthDropOpen] = useState(false);
     const [error, setError] = useState('');
+    const { signOut } = useAuth();
 
     function handleCalculate(): void {
         const parsed = parseFloat(kl);
@@ -69,7 +71,12 @@ export default function NeeruHomeScreen({ navigation }: Props): React.JSX.Elemen
             >
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.eyebrow}>NEERU</Text>
+                    <View style={styles.headerTop}>
+                        <Text style={styles.eyebrow}>NEERU</Text>
+                        <TouchableOpacity onPress={signOut} activeOpacity={0.7}>
+                            <Text style={styles.logoutBtn}>Logout</Text>
+                        </TouchableOpacity>
+                    </View>
                     <Text style={styles.title}>How much water{'\n'}did you use?</Text>
                     <Text style={styles.subtitle}>
                         Enter your monthly household usage from your water bill.
@@ -184,6 +191,8 @@ const styles = StyleSheet.create({
     content: { padding: Spacing.lg, paddingBottom: Spacing.xxl },
 
     header: { marginBottom: Spacing.xl },
+    headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    logoutBtn: { ...Typography.label, color: Colors.danger, marginBottom: Spacing.sm },
     eyebrow: {
         ...Typography.label,
         color: Colors.accent,

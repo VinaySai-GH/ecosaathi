@@ -21,6 +21,12 @@ export const SPOT_CATEGORIES = [
 ] as const;
 export type SpotCategory = typeof SPOT_CATEGORIES[number];
 
+import Constants from 'expo-constants';
+
 export const LEADERBOARD_REFRESH_HOURS = 6;
 
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+// Automatically resolve the local IP address for Expo Go so the phone can reach the PC's backend
+const hostUri = Constants.expoConfig?.hostUri;
+const localIp = hostUri ? hostUri.split(':')[0] : 'localhost';
+
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? `http://${localIp}:5000/api`;
