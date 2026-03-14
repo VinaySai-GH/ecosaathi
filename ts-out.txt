@@ -1,4 +1,0 @@
-features/neeru/screens/NeeruResultScreen.tsx(23,23): error TS1261: Already included file name 'C:/Users/NIKHIL/Desktop/ecology/features/neeru/components/ShareCard.tsx' differs from file name 'C:/Users/NIKHIL/Desktop/ecology/features/neeru/components/Sharecard.tsx' only in casing.
-  The file is in the program because:
-    Imported via '../components/ShareCard' from file 'C:/Users/NIKHIL/Desktop/ecology/features/neeru/screens/NeeruResultScreen.tsx'
-    Matched by default include pattern '**/*'
