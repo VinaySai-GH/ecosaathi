@@ -5,6 +5,15 @@ import './dashboard.css';
 
 const FEATURES = [
   {
+    id: 'carbon',
+    path: '/carbon',
+    title: 'Carbon Footprint',
+    subtitle: 'Daily Indian emission tracker',
+    icon: '🌱',
+    themeClass: 'theme-carbon',
+    instructor: 'Measure daily & monthly CO₂',
+  },
+  {
     id: 'neeru',
     path: '/neeru',
     title: 'Neeru',

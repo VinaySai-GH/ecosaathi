@@ -6,6 +6,7 @@ const cors = require('cors');
 // Import Routes
 const authRoutes = require('./routes/auth.routes');
 const neeruRoutes = require('./routes/neeru.routes');
+const carbonRoutes = require('./routes/carbon.routes');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/neeru', neeruRoutes);
+app.use('/api/carbon', carbonRoutes);
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {

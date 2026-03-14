@@ -12,6 +12,7 @@ import SidebarLayout from './layouts/SidebarLayout.jsx';
 import Dashboard from './pages/dashboard/Dashboard.jsx';
 import NeeruHomeScreen from './pages/neeru/NeeruHome.jsx';
 import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
+import CarbonHome from './pages/carbon_footprint_calculation/components/CarbonHome.jsx';
 import ComingSoon from './ComingSoon.jsx';
 
 // Wrapper that redirects to /login if not authenticated
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: 'neeru', element: <NeeruHomeScreen /> },
       { path: 'neeru/result', element: <NeeruResultScreen /> },
+      { path: 'carbon', element: <CarbonHome /> },
       { path: 'greenspot', element: <ComingSoon title="Green Spot" icon="🗺️" /> },
       { path: 'raatkahisaab', element: <ComingSoon title="Raat Ka Hisaab" icon="🌙" /> },
       { path: 'ecopulse', element: <ComingSoon title="Eco Pulse" icon="🏆" /> },
