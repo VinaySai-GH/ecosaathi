@@ -8,7 +8,8 @@ import { useAuth } from './context/AuthContext.jsx';
 
 import LoginScreen from './pages/auth/LoginPage.jsx';
 import RegisterScreen from './pages/auth/RegisterPage.jsx';
-import TabLayout from './TabLayout.jsx';
+import SidebarLayout from './layouts/SidebarLayout.jsx';
+import Dashboard from './pages/dashboard/Dashboard.jsx';
 import NeeruHomeScreen from './pages/neeru/NeeruHome.jsx';
 import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
 import ComingSoon from './ComingSoon.jsx';
@@ -50,9 +51,10 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <PrivateRoute><TabLayout /></PrivateRoute>,
+    element: <PrivateRoute><SidebarLayout /></PrivateRoute>,
     children: [
-      { index: true, element: <NeeruHomeScreen /> },
+      { index: true, element: <Dashboard /> },
+      { path: 'neeru', element: <NeeruHomeScreen /> },
       { path: 'neeru/result', element: <NeeruResultScreen /> },
       { path: 'greenspot', element: <ComingSoon title="Green Spot" icon="🗺️" /> },
       { path: 'raatkahisaab', element: <ComingSoon title="Raat Ka Hisaab" icon="🌙" /> },
