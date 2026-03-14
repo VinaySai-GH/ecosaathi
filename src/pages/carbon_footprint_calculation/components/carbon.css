@@ -141,3 +141,13 @@
     color: var(--textMuted);
     margin-top: 16px;
 }
+.save-btn { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-lg); color: var(--text); font-size: 17px; font-weight: 600; margin-top: var(--sp-xl); transition: background 0.2s, border-color 0.2s; cursor: pointer; }
+.save-btn.saved { background: var(--success-dim); border-color: var(--success); }
+.save-btn:hover:not(:disabled) { background: var(--card); }
+
+.overwrite-box { background: var(--surface); border: 1px solid var(--danger); border-radius: var(--radius-lg); padding: var(--sp-lg); margin-top: var(--sp-md); width: 100%; }
+.overwrite-msg { color: var(--text); font-size: 15px; margin-bottom: var(--sp-md); }
+.overwrite-actions { display: flex; gap: var(--sp-sm); }
+.overwrite-cancel { flex: 1; padding: 12px; border-radius: var(--radius-md); background: var(--card); border: 1px solid var(--border); color: var(--text-muted); font-size: 15px; cursor: pointer; }
+.overwrite-confirm { flex: 1; padding: 12px; border-radius: var(--radius-md); background: var(--danger-dim); border: 1px solid var(--danger); color: var(--danger); font-size: 15px; font-weight: 600; cursor: pointer; }
+
