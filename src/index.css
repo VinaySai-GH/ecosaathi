@@ -17,26 +17,27 @@ body {
 
 /* ── Design Tokens ── */
 :root {
-  --bg: #0a1f14;
-  --surface: #122d1e;
-  --card: #1a3f2b;
-  --card-highlight: #1f4d35;
-  --accent: #6ee07f;
-  --accent-dim: #2d6b42;
-  --accent-glow: rgba(110, 224, 127, 0.15);
-  --text: #eef5f0;
-  --text-muted: #7aad8f;
-  --text-dim: #4a7a5c;
-  --danger: #e05c5c;
-  --danger-dim: rgba(224, 92, 92, 0.15);
-  --success: #6ee07f;
-  --success-dim: rgba(110, 224, 127, 0.12);
-  --border: #1e4a32;
+  --bg: #030a06;
+  --surface: rgba(18, 45, 30, 0.45);
+  --surface-solid: #08180e;
+  --card: rgba(26, 63, 43, 0.5);
+  --card-highlight: rgba(31, 77, 53, 0.7);
+  --accent: #00ff88;
+  --accent-dim: #1ea35b;
+  --accent-glow: rgba(0, 255, 136, 0.3);
+  --text: #ffffff;
+  --text-muted: #a6cca7;
+  --text-dim: #648a70;
+  --danger: #ff5c5c;
+  --danger-dim: rgba(255, 92, 92, 0.2);
+  --success: #00ff88;
+  --success-dim: rgba(0, 255, 136, 0.2);
+  --border: rgba(40, 100, 60, 0.4);
 
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-xl: 32px;
   --radius-full: 9999px;
 
   --sp-xs: 4px;
@@ -45,6 +46,11 @@ body {
   --sp-lg: 24px;
   --sp-xl: 32px;
   --sp-xxl: 48px;
+
+  --glass-bg: rgba(18, 45, 30, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.6);
+  --glass-blur: blur(16px);
 }
 
 /* ── Typography ── */
@@ -113,14 +119,15 @@ input[type="email"],
 input[type="password"] {
   font-family: inherit;
   font-size: 15px;
-  background: var(--card);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 14px var(--sp-md);
   width: 100%;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 input[type="text"]:focus,
@@ -128,6 +135,8 @@ input[type="number"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
   border-color: var(--accent);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px var(--accent-glow);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 input::placeholder {
@@ -210,10 +219,43 @@ button:disabled:active {
   animation: fadeSlideUp 0.45s ease both;
 }
 
-/* ── Page layout ── */
+/* ── Page layout & Animated Background ── */
+@keyframes bgGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .page {
   min-height: 100vh;
-  background: var(--bg);
+  background: radial-gradient(circle at top left, #0a2614 0%, var(--bg) 40%),
+    radial-gradient(circle at bottom right, #0a3018 0%, var(--bg) 60%);
+  background-size: 200% 200%;
+  animation: bgGradient 15s ease infinite;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle glowing orb behind content */
+.page::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .page-scroll {

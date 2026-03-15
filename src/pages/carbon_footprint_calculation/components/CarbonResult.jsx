@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BreakdownChart from './BreakdownChart';
+import Tree3D from './Tree3D';
 import { saveCarbonLog } from '../../../services/carbon.service.js';
 
 export default function CarbonResult({ result, formData, onReset }) {
@@ -39,6 +40,7 @@ export default function CarbonResult({ result, formData, onReset }) {
 
   return (
     <div className="carbon-result">
+      <Tree3D isAboveLimit={isAboveLimit} />
 
       <div className={`score-badge ${isAboveLimit ? 'above' : 'below'}`}>
         <h2>{totalKgCO2} kg CO₂</h2>

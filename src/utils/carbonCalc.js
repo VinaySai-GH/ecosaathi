@@ -17,7 +17,9 @@ export function calculateMonthlyFootprint(log) {
     if (log.commutes && Array.isArray(log.commutes)) {
         log.commutes.forEach(commute => {
             if (commute.mode && commute.km) {
+                // Determine emission factor for mode
                 const ef = EF.commute[commute.mode] ?? EF.commute.car_petrol;
+                // Add Monthly driving footprint (assuming `commute.km` is monthly distance)
                 breakdown.commute += commute.km * ef;
             }
         });
@@ -25,9 +27,14 @@ export function calculateMonthlyFootprint(log) {
 
     // --- FOOD ---
     if (log.foodDays) {
-        breakdown.food += (log.foodDays.vegetarian || 0) * (EF.food.vegetarian ?? 3.8);
-        breakdown.food += (log.foodDays.mixed || 0) * (EF.food.mixed ?? 5.6);
-        breakdown.food += (log.foodDays.red_meat || 0) * (EF.food.red_meat ?? 7.2);
+        // We cap the max days at 31 to prevent user input errors inflating the score infinitely
+        const vegDays = Math.min(log.foodDays.vegetarian || 0, 31);
+        const mixedDays = Math.min(log.foodDays.mixed || 0, 31);
+        const meatDays = Math.min(log.foodDays.red_meat || 0, 31);
+
+        breakdown.food += vegDays * (EF.food.vegetarian ?? 1.5);
+        breakdown.food += mixedDays * (EF.food.mixed ?? 2.5);
+        breakdown.food += meatDays * (EF.food.red_meat ?? 3.5);
     }
 
     // --- ELECTRICITY ---

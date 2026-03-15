@@ -14,9 +14,9 @@ const EMISSION_FACTORS = {
     },
 
     food: {
-        vegetarian: 3.8,        // kg CO₂/day (standard Indian diet)
-        mixed: 5.6,
-        red_meat: 7.2,
+        vegetarian: 1.5,        // kg CO₂/day (standard Indian diet)
+        mixed: 2.5,
+        red_meat: 3.5,
     },
 
     electricity: {
