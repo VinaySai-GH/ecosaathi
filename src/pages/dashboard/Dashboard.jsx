@@ -32,6 +32,15 @@ const FEATURES = [
     instructor: 'Locate bins & identify plants',
   },
   {
+    id: 'pollutionsense',
+    path: '/pollutionsense',
+    title: 'PollutionSense',
+    subtitle: 'Smart Residential Zone Advisor',
+    icon: '🏙️',
+    themeClass: 'theme-greenspot',
+    instructor: 'Air quality & risk zones',
+  },
+  {
     id: 'raatkahisaab',
     path: '/raatkahisaab',
     title: 'Raat Ka Hisaab',

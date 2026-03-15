@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.routes');
 const neeruRoutes = require('./routes/neeru.routes');
 const carbonRoutes = require('./routes/carbon.routes');
 const greenspotRoutes = require('./routes/greenspot.routes');
+const psRoutes = require('./routes/pollutionsense.routes');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/neeru', neeruRoutes);
 app.use('/api/carbon', carbonRoutes);
 app.use('/api/spots', greenspotRoutes);
+app.use('/api/pollutionsense', psRoutes);
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {
