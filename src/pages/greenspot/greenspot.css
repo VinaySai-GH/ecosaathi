@@ -1,0 +1,454 @@
+.greenspot-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: var(--bg-color, #0a1f14);
+    overflow: hidden;
+}
+
+.greenspot-search-bar {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 500px;
+}
+
+.greenspot-search-input {
+    width: 100%;
+    padding: 12px 20px;
+    background: rgba(18, 45, 30, 0.95);
+    border: 1px solid rgba(110, 224, 127, 0.3);
+    border-radius: 28px;
+    color: #eef5f0;
+    font-size: 15px;
+    outline: none;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.greenspot-search-input::placeholder {
+    color: #7aad8f;
+}
+
+.greenspot-search-input:focus {
+    border-color: #6ee07f;
+    box-shadow: 0 4px 20px rgba(110, 224, 127, 0.2);
+}
+
+.greenspot-filter-strip {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.greenspot-filter-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.greenspot-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.greenspot-filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.greenspot-filter-btn.active {
+    box-shadow: 0 4px 16px rgba(110, 224, 127, 0.4);
+}
+
+.filter-icon {
+    font-size: 16px;
+}
+
+.greenspot-map {
+    width: 100%;
+    height: 100%;
+}
+
+.greenspot-spot-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    background: linear-gradient(to top, rgba(18, 45, 30, 0.98), rgba(18, 45, 30, 0.95));
+    backdrop-filter: blur(20px);
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.greenspot-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(110, 224, 127, 0.2);
+    color: #6ee07f;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.greenspot-close-btn:hover {
+    background: rgba(110, 224, 127, 0.3);
+    transform: rotate(90deg);
+}
+
+.greenspot-spot-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.greenspot-spot-header h3 {
+    margin: 0;
+    color: #eef5f0;
+    font-size: 22px;
+    font-weight: 700;
+    flex: 1;
+}
+
+.greenspot-category-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #0a1f14;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.greenspot-spot-details {
+    color: #eef5f0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.greenspot-spot-details p {
+    margin: 8px 0;
+    color: #eef5f0;
+}
+
+.greenspot-address {
+    font-weight: 500;
+    color: #7aad8f !important;
+}
+
+.greenspot-distance,
+.greenspot-hours,
+.greenspot-cost {
+    color: #7aad8f !important;
+}
+
+.greenspot-tips {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(110, 224, 127, 0.1);
+    border-radius: 12px;
+    border-left: 3px solid #6ee07f;
+}
+
+.greenspot-tips strong {
+    color: #6ee07f;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.greenspot-tips ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #eef5f0;
+}
+
+.greenspot-tips li {
+    margin: 4px 0;
+}
+
+.greenspot-verify-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(110, 224, 127, 0.2);
+}
+
+.greenspot-verified-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: rgba(110, 224, 127, 0.2);
+    color: #6ee07f;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.greenspot-verify-btn {
+    width: 100%;
+    padding: 12px;
+    background: #6ee07f;
+    color: #0a1f14;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.greenspot-verify-btn:hover {
+    background: #5ccf6d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(110, 224, 127, 0.3);
+}
+
+.greenspot-add-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1500;
+    width: 56px;
+    height: 56px;
+    border: none;
+    background: #6ee07f;
+    color: #0a1f14;
+    border-radius: 50%;
+    font-size: 28px;
+    font-weight: 300;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(110, 224, 127, 0.4);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.greenspot-add-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 30px rgba(110, 224, 127, 0.6);
+}
+
+.greenspot-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3000;
+    background: rgba(10, 31, 20, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.greenspot-modal {
+    background: #122d1e;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    animation: slideUpModal 0.3s ease-out;
+}
+
+@keyframes slideUpModal {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.greenspot-modal h2 {
+    margin: 0 0 24px 0;
+    color: #eef5f0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.greenspot-form-group {
+    margin-bottom: 20px;
+}
+
+.greenspot-form-label {
+    display: block;
+    color: #eef5f0;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.greenspot-form-input,
+.greenspot-form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: #1a3f2b;
+    border: 1px solid #1e4a32;
+    border-radius: 12px;
+    color: #eef5f0;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.greenspot-form-input:focus,
+.greenspot-form-textarea:focus {
+    border-color: #6ee07f;
+    box-shadow: 0 0 0 3px rgba(110, 224, 127, 0.1);
+}
+
+.greenspot-form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.greenspot-category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.greenspot-category-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #1a3f2b;
+    border: 2px solid #1e4a32;
+    border-radius: 12px;
+    color: #eef5f0;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.greenspot-category-option:hover {
+    border-color: #6ee07f;
+    background: #1f4d35;
+}
+
+.greenspot-category-option.active {
+    border-color: #6ee07f;
+    background: rgba(110, 224, 127, 0.15);
+    color: #6ee07f;
+}
+
+.greenspot-form-error {
+    padding: 12px;
+    background: rgba(224, 92, 92, 0.15);
+    border-left: 3px solid #e05c5c;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.greenspot-form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.greenspot-form-cancel-btn,
+.greenspot-form-submit-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.greenspot-form-cancel-btn {
+    background: #1a3f2b;
+    color: #7aad8f;
+    border: 1px solid #1e4a32;
+}
+
+.greenspot-form-cancel-btn:hover {
+    background: #1f4d35;
+    color: #eef5f0;
+}
+
+.greenspot-form-submit-btn {
+    background: #6ee07f;
+    color: #0a1f14;
+}
+
+.greenspot-form-submit-btn:hover:not(:disabled) {
+    background: #5ccf6d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(110, 224, 127, 0.3);
+}
+
+.greenspot-form-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
