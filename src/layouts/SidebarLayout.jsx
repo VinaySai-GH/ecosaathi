@@ -7,8 +7,7 @@ const SIDEBAR_LINKS = [
   { path: '/', label: 'Dashboard', icon: '🏠' },
   { path: '/neeru', label: 'Neeru', icon: '💧' },
   { path: '/carbon', label: 'Carbon Footprint', icon: '🌱' },
-  { path: '/greenspot', label: 'Green Spot', icon: '🗺️' },
-  { path: '/pollutionsense', label: 'PollutionSense', icon: '🏙️' },
+  { path: '/greenspot', label: 'Eco Atlas', icon: '🗺️' },
   { path: '/raatkahisaab', label: 'Raat Ka Hisaab', icon: '🌙' },
   { path: '/ecopulse', label: 'Eco Pulse', icon: '🏆' },
 ];

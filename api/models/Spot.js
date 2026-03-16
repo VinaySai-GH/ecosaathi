@@ -11,7 +11,7 @@ const spotSchema = new mongoose.Schema(
         category: {
             type: String,
             required: true,
-            enum: ['ewaste', 'zerowaste', 'organic', 'refill', 'composting', 'nature', 'park', 'nursery'],
+            enum: ['ewaste', 'zerowaste', 'organic', 'refill', 'composting', 'nature', 'park', 'nursery', 'industry'],
         },
         lat: {
             type: Number,

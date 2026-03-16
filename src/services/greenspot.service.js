@@ -30,8 +30,10 @@ export const verifySpot = async (spotId) => {
     return response;
 };
 
-export const getDistanceMatrix = async (origins, destinations, apiKey) => {
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origins.lat},${origins.lng}&destinations=${destinations.map((d) => `${d.lat},${d.lng}`).join('|')}&mode=walking&key=${apiKey}`;
+export const getDistanceMatrix = async (origins, destinations, apiKey, mode = 'driving') => {
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origins.lat},${origins.lng}&destinations=${destinations
+        .map((d) => `${d.lat},${d.lng}`)
+        .join('|')}&mode=${mode}&key=${apiKey}`;
     const response = await fetch(url);
     return response.json();
 };

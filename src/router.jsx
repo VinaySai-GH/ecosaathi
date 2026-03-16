@@ -15,7 +15,6 @@ import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
 import CarbonHome from './pages/carbon_footprint_calculation/components/CarbonHome.jsx';
 import ComingSoon from './ComingSoon.jsx';
 import GreenSpotHome from './pages/greenspot/GreenSpotHome.jsx';
-import PollutionSenseHome from './pages/pollutionsense/PollutionSenseHome.jsx';
 
 // Wrapper that redirects to /login if not authenticated
 function PrivateRoute({ children }) {
@@ -61,7 +60,6 @@ const router = createBrowserRouter([
       { path: 'neeru/result', element: <NeeruResultScreen /> },
       { path: 'carbon', element: <CarbonHome /> },
       { path: 'greenspot', element: <GreenSpotHome /> },
-      { path: 'pollutionsense', element: <PollutionSenseHome /> },
       { path: 'raatkahisaab', element: <ComingSoon title="Raat Ka Hisaab" icon="🌙" /> },
       { path: 'ecopulse', element: <ComingSoon title="Eco Pulse" icon="🏆" /> },
     ],
