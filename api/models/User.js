@@ -8,6 +8,13 @@ const userSchema = new mongoose.Schema(
             trim: true,
             maxlength: [50, 'Name cannot be more than 50 characters'],
         },
+        hostel: {
+            type: String,
+            default: '',
+            trim: true,
+        },
+        water_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'WaterLog' }],
+        carbon_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CarbonLog' }],
         phone: {
             type: String,
             required: [true, 'Please provide a phone number'],

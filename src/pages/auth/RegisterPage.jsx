@@ -49,6 +49,7 @@ export default function RegisterPage() {
           <label className="auth-label" style={{ marginTop: 20 }}>Password</label>
           <input type="password" placeholder="Enter a strong password" value={password}
             onChange={(e) => { setPassword(e.target.value); setError(''); }} />
+
           {error && <p className="auth-error">{error}</p>}
           <button type="submit" className="auth-btn" disabled={isSubmitting}>
             {isSubmitting ? <span className="spinner" /> : 'Register'}

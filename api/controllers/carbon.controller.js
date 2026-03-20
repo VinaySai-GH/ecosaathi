@@ -1,4 +1,5 @@
 const CarbonLog = require('../models/CarbonLog');
+const User = require('../models/User');
 
 exports.saveCarbonLog = async (req, res) => {
     try {
@@ -42,6 +43,9 @@ exports.saveCarbonLog = async (req, res) => {
         });
 
         await newLog.save();
+
+        // Attach carbon log tracking reference securely to the User Document
+        await User.findByIdAndUpdate(userId, { $push: { carbon_logs: newLog._id } });
 
         res.status(201).json({
             message: 'Carbon footprint saved successfully',

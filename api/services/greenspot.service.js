@@ -1,4 +1,5 @@
 const Spot = require('../models/Spot');
+const User = require('../models/User');
 
 exports.getSpots = async (filters = {}) => {
     const { category, lat, lng, q, limit = 100 } = filters;
@@ -53,6 +54,9 @@ exports.createSpot = async (spotData, userId) => {
         rating: rating || null,
     });
 
+    // Award 30 points for adding a verified listing
+    await User.findByIdAndUpdate(userId, { $inc: { points: 30 } });
+
     return spot.populate('added_by', 'name phone');
 };
 
@@ -65,6 +69,9 @@ exports.verifySpot = async (spotId, userId) => {
     if (!spot.verified_by.includes(userId)) {
         spot.verified_by.push(userId);
         await spot.save();
+        
+        // Award 5 points for verifying
+        await User.findByIdAndUpdate(userId, { $inc: { points: 5 } });
     }
 
     return spot.populate('added_by', 'name phone');

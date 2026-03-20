@@ -28,12 +28,12 @@ college students, starting with IIT Tirupati as the pilot campus.
   notification sent automatically
 
 **Tech stack:**
-- Frontend: React Native with Expo (single codebase for Android + iOS)
+- Frontend: Vite + React (Web application)
 - Backend: Node.js + Express hosted on Render (free tier)
 - Database: MongoDB Atlas
-- Maps: Google Maps Platform (Maps SDK + Places API)
+- Maps: Leaflet.js with OpenStreetMap (or Google Maps JS API for Places)
 - Bot: Meta WhatsApp Cloud API (free tier, 1000 conversations/month)
-- OCR: Google ML Kit on-device for bill scanning, manual entry as fallback
+- OCR: Manual entry (Scanning coming soon)
 - Water benchmarks: CGWB public datasets + ICAR research for AP context
 
 **Team:**
@@ -53,50 +53,23 @@ college students, starting with IIT Tirupati as the pilot campus.
 ## FOLDER STRUCTURE
 
 ecosaathi/
-├── shared/
-│   ├── types/         ← TypeScript interfaces used by 2+ features
-│   ├── constants/     ← scoring values, route names, env keys, city list
-│   ├── hooks/         ← useAuth, useCurrentUser, usePoints
-│   ├── utils/         ← pure functions only (formatDate, truncate etc.)
-│   └── mocks/         ← mock API responses for local development
+├── api/               ← Node.js Backend
+│   ├── routes/
+│   ├── controllers/
+│   ├── services/
+│   ├── models/
+│   └── server.js
 │
-├── features/
-│   ├── neeru/
-│   │   ├── components/
-│   │   ├── screens/
-│   │   ├── neeru.service.ts   ← all API calls for this feature
-│   │   ├── neeru.utils.ts     ← equivalency math (works fully offline)
-│   │   ├── neeru.types.ts     ← types only used inside neeru
-│   │   └── neeru.mock.ts      ← fake data so feature runs without backend
-│   ├── greenspot/
-│   │   ├── components/
-│   │   ├── screens/
-│   │   ├── greenspot.service.ts
-│   │   ├── greenspot.types.ts
-│   │   └── greenspot.mock.ts
-│   ├── raatkahisaab/
-│   │   ├── bot/               ← WhatsApp webhook handler
-│   │   ├── questions/         ← question pool + rotation logic
-│   │   ├── rkt.service.ts
-│   │   ├── rkt.types.ts
-│   │   └── rkt.mock.ts
-│   └── ecopulse/
-│       ├── leaderboard/
-│       ├── scoring/
-│       ├── ecopulse.service.ts
-│       ├── ecopulse.types.ts
-│       └── ecopulse.mock.ts
+├── src/               ← Vite + React Frontend
+│   ├── pages/         ← feature pages (neeru, carbon, etc)
+│   ├── components/    ← reusable UI elements
+│   ├── context/       ← Auth and global state
+│   ├── services/      ← API client logic
+│   ├── layouts/       ← Page wrappers (SidebarLayout)
+│   ├── App.jsx
+│   └── router.jsx
 │
-├── api/
-│   ├── routes/        ← one file per feature
-│   ├── controllers/   ← one file per feature
-│   ├── services/      ← business logic, one file per feature
-│   ├── models/        ← MongoDB schemas
-│   └── middleware/    ← auth, error handler, rate limiter
-│
-└── app/
-    ├── navigation/
-    └── App.tsx
+└── index.html         ← Frontend entry point
 
 **The one rule:** if something is only used by one feature, it lives inside 
 that feature's folder. If two or more features need it, it goes in shared/.
@@ -301,14 +274,14 @@ Rules for the AI:
 
 ## HARD RULES & LEARNINGS
 
-### 1. Expo SDK version
-**Always use Expo SDK 54.** While SDK 54 is the target, ensure it stays on **React 18.3.1** and **React Native 0.78.0**. Do not attempt to use React 19 or RN 0.81 as it causes major version mismatches and "incompatible" errors in Expo Go. If installing new Expo packages, always use `npx expo install <pkg>` to let the CLI handle versioning.
+### 1. Technology Stack
+Ensure the frontend matches **React 18.3.1** and **Vite ^6.0.0**. The application is primarily a web-based PWA/Web app. Always verify API endoints pointing to the backend hosted on Render.
 
 ### 2. TypeScript Strictness
 The project uses strict TypeScript compilation (`"strict": true`). Do not use smart/curly apostrophes (like `’` or `‘`) inside string literals in `.ts` files as it causes TypeScript Parser errors (`error TS1005: ':' expected`). Stick to plain ASCII straight quotes (`'`).
 
-### 3. IDE Sync Issues
-If `node_modules` is ever completely wiped and reinstalled, the IDE might throw `File 'expo/tsconfig.base' not found`. The fix is to add the explicit `.json` extension in `tsconfig.json`: `"extends": "expo/tsconfig.base.json"`.
+### 3. Running Locally
+Always run `npm run dev` in the root for the frontend and `npm run dev` in the `/api` directory for the backend. Ensure `.env` files are correctly configured in both locations.
 
 <!-- Update this section as you build. The AI reads it to avoid 
 rebuilding things that already exist. -->

@@ -449,8 +449,8 @@ async function seedDatabase() {
         }
 
         // Clear existing spots (optional - comment out if you want to keep existing)
-        await Spot.deleteMany({});
-        console.log('✅ Cleared existing spots');
+        // await Spot.deleteMany({});
+        // console.log('✅ Cleared existing spots');
 
         // Insert seed spots
         const spotsWithUser = seedSpots.map((spot) => ({

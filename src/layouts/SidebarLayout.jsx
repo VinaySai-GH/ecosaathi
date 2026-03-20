@@ -46,7 +46,12 @@ export default function SidebarLayout() {
           </div>
         </div>
         <div className="nav-right">
-          <div className="user-profile" title={user?.name || 'User'}>
+          <div 
+            className="user-profile" 
+            title={user?.name ? `${user.name}'s Profile` : 'User Profile'}
+            onClick={() => handleNavClick('/profile')}
+            style={{ cursor: 'pointer', border: '2px solid transparent', transition: 'border 0.2s', '&:hover': { border: '2px solid #4CAF50' } }}
+          >
             <span className="profile-initial">{user?.name ? user.name[0].toUpperCase() : 'U'}</span>
           </div>
         </div>

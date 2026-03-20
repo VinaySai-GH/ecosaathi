@@ -10,11 +10,13 @@ import LoginScreen from './pages/auth/LoginPage.jsx';
 import RegisterScreen from './pages/auth/RegisterPage.jsx';
 import SidebarLayout from './layouts/SidebarLayout.jsx';
 import Dashboard from './pages/dashboard/Dashboard.jsx';
+import ProfileSettings from './pages/dashboard/ProfileSettings.jsx';
 import NeeruHomeScreen from './pages/neeru/NeeruHome.jsx';
 import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
 import CarbonHome from './pages/carbon_footprint_calculation/components/CarbonHome.jsx';
 import ComingSoon from './ComingSoon.jsx';
 import GreenSpotHome from './pages/greenspot/GreenSpotHome.jsx';
+import EcoPulseHome from './pages/ecopulse/EcoPulseHome.jsx';
 
 // Wrapper that redirects to /login if not authenticated
 function PrivateRoute({ children }) {
@@ -56,12 +58,13 @@ const router = createBrowserRouter([
     element: <PrivateRoute><SidebarLayout /></PrivateRoute>,
     children: [
       { index: true, element: <Dashboard /> },
+      { path: 'profile', element: <ProfileSettings /> },
       { path: 'neeru', element: <NeeruHomeScreen /> },
       { path: 'neeru/result', element: <NeeruResultScreen /> },
       { path: 'carbon', element: <CarbonHome /> },
       { path: 'greenspot', element: <GreenSpotHome /> },
       { path: 'raatkahisaab', element: <ComingSoon title="Raat Ka Hisaab" icon="🌙" /> },
-      { path: 'ecopulse', element: <ComingSoon title="Eco Pulse" icon="🏆" /> },
+      { path: 'ecopulse', element: <EcoPulseHome /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

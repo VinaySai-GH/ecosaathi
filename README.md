@@ -26,12 +26,12 @@ All three features feed into a single Eco Pulse score. Hostels compete on a live
 
 | Layer | Technology |
 |---|---|
-| Mobile | React Native + Expo |
+| Frontend | Vite + React (Web) |
 | Backend | Node.js + Express |
 | Database | MongoDB Atlas |
-| Maps | Google Maps Platform |
+| Maps | Leaflet.js / OpenStreetMap |
 | WhatsApp Bot | Meta WhatsApp Cloud API |
-| Bill Scanning | Google ML Kit (on-device OCR) |
+| Tank Analysis | Manual entry (OCR coming soon) |
 | Water Benchmarks | CGWB public datasets |
 
 ---
@@ -40,22 +40,24 @@ All three features feed into a single Eco Pulse score. Hostels compete on a live
 
 ### Prerequisites
 - Node.js 18+
-- Expo CLI: `npm install -g expo-cli`
 - MongoDB Atlas account
-- `.env` file set up (see `.env.example`)
+- `.env` files set up in both root and `/api` (see `.env.example`)
 
 ### Install and run
 
 ```bash
+# Clone the repository
 git clone https://github.com/your-org/ecosaathi.git
 cd ecosaathi
+
+# 1. Start the Frontend
 npm install
+npm run dev
 
-# Start the mobile app
-npx expo start
-
-# Start the backend (separate terminal)
-cd api && npm run dev
+# 2. Start the Backend (separate terminal)
+cd api
+npm install
+npm run dev
 ```
 
 ---

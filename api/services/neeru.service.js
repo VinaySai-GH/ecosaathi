@@ -1,4 +1,5 @@
 const WaterLog = require('../models/WaterLog');
+const User = require('../models/User');
 
 exports.saveWaterLog = async (userId, payload, overwrite = false) => {
     const { month, year, city, kl_used } = payload;
@@ -20,6 +21,14 @@ exports.saveWaterLog = async (userId, payload, overwrite = false) => {
         { $set: { city, kl_used } }, // What to update
         { new: true, upsert: true } // Return updated doc, create if missing
     );
+
+    // Award points only for new logs and append log ID to User
+    if (!existingLog) {
+        await User.findByIdAndUpdate(userId, { 
+            $inc: { points: 50 },
+            $push: { water_logs: log._id }
+        });
+    }
 
     return {
         log,

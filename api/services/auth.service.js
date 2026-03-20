@@ -8,7 +8,7 @@ const generateToken = (id) => {
 };
 
 exports.registerUser = async (userData) => {
-    const { name, phone, password } = userData;
+    const { name, phone, password, hostel = '' } = userData;
 
     // Check if user exists
     const userExists = await User.findOne({ phone });
@@ -17,12 +17,13 @@ exports.registerUser = async (userData) => {
     }
 
     // Create user
-    const user = await User.create({ name, phone, password });
+    const user = await User.create({ name, phone, password, hostel });
 
     return {
         _id: user._id,
         name: user.name,
         phone: user.phone,
+        hostel: user.hostel,
         points: user.points,
         token: generateToken(user._id),
     };
@@ -44,6 +45,27 @@ exports.loginUser = async (phone, password) => {
         _id: user._id,
         name: user.name,
         phone: user.phone,
+        hostel: user.hostel,
+        points: user.points,
+        token: generateToken(user._id),
+    };
+};
+
+exports.updateUser = async (userId, updateData) => {
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
+    
+    if (updateData.name) user.name = updateData.name;
+    if (updateData.password) user.password = updateData.password;
+    if (updateData.hostel) user.hostel = updateData.hostel;
+    
+    await user.save();
+    
+    return {
+        _id: user._id,
+        name: user.name,
+        phone: user.phone,
+        hostel: user.hostel,
         points: user.points,
         token: generateToken(user._id),
     };

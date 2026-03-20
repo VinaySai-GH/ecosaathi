@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Colors } from '../../constants/theme.js';
 import { CITIES, DEFAULT_CITY } from '../../data/cities.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { apiFetch } from '../../api/client.js';
 import './neeru.css';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -19,6 +20,29 @@ export default function NeeruHome() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
+  // History State
+  const [activeTab, setActiveTab] = useState('log'); // 'log' or 'history'
+  const [historyLogs, setHistoryLogs] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'history') {
+      loadHistory();
+    }
+  }, [activeTab]);
+
+  const loadHistory = async () => {
+    setLoadingHistory(true);
+    try {
+      const res = await apiFetch('/neeru/history', { requireAuth: true });
+      setHistoryLogs(res.logs || []);
+    } catch (err) {
+      console.error('Failed to load history', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
   function handleCalculate(e) {
     e.preventDefault();
     const parsed = parseFloat(kl);
@@ -34,63 +58,104 @@ export default function NeeruHome() {
         <div className="neeru-header">
           <div className="neeru-header-top">
             <span className="neeru-eyebrow">NEERU</span>
-            <button className="logout-btn" onClick={signOut}>Logout</button>
           </div>
           <h1 className="neeru-title">How much water<br />did you use?</h1>
-          <p className="neeru-subtitle">Enter your monthly household usage from your water bill.</p>
+          <p className="neeru-subtitle">Track your monthly household usage.</p>
         </div>
 
-        <form onSubmit={handleCalculate}>
-          <div className="neeru-section">
-            <label className="neeru-label">Water used this month</label>
-            <div className="kl-row">
-              <input type="number" placeholder="e.g. 8.5" value={kl} min="0" step="0.1"
-                onChange={(e) => { setKl(e.target.value); setError(''); }} className="kl-input" autoFocus />
-              <div className="unit-badge"><span className="unit-text">KL</span></div>
-            </div>
-            <p className="neeru-hint">1 KL = 1000 litres. Check your bill for "units consumed" or "kl used".</p>
-            {error && <p className="neeru-error">{error}</p>}
-          </div>
-
-          <div className="neeru-section">
-            <label className="neeru-label">Billing month</label>
-            <button type="button" className="dropdown-btn" onClick={() => { setMonthDropOpen(o => !o); setCityDropOpen(false); }}>
-              <span>{MONTHS[selectedMonth]}, {selectedYear}</span>
-              <span className="chevron">{monthDropOpen ? '▲' : '▼'}</span>
-            </button>
-            {monthDropOpen && (
-              <div className="drop-list">
-                {MONTHS.map((m, i) => (
-                  <button type="button" key={m} className={`drop-item${i === selectedMonth ? ' active' : ''}`}
-                    onClick={() => { setSelectedMonth(i); setMonthDropOpen(false); }}>{m}</button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="neeru-section">
-            <label className="neeru-label">Your city</label>
-            <button type="button" className="dropdown-btn" onClick={() => { setCityDropOpen(o => !o); setMonthDropOpen(false); }}>
-              <span>{selectedCity}</span>
-              <span className="chevron">{cityDropOpen ? '▲' : '▼'}</span>
-            </button>
-            {cityDropOpen && (
-              <div className="drop-list">
-                {CITIES.map((c) => (
-                  <button type="button" key={c.label} className={`drop-item${c.label === selectedCity ? ' active' : ''}`}
-                    onClick={() => { setSelectedCity(c.label); setCityDropOpen(false); }}>
-                    {c.label} <span className="drop-state">· {c.state}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button type="button" className="scan-btn" disabled>
-            <span>📷</span><span>Scan bill instead (coming soon)</span>
+        {/* Tab Toggle */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', background: '#1a2b25', padding: '5px', borderRadius: '12px' }}>
+          <button 
+            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: activeTab === 'log' ? '#25D366' : 'transparent', color: activeTab === 'log' ? '#000' : '#888', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
+            onClick={() => setActiveTab('log')}
+          >
+            Log Water
           </button>
-          <button type="submit" className="cta-btn">See My Impact  →</button>
-        </form>
+          <button 
+            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: activeTab === 'history' ? '#25D366' : 'transparent', color: activeTab === 'history' ? '#000' : '#888', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
+            onClick={() => setActiveTab('history')}
+          >
+            My History
+          </button>
+        </div>
+
+        {activeTab === 'log' && (
+          <form onSubmit={handleCalculate}>
+            <div className="neeru-section">
+              <label className="neeru-label">Water used this month</label>
+              <div className="kl-row">
+                <input type="number" placeholder="e.g. 8.5" value={kl} min="0" step="0.1"
+                  onChange={(e) => { setKl(e.target.value); setError(''); }} className="kl-input" autoFocus />
+                <div className="unit-badge"><span className="unit-text">KL</span></div>
+              </div>
+              <p className="neeru-hint">1 KL = 1000 litres. Check your bill for "units consumed" or "kl used".</p>
+              {error && <p className="neeru-error">{error}</p>}
+            </div>
+
+            <div className="neeru-section">
+              <label className="neeru-label">Billing month</label>
+              <button type="button" className="dropdown-btn" onClick={() => { setMonthDropOpen(o => !o); setCityDropOpen(false); }}>
+                <span>{MONTHS[selectedMonth]}, {selectedYear}</span>
+                <span className="chevron">{monthDropOpen ? '▲' : '▼'}</span>
+              </button>
+              {monthDropOpen && (
+                <div className="drop-list">
+                  {MONTHS.map((m, i) => (
+                    <button type="button" key={m} className={`drop-item${i === selectedMonth ? ' active' : ''}`}
+                      onClick={() => { setSelectedMonth(i); setMonthDropOpen(false); }}>{m}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="neeru-section">
+              <label className="neeru-label">Your city</label>
+              <button type="button" className="dropdown-btn" onClick={() => { setCityDropOpen(o => !o); setMonthDropOpen(false); }}>
+                <span>{selectedCity}</span>
+                <span className="chevron">{cityDropOpen ? '▲' : '▼'}</span>
+              </button>
+              {cityDropOpen && (
+                <div className="drop-list">
+                  {CITIES.map((c) => (
+                    <button type="button" key={c.label} className={`drop-item${c.label === selectedCity ? ' active' : ''}`}
+                      onClick={() => { setSelectedCity(c.label); setCityDropOpen(false); }}>
+                      {c.label} <span className="drop-state">· {c.state}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button type="submit" className="cta-btn">Calculate Impact  →</button>
+          </form>
+        )}
+
+        {/* History Tab */}
+        {activeTab === 'history' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {loadingHistory ? (
+              <div style={{ textAlign: 'center', color: '#fff', padding: '20px' }}><div className="spinner"></div></div>
+            ) : historyLogs.length === 0 ? (
+              <p style={{ color: '#aaa', textAlign: 'center', marginTop: '20px' }}>No logs found yet. Start logging your water!</p>
+            ) : (
+              historyLogs.map(log => (
+                <div key={log._id} style={{ background: '#11221c', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #25D366' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h4 style={{ color: '#fff', margin: '0 0 5px 0', fontSize: '18px' }}>{MONTHS[log.month - 1]} {log.year}</h4>
+                      <p style={{ color: '#888', margin: 0, fontSize: '13px' }}>📍 {log.city} • Recorded {new Date(log.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <p style={{ color: '#25D366', fontWeight: 'bold', fontSize: '24px', margin: 0 }}>{log.kl_used}</p>
+                      <p style={{ color: '#888', margin: 0, fontSize: '12px', textTransform: 'uppercase' }}>Kiloliters</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -4,14 +4,16 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 export default function CarbonTrend({ onBack }) {
   const [data, setData] = useState([]);
+  const [historyList, setHistoryList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchHistory() {
       try {
         const history = await getCarbonHistory();
-        // Sort by year then month
-        const sorted = history.sort((a, b) => {
+        setHistoryList(history); // Direct from API is reverse chronological
+        // Sort by year then month for the graph (ascending)
+        const sorted = [...history].sort((a, b) => {
            if (a.year !== b.year) return a.year - b.year;
            return a.month - b.month;
         });
@@ -68,6 +70,38 @@ export default function CarbonTrend({ onBack }) {
           </ResponsiveContainer>
         </div>
       )}
+
+      {/* Text History List */}
+      {!loading && historyList.length > 0 && (
+        <div style={{ marginTop: '32px' }}>
+          <h3 style={{ marginBottom: '16px', color: 'var(--text)' }}>Detailed History</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {historyList.map(log => (
+              <div key={log._id} style={{ background: 'var(--surface-solid)', padding: '16px', borderRadius: '12px', borderLeft: '4px solid var(--accent)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ color: 'var(--text)', margin: '0 0 4px 0', fontSize: '16px' }}>
+                      {new Date(2000, log.month - 1).toLocaleString('default', { month: 'long' })} {log.year}
+                    </h4>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '12px' }}>
+                      Recorded {new Date(log.date || log.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '20px', margin: 0 }}>
+                      {Number(log.totalKgCO2).toFixed(1)}
+                    </p>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '12px', textTransform: 'uppercase' }}>
+                      kg CO₂
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -38,5 +38,19 @@ yarn-error.*
 *.tsbuildinfo
 
 # generated native folders
-/ios
 /android
+/ios
+
+# logs and temp
+*.log
+build.log
+build_error.log
+depcheck-*.txt
+api/crash.log
+
+# Redundant assets
+assets/android-icon-*.png
+assets/splash-icon.png
+
+# IDE
+.vscode/
