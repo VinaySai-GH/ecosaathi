@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import Footer from '../components/Footer.jsx';
 import './layout.css';
 
 const SIDEBAR_LINKS = [
@@ -14,6 +15,7 @@ const SIDEBAR_LINKS = [
 
 export default function SidebarLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,15 +47,36 @@ export default function SidebarLayout() {
             <span className="brand-text">EcoSaathi</span>
           </div>
         </div>
-        <div className="nav-right">
+        <div className="nav-right" style={{ position: 'relative' }}>
           <div 
             className="user-profile" 
             title={user?.name ? `${user.name}'s Profile` : 'User Profile'}
-            onClick={() => handleNavClick('/profile')}
+            onClick={() => setProfileOpen(!profileOpen)}
             style={{ cursor: 'pointer', border: '2px solid transparent', transition: 'border 0.2s', '&:hover': { border: '2px solid #4CAF50' } }}
           >
             <span className="profile-initial">{user?.name ? user.name[0].toUpperCase() : 'U'}</span>
           </div>
+
+          {profileOpen && (
+            <div className="profile-dropdown" style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', width: '200px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)', zIndex: 1000 }}>
+              <div style={{ marginBottom: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                <strong style={{ color: 'var(--text)' }}>{user?.name || 'User'}</strong>
+                <div style={{ color: 'var(--textMuted)', fontSize: '12px' }}>{user?.phone || 'No phone'}</div>
+              </div>
+              <button 
+                onClick={() => { setProfileOpen(false); handleNavClick('/profile'); }}
+                style={{ width: '100%', padding: '8px', textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--text)', cursor: 'pointer', borderRadius: '6px', transition: '0.2s', fontWeight: 'bold' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--card)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >✏️ Edit Profile</button>
+              <button 
+                onClick={signOut}
+                style={{ width: '100%', padding: '8px', textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', borderRadius: '6px', marginTop: '4px', fontWeight: 'bold' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--dangerDim)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >🚪 Logout</button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -74,10 +97,12 @@ export default function SidebarLayout() {
           </nav>
           
           <div className="sidebar-footer">
-            <button className="logout-btn-nav" onClick={signOut}>
-              <span className="sidebar-icon">🚪</span>
-              <span className="sidebar-label">Logout</span>
-            </button>
+            <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--accent)', color: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                {user?.name ? user.name[0].toUpperCase() : 'U'}
+              </div>
+              <span style={{ color: 'var(--text)', fontWeight: 'bold' }}>{user?.name || 'User'}</span>
+            </div>
           </div>
         </aside>
 
@@ -91,6 +116,7 @@ export default function SidebarLayout() {
           <div className="content-container">
             <Outlet />
           </div>
+          <Footer />
         </main>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Colors } from '../../constants/theme.js';
 import { CITIES, DEFAULT_CITY } from '../../data/cities.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import AnimatedCard from '../../components/animations/AnimatedCard.jsx';
 import './neeru.css';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -55,30 +56,38 @@ export default function NeeruHome() {
   return (
     <div className="neeru-page">
       <div className="page-scroll">
-        <div className="neeru-header">
-          <div className="neeru-header-top">
-            <span className="neeru-eyebrow">NEERU</span>
+        <AnimatedCard delay={0}>
+          <div className="neeru-header">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div className="neeru-header-top">
+                  <span className="neeru-eyebrow">NEERU</span>
+                </div>
+                <h1 className="neeru-title">How much water<br />did you use?</h1>
+              </div>
+              <button 
+                onClick={() => setActiveTab(activeTab === 'log' ? 'history' : 'log')}
+                style={{ 
+                  background: 'rgba(255,255,255,0.1)', 
+                  color: '#fff', 
+                  padding: '8px 16px', 
+                  borderRadius: '20px', 
+                  border: '1px solid rgba(255,255,255,0.2)', 
+                  fontSize: '14px', 
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {activeTab === 'log' ? '📜 My History' : '💧 Log Water'}
+              </button>
+            </div>
+            <p className="neeru-subtitle">Track your monthly household usage.</p>
           </div>
-          <h1 className="neeru-title">How much water<br />did you use?</h1>
-          <p className="neeru-subtitle">Track your monthly household usage.</p>
-        </div>
+        </AnimatedCard>
 
-        {/* Tab Toggle */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', background: '#1a2b25', padding: '5px', borderRadius: '12px' }}>
-          <button 
-            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: activeTab === 'log' ? '#25D366' : 'transparent', color: activeTab === 'log' ? '#000' : '#888', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
-            onClick={() => setActiveTab('log')}
-          >
-            Log Water
-          </button>
-          <button 
-            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: activeTab === 'history' ? '#25D366' : 'transparent', color: activeTab === 'history' ? '#000' : '#888', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
-            onClick={() => setActiveTab('history')}
-          >
-            My History
-          </button>
-        </div>
-
+        <AnimatedCard delay={200}>
         {activeTab === 'log' && (
           <form onSubmit={handleCalculate}>
             <div className="neeru-section">
@@ -155,6 +164,7 @@ export default function NeeruHome() {
             )}
           </div>
         )}
+        </AnimatedCard>
 
       </div>
     </div>

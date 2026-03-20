@@ -5,7 +5,7 @@ export const TIPS = [
     { id: 'tap_off_brushing', icon: '🦷', text: 'Leaving the tap on while brushing wastes 6 litres per minute. Turn it off — that is 180 litres saved per month per person.', tags: ['above_benchmark', 'water_stress', 'general'] },
     { id: 'plants_morning', icon: '🌿', text: 'Water plants in the morning or evening — watering at noon loses 30% to evaporation before it reaches the roots.', tags: ['general', 'water_stress'] },
     { id: 'vessel_washing', icon: '🍽️', text: 'Rinsing vessels under a running tap uses 10x more water than soaking them first. Soak for 2 minutes, then rinse quickly.', tags: ['above_benchmark', 'general'] },
-    { id: 'below_streak', icon: '🏆', text: 'You are under the city benchmark — great discipline! Share your report to inspire your hostel mates.', tags: ['below_benchmark'] },
+    { id: 'below_streak', icon: '🏆', text: 'You are under the city benchmark — great discipline! Share your report to inspire your city mates.', tags: ['below_benchmark'] },
     { id: 'below_maintain', icon: '📊', text: 'You are using less than the city average. Keep tracking monthly — even small reductions add up to thousands of litres a year.', tags: ['below_benchmark'] },
     { id: 'check_leaks', icon: '🔧', text: 'A dripping tap wastes ~20 litres a day — 600 litres a month. Report leaky taps to the maintenance desk immediately.', tags: ['above_benchmark', 'water_stress', 'general'] },
     { id: 'grey_water', icon: '♻️', text: 'Water from washing vegetables or rinsing dal is perfectly safe for mopping or watering plants. Keep a small vessel nearby while cooking.', tags: ['general', 'water_stress'] },

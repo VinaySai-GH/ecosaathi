@@ -1,9 +1,11 @@
 .greenspot-container {
     position: relative;
-    width: 100%;
-    height: 100vh;
+    /* Negate the .content-container padding for a full-bleed map */
+    margin: -24px;
+    flex: 1;
     background: var(--bg-color, #0a1f14);
     overflow: hidden;
+    border-radius: 0;
 }
 
 .greenspot-search-bar {
@@ -250,7 +252,7 @@
 .greenspot-add-btn {
     position: absolute;
     bottom: 24px;
-    right: 24px;
+    left: 24px;
     z-index: 1500;
     width: 56px;
     height: 56px;

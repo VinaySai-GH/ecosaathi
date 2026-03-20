@@ -5,14 +5,14 @@ exports.getLeaderboard = async (req, res, next) => {
         const aggregated = await User.aggregate([
             {
                 $group: {
-                    _id: '$hostel',
+                    _id: '$city',
                     total_points: { $sum: '$points' },
                     member_count: { $sum: 1 }
                 }
             },
             {
                 $project: {
-                    hostel: '$_id',
+                    city: '$_id',
                     total_points: 1,
                     member_count: 1,
                     avg_score: { $divide: ['$total_points', '$member_count'] },
@@ -22,7 +22,7 @@ exports.getLeaderboard = async (req, res, next) => {
             { $sort: { avg_score: -1 } }
         ]);
 
-        const topUsers = await User.find({}, 'name points hostel')
+        const topUsers = await User.find({}, 'name points city')
             .sort({ points: -1 })
             .limit(50); // Get top 50 users globally
 
@@ -44,14 +44,14 @@ exports.getMyLeaderboard = async (req, res, next) => {
         const aggregated = await User.aggregate([
             {
                 $group: {
-                    _id: '$hostel',
+                    _id: '$city',
                     total_points: { $sum: '$points' },
                     member_count: { $sum: 1 }
                 }
             },
             {
                 $project: {
-                    hostel: '$_id',
+                    city: '$_id',
                     total_points: 1,
                     member_count: 1,
                     avg_score: { $divide: ['$total_points', '$member_count'] },
@@ -61,13 +61,13 @@ exports.getMyLeaderboard = async (req, res, next) => {
             { $sort: { avg_score: -1 } }
         ]);
 
-        const myHostelEntry = aggregated.find(entry => entry.hostel === user.hostel);
-        const rank = aggregated.findIndex(entry => entry.hostel === user.hostel) + 1;
+        const myCityEntry = aggregated.find(entry => entry.city === user.city);
+        const rank = aggregated.findIndex(entry => entry.city === user.city) + 1;
 
         res.status(200).json({
             rank: rank || 0,
             points: user.points,
-            hostel_score: myHostelEntry ? myHostelEntry.avg_score : 0,
+            city_score: myCityEntry ? myCityEntry.avg_score : 0,
         });
     } catch (error) {
         next(error);

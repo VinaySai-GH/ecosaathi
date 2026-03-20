@@ -8,7 +8,7 @@ const generateToken = (id) => {
 };
 
 exports.registerUser = async (userData) => {
-    const { name, phone, password, hostel = '' } = userData;
+    const { name, phone, password, city = '' } = userData;
 
     // Check if user exists
     const userExists = await User.findOne({ phone });
@@ -17,13 +17,13 @@ exports.registerUser = async (userData) => {
     }
 
     // Create user
-    const user = await User.create({ name, phone, password, hostel });
+    const user = await User.create({ name, phone, password, city });
 
     return {
         _id: user._id,
         name: user.name,
         phone: user.phone,
-        hostel: user.hostel,
+        city: user.city,
         points: user.points,
         token: generateToken(user._id),
     };
@@ -45,7 +45,7 @@ exports.loginUser = async (phone, password) => {
         _id: user._id,
         name: user.name,
         phone: user.phone,
-        hostel: user.hostel,
+        city: user.city,
         points: user.points,
         token: generateToken(user._id),
     };
@@ -57,7 +57,7 @@ exports.updateUser = async (userId, updateData) => {
     
     if (updateData.name) user.name = updateData.name;
     if (updateData.password) user.password = updateData.password;
-    if (updateData.hostel) user.hostel = updateData.hostel;
+    if (updateData.city) user.city = updateData.city;
     
     await user.save();
     
@@ -65,7 +65,7 @@ exports.updateUser = async (userId, updateData) => {
         _id: user._id,
         name: user.name,
         phone: user.phone,
-        hostel: user.hostel,
+        city: user.city,
         points: user.points,
         token: generateToken(user._id),
     };

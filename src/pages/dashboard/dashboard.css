@@ -26,11 +26,13 @@
     gap: 24px;
 }
 
-/* Feature Card (Google Classroom style) */
+/* Feature Card (Google Classroom style converted to Premium Glassmorphism) */
 .feature-card {
-    background-color: var(--surface);
+    background-color: rgba(17, 34, 28, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -92,7 +94,8 @@
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background-color: var(--surface);
+    background-color: rgba(26, 43, 37, 0.8);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -101,10 +104,9 @@
     z-index: 3;
 }
 
-/* Bottom Content Area */
 .card-bottom-content {
     flex: 1;
-    background-color: var(--surface);
+    background-color: transparent;
     padding: 16px;
     display: flex;
     flex-direction: column;

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import AnimatedCard from '../../components/animations/AnimatedCard.jsx';
 
 export default function EcoPulseHome() {
   const { user } = useAuth();
   const [boardData, setBoardData] = useState({ entries: [], topUsers: [] });
-  const [myData, setMyData] = useState({ rank: 0, points: 0, hostel_score: 0 });
+  const [myData, setMyData] = useState({ rank: 0, points: 0, city_score: 0 });
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('users'); // 'users' or 'hostels'
+  const [activeTab, setActiveTab] = useState('users'); // 'users' or 'cities'
 
   useEffect(() => {
     fetchLeaderboard();
@@ -42,43 +43,48 @@ export default function EcoPulseHome() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.heroSection}>
-        <div style={styles.heroIcon}>🏆</div>
-        <h1 style={styles.heroTitle}>Eco Pulse Leaderboard</h1>
-        <p style={styles.heroSubtitle}>Live tracking of campus sustainability champions</p>
-      </div>
-
-      <div style={styles.statsRow}>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>My Points</p>
-          <p style={styles.statValue}>{myData.points}</p>
+      <AnimatedCard delay={0}>
+        <div style={styles.heroSection}>
+          <div style={styles.heroIcon}>🏆</div>
+          <h1 style={styles.heroTitle}>Eco Pulse Leaderboard</h1>
+          <p style={styles.heroSubtitle}>Live tracking of campus sustainability champions</p>
         </div>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>Global Rank</p>
-          <p style={styles.statValue}>{rankDisplay}</p>
-        </div>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>Hostel Average</p>
-          <p style={styles.statValue}>{myData.hostel_score.toFixed(1)}</p>
-        </div>
-      </div>
+      </AnimatedCard>
 
-      <div style={styles.toggleRow}>
-        <button 
-          style={activeTab === 'users' ? styles.tabActive : styles.tabInactive}
-          onClick={() => setActiveTab('users')}
-        >
-          Top Users
-        </button>
-        <button 
-          style={activeTab === 'hostels' ? styles.tabActive : styles.tabInactive}
-          onClick={() => setActiveTab('hostels')}
-        >
-          Hostel Rankings
-        </button>
-      </div>
+      <AnimatedCard delay={100}>
+        <div style={styles.statsRow}>
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>My Points</p>
+            <p style={styles.statValue}>{myData.points}</p>
+          </div>
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>Global Rank</p>
+            <p style={styles.statValue}>{rankDisplay}</p>
+          </div>
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>City Average</p>
+            <p style={styles.statValue}>{myData.city_score.toFixed(1)}</p>
+          </div>
+        </div>
+      </AnimatedCard>
 
-      <div style={styles.listContainer}>
+      <AnimatedCard delay={200}>
+        <div style={styles.toggleRow}>
+          <button 
+            style={activeTab === 'users' ? styles.tabActive : styles.tabInactive}
+            onClick={() => setActiveTab('users')}
+          >
+            Top Users
+          </button>
+          <button 
+            style={activeTab === 'cities' ? styles.tabActive : styles.tabInactive}
+            onClick={() => setActiveTab('cities')}
+          >
+            City Rankings
+          </button>
+        </div>
+
+        <div style={styles.listContainer}>
         {activeTab === 'users' && (
           <div style={styles.list}>
             {boardData.topUsers.map((u, i) => (
@@ -86,7 +92,7 @@ export default function EcoPulseHome() {
                 <div style={styles.rankBox}>{i + 1}</div>
                 <div style={styles.userInfo}>
                   <p style={styles.userName}>{u.name} {u._id === user._id && '(You)'}</p>
-                  <p style={styles.userHostel}>{u.hostel || 'No Hostel'}</p>
+                  <p style={styles.userHostel}>{u.city || 'No City'}</p>
                 </div>
                 <div style={styles.pointsBox}>{u.points} pts</div>
               </div>
@@ -95,22 +101,23 @@ export default function EcoPulseHome() {
           </div>
         )}
 
-        {activeTab === 'hostels' && (
+        {activeTab === 'cities' && (
           <div style={styles.list}>
             {boardData.entries.map((h, i) => (
-              <div key={h.hostel || 'unknown'} style={styles.listItem}>
+              <div key={h.city || 'unknown'} style={styles.listItem}>
                 <div style={styles.rankBox}>{i + 1}</div>
                 <div style={styles.userInfo}>
-                  <p style={styles.userName}>{h.hostel || 'No Hostel specified'}</p>
+                  <p style={styles.userName}>{h.city || 'No City specified'}</p>
                   <p style={styles.userHostel}>{h.member_count} members</p>
                 </div>
                 <div style={styles.pointsBox}>{h.avg_score.toFixed(1)} <span style={{fontSize: 12}}>avg</span></div>
               </div>
             ))}
-             {boardData.entries.length === 0 && <p style={{ color: '#aaa', textAlign: 'center' }}>No hostels are ranked yet.</p>}
+             {boardData.entries.length === 0 && <p style={{ color: '#aaa', textAlign: 'center' }}>No cities are ranked yet.</p>}
           </div>
         )}
-      </div>
+        </div>
+      </AnimatedCard>
     </div>
   );
 }

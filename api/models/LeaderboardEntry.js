@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const leaderboardEntrySchema = new mongoose.Schema(
     {
-        hostel: {
+        city: {
             type: String,
             required: true,
         },
@@ -32,7 +32,7 @@ const leaderboardEntrySchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-// We want only one leaderboard entry per hostel per month/year
-leaderboardEntrySchema.index({ hostel: 1, month: 1, year: 1 }, { unique: true });
+// We want only one leaderboard entry per city per month/year
+leaderboardEntrySchema.index({ city: 1, month: 1, year: 1 }, { unique: true });
 
 module.exports = mongoose.model('LeaderboardEntry', leaderboardEntrySchema);

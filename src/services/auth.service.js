@@ -6,5 +6,5 @@ export const loginUser = async (phone, password) =>
 export const registerUser = async (name, phone, password) =>
     apiFetch('/auth/register', { method: 'POST', requireAuth: false, body: JSON.stringify({ name, phone, password }) });
 
-export const updateProfile = async (name, password, hostel) =>
-    apiFetch('/auth/profile', { method: 'PUT', requireAuth: true, body: JSON.stringify({ name, password, hostel }) });
+export const updateProfile = async (name, password, city) =>
+    apiFetch('/auth/profile', { method: 'PUT', requireAuth: true, body: JSON.stringify({ name, password, city }) });

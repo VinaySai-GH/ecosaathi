@@ -1,0 +1,11 @@
+.aurora-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 1; /* Subtly blend with the dark app background */
+}

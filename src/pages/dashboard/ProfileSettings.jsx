@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { updateProfile } from '../../services/auth.service.js';
 
 export default function ProfileSettings() {
   const { user, signIn } = useAuth();
+  const navigate = useNavigate();
   
   // Local state for edits
   const [name, setName] = useState(user?.name || '');
-  const [hostel, setHostel] = useState(user?.hostel || '');
+  const [city, setCity] = useState(user?.city || '');
   const [password, setPassword] = useState('');
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +22,7 @@ export default function ProfileSettings() {
     setMessage('');
     setIsSubmitting(true);
     try {
-      const updatedUser = await updateProfile(name, password || undefined, hostel);
+      const updatedUser = await updateProfile(name, password || undefined, city);
       signIn(updatedUser); // Update local context and storage seamlessly
       setMessage('Profile updated successfully!');
       setPassword(''); 
@@ -41,11 +43,11 @@ export default function ProfileSettings() {
           {user?.name ? user.name[0].toUpperCase() : 'U'}
         </div>
         <h2 style={styles.heroName}>{user?.name}</h2>
-        <p style={styles.heroPhone}>+91 {user?.phone} • {user?.hostel || 'No Hostel Assigned'}</p>
+        <p style={styles.heroPhone}>+91 {user?.phone} • {user?.city || 'No City Assigned'}</p>
       </div>
 
       <div style={styles.settingsCard}>
-        <h3 style={styles.sectionTitle}>Account Settings</h3>
+        <h3 style={styles.sectionTitle}>Edit Profile</h3>
         
         <form onSubmit={handleUpdate} style={styles.formContainer}>
           
@@ -77,14 +79,14 @@ export default function ProfileSettings() {
           <div style={styles.formGroup}>
             <div style={styles.iconCol}>🏢</div>
             <div style={styles.inputCol}>
-              <label style={styles.label}>Hostel (Eco Pulse Leaderboard)</label>
-              <select value={hostel} onChange={(e) => setHostel(e.target.value)} style={styles.input}>
-                <option value="">Select your hostel...</option>
-                <option value="Palaash">Palaash</option>
-                <option value="Sahyadri">Sahyadri</option>
-                <option value="Narmada">Narmada</option>
-                <option value="Godavari">Godavari</option>
-              </select>
+              <label style={styles.label}>City (Eco Pulse Leaderboard)</label>
+              <input 
+                type="text" 
+                value={city} 
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Tirupati"
+                style={styles.input} 
+              />
             </div>
           </div>
           <hr style={styles.divider} />
@@ -107,9 +109,14 @@ export default function ProfileSettings() {
             {error && <p style={styles.errorText}>{error}</p>}
             {message && <p style={styles.successText}>{message}</p>}
 
-            <button type="submit" disabled={isSubmitting} style={styles.saveBtn}>
-              {isSubmitting ? 'Saving...' : 'Save Profile Changes'}
-            </button>
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <button type="button" onClick={() => navigate(-1)} style={styles.cancelBtn}>
+                Cancel
+              </button>
+              <button type="submit" disabled={isSubmitting} style={styles.saveBtn}>
+                 {isSubmitting ? 'Saving...' : 'Save Profile Changes'}
+              </button>
+            </div>
           </div>
 
         </form>
@@ -226,10 +233,22 @@ const styles = {
     textAlign: 'center'
   },
   saveBtn: {
-    width: '100%',
+    flex: 2,
     backgroundColor: '#075E54',
     color: '#fff',
     border: 'none',
+    padding: '16px',
+    borderRadius: '8px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s'
+  },
+  cancelBtn: {
+    flex: 1,
+    backgroundColor: '#1a2b25',
+    color: '#aaa',
+    border: '1px solid #22332c',
     padding: '16px',
     borderRadius: '8px',
     fontSize: '16px',

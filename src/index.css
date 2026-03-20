@@ -259,7 +259,8 @@ button:disabled:active {
 }
 
 .page-scroll {
-  max-width: 540px;
+  width: 100%;
+  max-width: 900px;
   margin: 0 auto;
   padding: var(--sp-lg);
   padding-bottom: 80px;
