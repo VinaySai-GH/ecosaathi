@@ -16,7 +16,7 @@ exports.registerUser = async (userData) => {
         throw new Error('User already exists with this phone number');
     }
 
-    // Create user
+    // Create user with plain password and city
     const user = await User.create({ name, phone, password, city });
 
     return {
@@ -30,15 +30,18 @@ exports.registerUser = async (userData) => {
 };
 
 exports.loginUser = async (phone, password) => {
-    // Find user by phone
-    const user = await User.findOne({ phone });
+    // Find user by phone and explicitly select password field (which has select: false by default)
+    const user = await User.findOne({ phone }).select('+password');
 
     if (!user) {
-        throw new Error('Invalid phone number or user not found');
+        throw new Error('Invalid phone number or password');
     }
 
-    if (user.password != password) {
-        throw new Error('Invalid password');
+    // Compare provided password with stored password (plain text as requested)
+    const isPasswordValid = password === user.password;
+
+    if (!isPasswordValid) {
+        throw new Error('Invalid phone number or password');
     }
 
     return {
@@ -54,13 +57,13 @@ exports.loginUser = async (phone, password) => {
 exports.updateUser = async (userId, updateData) => {
     const user = await User.findById(userId);
     if (!user) throw new Error('User not found');
-    
+
     if (updateData.name) user.name = updateData.name;
     if (updateData.password) user.password = updateData.password;
     if (updateData.city) user.city = updateData.city;
-    
+
     await user.save();
-    
+
     return {
         _id: user._id,
         name: user.name,

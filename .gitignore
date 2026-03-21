@@ -38,7 +38,30 @@ yarn-error.*
 *.tsbuildinfo
 
 # generated native folders
+/ios
 /android
+
+# --- Project-specific ignores ---
+# Test files and media
+*.pdf
+*.xlsx
+*.csv
+Screenshot*.png
+eng.traineddata
+
+# Temporary scripts and logs
+test-ocr-files.js
+SHARE_LOCATIONS.js
+api/resetUsers.js
+TEST_OCR.sh
+
+# Temporary sprint documentation
+PHASE_*.md
+*SUMMARY.md
+DEMO_READY.md
+QUICK_TEST.md
+WHAT_TO_SHARE.md
+GREEN_SPOT_SHARING_GUIDE.md
 /ios
 
 # logs and temp

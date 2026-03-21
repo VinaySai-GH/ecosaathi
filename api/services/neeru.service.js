@@ -38,8 +38,8 @@ exports.saveWaterLog = async (userId, payload, overwrite = false) => {
 };
 
 exports.fetchUserHistory = async (userId) => {
-    // Return logs sorted by newest first
+    // Return logs sorted by oldest first (for proper chart progression left→right)
     return await WaterLog.find({ userId })
-        .sort({ year: -1, month: -1 })
+        .sort({ year: 1, month: 1 })
         .lean();
 };

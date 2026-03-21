@@ -1,0 +1,92 @@
+.carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--bg-dark), var(--bg));
+  padding: 0;
+  margin: 24px 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.3s ease-out;
+  touch-action: pan-y;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.slide-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0 12px;
+  background: rgba(0,0,0,0.1);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+}
+
+.dot.active {
+  background: var(--accent);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .carousel-slide {
+    padding: 28px 20px;
+  }
+  
+  .slide-title {
+    font-size: 16px;
+  }
+}
+
+/* Animation for swipe (drag) */
+.carousel-wrapper.dragging {
+  transition: none;
+}

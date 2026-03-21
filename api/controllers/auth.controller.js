@@ -30,8 +30,9 @@ exports.login = async (req, res, next) => {
         const userData = await authService.loginUser(phone, password);
         res.status(200).json(userData);
     } catch (error) {
-        if (error.message.includes('Invalid phone number')) {
-            return res.status(401).json({ error: error.message });
+        // Don't reveal which credential is wrong (security best practice)
+        if (error.message.includes('Invalid phone number') || error.message.includes('Invalid password')) {
+            return res.status(401).json({ error: 'Invalid phone number or password' });
         }
         next(error);
     }

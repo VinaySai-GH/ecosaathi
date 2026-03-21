@@ -27,6 +27,7 @@
     color: #eef5f0;
     font-size: 15px;
     outline: none;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -70,6 +71,7 @@
     white-space: nowrap;
     cursor: pointer;
     transition: all 0.2s;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -99,6 +101,7 @@
     right: 0;
     z-index: 2000;
     background: linear-gradient(to top, rgba(18, 45, 30, 0.98), rgba(18, 45, 30, 0.95));
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-top-left-radius: 28px;
     border-top-right-radius: 28px;
@@ -283,6 +286,7 @@
     bottom: 0;
     z-index: 3000;
     background: rgba(10, 31, 20, 0.85);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;

@@ -167,16 +167,27 @@
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--sp-sm);
     background: var(--surface);
-    border: 1px dashed var(--border);
+    border: 2px dashed var(--accent);
     border-radius: var(--radius-md);
     padding: var(--sp-md);
-    color: var(--text-muted);
+    color: var(--accent);
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 600;
     margin-bottom: var(--sp-lg);
-    cursor: not-allowed;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.scan-btn:hover {
+    background: rgba(110, 224, 127, 0.05);
+    border-color: #5dd46d;
+}
+
+.scan-btn:active {
+    transform: scale(0.98);
 }
 
 /* CTA */
@@ -380,4 +391,497 @@
     font-size: 12px;
     opacity: 0.75;
     margin-top: 2px;
+}
+
+/* Extraction feedback notification */
+.extraction-feedback {
+    margin-bottom: var(--sp-md);
+    padding: 12px;
+    background: rgba(110, 224, 127, 0.1);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Mobile Accessibility & Responsiveness (Phase 3) ── */
+
+@media (max-width: 480px) {
+    /* Page padding for small screens */
+    .neeru-page {
+        padding: var(--sp-md);
+    }
+
+    /* Header adjustments */
+    .neeru-header {
+        margin-bottom: var(--sp-lg);
+    }
+
+    .neeru-title {
+        font-size: 24px;
+        line-height: 1.1;
+        margin-bottom: var(--sp-sm);
+    }
+
+    .neeru-subtitle {
+        font-size: 14px;
+    }
+
+    /* Section spacing */
+    .neeru-section {
+        margin-bottom: var(--sp-md);
+    }
+
+    /* Input improvements for small screens */
+    .kl-input {
+        font-size: 20px; /* Prevents zoom-on-focus in iOS */
+        padding: 12px;
+    }
+
+    .unit-badge {
+        padding: 12px var(--sp-sm);
+        border-radius: var(--radius-sm);
+    }
+
+    .unit-text {
+        font-size: 16px;
+    }
+
+    /* Button sizing for touch (44px minimum height) */
+    .dropdown-btn {
+        min-height: 44px;
+        padding: var(--sp-md);
+        font-size: 15px;
+    }
+
+    .drop-list {
+        max-height: 240px;
+    }
+
+    .drop-item {
+        min-height: 44px;
+        padding: 12px var(--sp-sm);
+    }
+
+    .scan-btn {
+        min-height: 44px;
+        padding: 12px var(--sp-md);
+        font-size: 14px;
+        gap: var(--sp-xs);
+    }
+
+    .scan-btn span:first-child {
+        font-size: 18px;
+    }
+
+    .cta-btn {
+        min-height: 44px;
+        padding: 14px var(--sp-md);
+        font-size: 16px;
+    }
+
+    /* Error message improvements */
+    .neeru-error {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+
+    /* Result screen adjustments */
+    .hero-card {
+        padding: var(--sp-lg);
+        margin-bottom: var(--sp-lg);
+    }
+
+    .hero-kl {
+        font-size: 56px;
+    }
+
+    .hero-unit {
+        font-size: 18px;
+    }
+
+    .save-btn,
+    .share-btn,
+    .overwrite-cancel,
+    .overwrite-confirm {
+        min-height: 44px;
+        padding: 12px var(--sp-md);
+        font-size: 15px;
+    }
+
+    /* Overwrite actions layout on small screens */
+    .overwrite-actions {
+        gap: 8px;
+    }
+
+    /* Adjustment for landscape mode on small phones */
+    @media (max-height: 600px) {
+        .neeru-page {
+            padding: 8px;
+        }
+
+        .neeru-section {
+            margin-bottom: 8px;
+        }
+
+        .hero-kl {
+            font-size: 48px;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    /* Extra small phones */
+    .neeru-title {
+        font-size: 20px;
+    }
+
+    .neeru-subtitle {
+        font-size: 13px;
+    }
+
+    .kl-input {
+        font-size: 18px;
+    }
+
+    .cta-btn {
+        font-size: 14px;
+    }
+
+    .hero-kl {
+        font-size: 48px;
+        letter-spacing: -1.5px;
+    }
+}
+
+/* ── Desktop Optimization (768px+) ── */
+
+@media (min-width: 768px) {
+    /* Page layout */
+    .neeru-page {
+        padding: 0;
+    }
+
+    .page-scroll {
+        padding: var(--sp-xl) var(--sp-xl);
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .neeru-header {
+        margin-bottom: var(--sp-xl);
+    }
+
+    .neeru-title {
+        font-size: 48px;
+        line-height: 1.1;
+        margin-bottom: var(--sp-lg);
+        max-width: 600px;
+    }
+
+    .neeru-subtitle {
+        font-size: 16px;
+        max-width: 500px;
+    }
+
+    /* Form sections */
+    form {
+        display: grid;
+        gap: var(--sp-xl);
+    }
+
+    /* Two-column layout for month and city on desktop */
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--sp-lg);
+    }
+
+    .neeru-section {
+        margin-bottom: 0;
+    }
+
+    .neeru-label {
+        font-size: 14px;
+        margin-bottom: var(--sp-md);
+        font-weight: 600;
+    }
+
+    .kl-input {
+        font-size: 24px;
+        padding: 14px;
+    }
+
+    .unit-badge {
+        padding: 14px var(--sp-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    .unit-text {
+        font-size: 20px;
+    }
+
+    /* Dropdown improvements */
+    .dropdown-btn {
+        padding: var(--sp-lg);
+        font-size: 16px;
+        border-radius: var(--radius-lg);
+    }
+
+    .dropdown-btn:hover {
+        border-color: var(--accent);
+        background: var(--card);
+    }
+
+    .drop-list {
+        max-height: 300px;
+        border-radius: var(--radius-lg);
+    }
+
+    .drop-item {
+        padding: 14px var(--sp-lg);
+        font-size: 16px;
+    }
+
+    .drop-item:hover {
+        background: var(--accent-dim);
+    }
+
+    /* Buttons */
+    .scan-btn {
+        padding: var(--sp-lg);
+        font-size: 16px;
+        border-radius: var(--radius-lg);
+        gap: var(--sp-md);
+    }
+
+    .scan-btn:hover {
+        background: rgba(110, 224, 127, 0.08);
+        border-color: #5dd46d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(110, 224, 127, 0.15);
+    }
+
+    .cta-btn {
+        font-size: 18px;
+        padding: 18px var(--sp-xl);
+        border-radius: var(--radius-full);
+    }
+
+    .cta-btn:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(110, 224, 127, 0.2);
+    }
+
+    /* Extraction feedback */
+    .extraction-feedback {
+        padding: 16px;
+        font-size: 15px;
+        border-left-width: 4px;
+        border-radius: 8px;
+    }
+
+    /* ── Result Screen Desktop ── */
+    .result-topbar {
+        padding: var(--sp-lg);
+    }
+
+    .result-topbar-title {
+        font-size: 20px;
+    }
+
+    /* Hero card */
+    .hero-card {
+        padding: var(--sp-xl);
+        border-radius: var(--radius-xl);
+        margin-bottom: var(--sp-xl);
+    }
+
+    .hero-kl {
+        font-size: 96px;
+        line-height: 1;
+    }
+
+    .hero-unit {
+        font-size: 32px;
+        margin-bottom: 12px;
+        margin-left: 8px;
+    }
+
+    .hero-city {
+        font-size: 18px;
+        margin-bottom: var(--sp-xl);
+    }
+
+    /* Sections */
+    .section-heading {
+        font-size: 12px;
+        margin: var(--sp-xl) 0 var(--sp-lg);
+    }
+
+    /* Buttons on result screen */
+    .save-btn,
+    .share-btn,
+    .overwrite-cancel,
+    .overwrite-confirm {
+        padding: 16px var(--sp-lg);
+        font-size: 16px;
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+    }
+
+    .save-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .share-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(110, 224, 127, 0.2);
+    }
+
+    .save-btn-title {
+        font-size: 18px;
+    }
+
+    /* Equivalency cards */
+    .tip-card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--sp-lg);
+    }
+
+    .equivalency-card,
+    .tip-card {
+        padding: var(--sp-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    /* Logout button */
+    .logout-btn:hover {
+        opacity: 0.7;
+        text-decoration: underline;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Large desktop */
+    .page-scroll {
+        padding: var(--sp-xl) 0;
+        max-width: 1100px;
+    }
+
+    /* Hero section spacious on desktop */
+    .hero-card {
+        padding: 48px;
+        margin-bottom: var(--sp-xl);
+    }
+
+    .neeru-title {
+        font-size: 56px;
+        margin-bottom: var(--sp-xl);
+    }
+
+    .neeru-subtitle {
+        font-size: 18px;
+    }
+
+    .hero-kl {
+        font-size: 120px;
+        letter-spacing: -3px;
+    }
+
+    .hero-unit {
+        font-size: 36px;
+    }
+
+    /* Better spacing for large screens */
+    .form-row {
+        gap: var(--sp-xl);
+    }
+
+    .tip-card-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ── Cursor & Hover States (for desktop mouse users) ── */
+
+/* Add cursor pointer to all interactive elements */
+button {
+    cursor: pointer;
+}
+
+/* Enhanced hover states for desktop */
+@media (hover: hover) and (pointer: fine) {
+    /* Desktop hover - buttons with lift effect */
+    .cta-btn {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .cta-btn:hover {
+        opacity: 0.95;
+        box-shadow: 0 12px 32px rgba(110, 224, 127, 0.2);
+    }
+
+    .scan-btn {
+        transition: all 0.2s ease;
+    }
+
+    .scan-btn:hover {
+        cursor: pointer;
+    }
+
+    .dropdown-btn {
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-btn:hover {
+        cursor: pointer;
+    }
+
+    .drop-item {
+        transition: background 0.15s ease;
+    }
+
+    .drop-item:hover {
+        cursor: pointer;
+    }
+
+    .back-btn {
+        transition: color 0.2s ease;
+    }
+
+    .back-btn:hover {
+        cursor: pointer;
+    }
+
+    .save-btn,
+    .share-btn {
+        transition: all 0.2s ease;
+    }
+
+    .save-btn:hover:not(:disabled) {
+        cursor: pointer;
+    }
+
+    .share-btn:hover {
+        cursor: pointer;
+    }
 }

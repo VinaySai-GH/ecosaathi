@@ -1,14 +1,19 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Colors } from '../../constants/theme.js';
 import EquivalencyCard from './components/EquivalencyCard.jsx';
 import BenchmarkBar from './components/BenchmarkBar.jsx';
 import TipCard from './components/TipCard.jsx';
 import ShareCard from './components/ShareCard.jsx';
+import InsightCard from './components/InsightCard.jsx';
+import BillAnalysisCard from './components/BillAnalysisCard.jsx';
+import TrendChart from './components/TrendChart.jsx';
+import StreakCounter from './components/StreakCounter.jsx';
+import InsightCarousel from './InsightCarousel.jsx';
 import { pickEquivalencies } from '../../data/equivalencies.js';
 import { findCity, getBenchmarkStatus } from '../../data/cities.js';
 import { pickTips } from '../../data/tips.js';
-import { submitWaterLog } from '../../services/neeru.service.js';
+import { submitWaterLog, getUserHistory } from '../../services/neeru.service.js';
 import './neeru.css';
 
 const MONTH_NAMES = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -16,16 +21,33 @@ const MONTH_NAMES = ['','January','February','March','April','May','June','July'
 export default function NeeruResult() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { kl, cityLabel, month, year } = location.state || {};
+  const { kl, cityLabel, month, year, billText } = location.state || {};
   const city = findCity(cityLabel);
   const status = getBenchmarkStatus(kl, city);
   const equivalencies = pickEquivalencies(kl);
-  const tips = pickTips(status, city.isWaterStressed);
+  const tips = pickTips(status, city.isWaterStressed, cityLabel);
 
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [confirmOverwrite, setConfirmOverwrite] = useState(null);
+  const [userHistory, setUserHistory] = useState([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const shareRef = useRef(null);
+
+  // Fetch user history on mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const history = await getUserHistory();
+        setUserHistory(history || []);
+      } catch (err) {
+        console.error('Failed to load history:', err);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+    loadHistory();
+  }, []);
 
   const isOver = status === 'over';
   const statusEmoji = isOver ? '⚠️' : '✅';
@@ -92,13 +114,33 @@ export default function NeeruResult() {
         </div>
 
         <h3 className="section-heading">What does this actually mean?</h3>
-        {equivalencies.map((eq, i) => <EquivalencyCard key={eq.id} equivalency={eq} kl={kl} index={i} />)}
+        
+        {/* Insight Carousel with equivalencies, insight card, and tips */}
+        <InsightCarousel slides={[
+          ...equivalencies.map(eq => <EquivalencyCard key={eq.id} equivalency={eq} kl={kl} />),
+          ...(billText ? [<BillAnalysisCard key="bill" kl={kl} billText={billText} city={city} previousKL={userHistory[0]?.kl_used} />] : []),
+          <InsightCard
+            kl={kl}
+            city={city}
+            status={status}
+            prevKl={userHistory[0]?.kl_used}
+            hostelAvg={null}
+          />,
+          ...tips.map(tip => <TipCard key={tip.id} tip={tip} />)
+        ]} />
 
         <h3 className="section-heading">vs. {cityLabel}</h3>
         <BenchmarkBar kl={kl} city={city} />
 
-        <h3 className="section-heading">{isOver ? '3 ways to reduce' : '3 tips to keep it up'}</h3>
-        {tips.map((tip, i) => <TipCard key={tip.id} tip={tip} index={i} />)}
+        <h3 className="section-heading">Your Streak</h3>
+        <StreakCounter userHistory={userHistory} />
+
+        {!isLoadingHistory && userHistory.length > 0 && (
+          <>
+            <h3 className="section-heading">Last 3 Months</h3>
+            <TrendChart history={userHistory} />
+          </>
+        )}
 
         <button className={`save-btn${isSaved ? ' saved' : ''}`} onClick={() => handleSave(false)} disabled={isSaving || isSaved}>
           {isSaving ? 'Saving…' : isSaved ? '✅ Saved to your trend' : '💾 Save to my Monthly Trend'}
