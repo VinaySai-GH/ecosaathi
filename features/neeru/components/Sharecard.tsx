@@ -24,6 +24,20 @@ export default function ShareCard({ kl, cityLabel, month, year, equivalency, ben
                 <Text style={styles.label}>Total Used</Text>
             </View>
 
+            <View style={[styles.benchmarkContainer,
+            status === 'under' ? styles.statusUnder :
+                status === 'over' ? styles.statusOver : styles.statusAt
+            ]}>
+                <Text style={styles.benchmarkTitle}>
+                    {status === 'under' ? '🏆 Great Job!' : status === 'over' ? '⚠️ High Usage' : '🎯 On Target'}
+                </Text>
+                <Text style={styles.benchmarkText}>
+                    {status === 'under' ? `You used ${benchmarkKl - kl} KL less than the ${cityLabel} average.` :
+                        status === 'over' ? `You used ${kl - benchmarkKl} KL more than the ${cityLabel} average.` :
+                            `You matched the ${cityLabel} average perfectly.`}
+                </Text>
+            </View>
+
             <View style={styles.eqContainer}>
                 <Text style={styles.eqIcon}>{equivalency ? equivalency.icon : '💧'}</Text>
                 <Text style={styles.equivalencyText}>
@@ -59,7 +73,21 @@ const styles = StyleSheet.create({
     klText: { fontSize: 120, fontWeight: '900', color: Colors.accent, marginBottom: Spacing.sm },
     label: { fontSize: 24, color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 2 },
 
-    eqContainer: { alignItems: 'center', paddingHorizontal: 40 },
+    eqContainer: { alignItems: 'center', paddingHorizontal: 40, marginTop: 40 },
     eqIcon: { fontSize: 80, marginBottom: Spacing.md },
     equivalencyText: { fontSize: 36, color: Colors.textDim, textAlign: 'center', lineHeight: 48 },
+
+    benchmarkContainer: {
+        width: '80%',
+        padding: 40,
+        borderRadius: Radius.lg,
+        alignItems: 'center',
+        marginBottom: 40,
+        borderWidth: 3,
+    },
+    statusUnder: { backgroundColor: 'rgba(76,175,80,0.1)', borderColor: '#4caf50' },
+    statusOver: { backgroundColor: 'rgba(244,67,54,0.1)', borderColor: '#f44336' },
+    statusAt: { backgroundColor: 'rgba(255,193,7,0.1)', borderColor: '#ffc107' },
+    benchmarkTitle: { fontSize: 36, fontWeight: 'bold', color: Colors.text, marginBottom: Spacing.sm },
+    benchmarkText: { fontSize: 24, color: Colors.textMuted, textAlign: 'center' },
 });
