@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BreakdownChart from './BreakdownChart';
 import Tree3D from './Tree3D';
-import { saveCarbonLog } from '../../../services/carbon.service.js';
+import { saveCarbonLog } from '../../../services/carbonprints.service';
 
 export default function CarbonResult({ result, formData, onReset }) {
   if (!result || !formData) return null;

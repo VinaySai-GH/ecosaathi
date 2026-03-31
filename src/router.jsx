@@ -13,7 +13,7 @@ import Dashboard from './pages/dashboard/Dashboard.jsx';
 import ProfileSettings from './pages/dashboard/ProfileSettings.jsx';
 import NeeruHomeScreen from './pages/neeru/NeeruHome.jsx';
 import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
-import CarbonHome from './pages/carbon_footprint_calculation/components/CarbonHome.jsx';
+import CarbonHome from './pages/carbonprints/CarbonPrintsPage';
 import ComingSoon from './ComingSoon.jsx';
 import GreenSpotHome from './pages/greenspot/GreenSpotHome.jsx';
 import EcoPulseHome from './pages/ecopulse/EcoPulseHome.jsx';

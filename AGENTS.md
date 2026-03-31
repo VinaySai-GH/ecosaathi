@@ -77,7 +77,7 @@ Features never import from each other — only from their own folder or shared/.
 
 ---
 
-## DATABASE SCHEMA
+## DATABASE SCHEMA(requirements might be changed by now, do loose the constraints)
 
 ### User
 ```
@@ -174,9 +174,9 @@ GET  /api/leaderboard/me  {}          →  { rank, points, hostel_score }
 - Green Spot verification given: 5 pts
 - Raat Ka Hisaab daily reply: 5 pts
 - Raat Ka Hisaab 30-day streak: +50 bonus pts
-
+(hostel changed to cities)
 Hostel score = sum of all member points ÷ number of members
-(prevents large hostels from dominating)
+(prevents large cities from dominating)
 Leaderboard recalculates every 6 hours.
 
 ---
@@ -220,7 +220,7 @@ Never combine two files into one code block.
 
 ---
 
-## GIT COMMITS
+## GIT COMMITS(no need(don't) to follow this now)
 
 Commit after every meaningful unit of work — a screen done, a service wired up, a bug fixed, a type file written. Don't batch everything into one big commit.
 

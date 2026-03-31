@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { updateProfile } from '../../services/auth.service.js';
+import { updateProfile, getCities } from '../../services/auth.service.js';
 
 export default function ProfileSettings() {
   const { user, signIn } = useAuth();
@@ -11,6 +11,23 @@ export default function ProfileSettings() {
   const [name, setName] = useState(user?.name || '');
   const [city, setCity] = useState(user?.city || '');
   const [password, setPassword] = useState('');
+  
+  const [allCities, setAllCities] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef(null);
+
+  useEffect(() => {
+    getCities().then(res => setAllCities(res.cities || [])).catch(err => console.error(err));
+    
+    // click outside listener
+    const handleClickOutside = (event) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -22,7 +39,8 @@ export default function ProfileSettings() {
     setMessage('');
     setIsSubmitting(true);
     try {
-      const updatedUser = await updateProfile(name, password || undefined, city);
+      const formattedCity = city.trim().charAt(0).toUpperCase() + city.trim().slice(1).toLowerCase();
+      const updatedUser = await updateProfile(name, password || undefined, formattedCity);
       signIn(updatedUser); // Update local context and storage seamlessly
       setMessage('Profile updated successfully!');
       setPassword(''); 
@@ -80,13 +98,34 @@ export default function ProfileSettings() {
             <div style={styles.iconCol}>🏢</div>
             <div style={styles.inputCol}>
               <label style={styles.label}>City (Eco Pulse Leaderboard)</label>
-              <input 
-                type="text" 
-                value={city} 
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="e.g. Tirupati"
-                style={styles.input} 
-              />
+              <div style={{ position: 'relative' }} ref={suggestionRef}>
+                <input 
+                  type="text" 
+                  value={city} 
+                  onChange={(e) => {
+                    setCity(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="e.g. Tirupati"
+                  style={styles.input} 
+                />
+                
+                {showSuggestions && city && allCities.filter(c => c.toLowerCase().includes(city.toLowerCase()) && c.toLowerCase() !== city.toLowerCase()).length > 0 && (
+                  <ul style={styles.suggestionsList}>
+                    {allCities
+                      .filter(c => c.toLowerCase().includes(city.toLowerCase()) && c.toLowerCase() !== city.toLowerCase())
+                      .map((c, i) => (
+                      <li key={i} style={styles.suggestionItem} onClick={() => {
+                        setCity(c);
+                        setShowSuggestions(false);
+                      }}>
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </div>
           <hr style={styles.divider} />
@@ -255,6 +294,29 @@ const styles = {
     fontWeight: 'bold',
     cursor: 'pointer',
     transition: 'background-color 0.2s'
+  },
+  suggestionsList: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#1a3f2b',
+    border: '1px solid #1e4a32',
+    borderRadius: '12px',
+    marginTop: '4px',
+    padding: 0,
+    listStyle: 'none',
+    maxHeight: '160px',
+    overflowY: 'auto',
+    zIndex: 100,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+  },
+  suggestionItem: {
+    padding: '12px 16px',
+    color: '#fff',
+    cursor: 'pointer',
+    borderBottom: '1px solid #122d1e',
+    fontSize: '15px'
   },
   errorText: {
     color: '#ef5350',

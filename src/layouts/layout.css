@@ -202,6 +202,8 @@
         left: 0;
         height: 100%;
         transform: translateX(-100%);
+        background-color: rgba(10, 31, 20, 0.98);
+        backdrop-filter: blur(16px);
     }
 
     .sidebar.open {

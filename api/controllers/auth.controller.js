@@ -1,4 +1,15 @@
 const authService = require('../services/auth.service');
+const User = require('../models/User');
+
+exports.getCities = async (req, res, next) => {
+    try {
+        const cities = await User.distinct('city');
+        const validCities = cities.filter(c => c && c.trim() !== '');
+        res.status(200).json({ cities: validCities });
+    } catch (error) {
+        next(error);
+    }
+};
 
 exports.register = async (req, res, next) => {
     try {

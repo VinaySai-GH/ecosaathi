@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCarbonHistory } from '../../../services/carbon.service.js';
+import { getCarbonHistory } from '../../../services/carbonprints.service';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 export default function CarbonTrend({ onBack }) {

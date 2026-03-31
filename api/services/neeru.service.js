@@ -22,11 +22,16 @@ exports.saveWaterLog = async (userId, payload, overwrite = false) => {
         { new: true, upsert: true } // Return updated doc, create if missing
     );
 
-    // Award points only for new logs and append log ID to User
+    // Award points only for new logs
     if (!existingLog) {
         await User.findByIdAndUpdate(userId, { 
             $inc: { points: 50 },
-            $push: { water_logs: log._id }
+            $addToSet: { water_logs: log._id }
+        });
+    } else {
+        // Ensure log ID is stored even on updates if missing
+        await User.findByIdAndUpdate(userId, { 
+            $addToSet: { water_logs: log._id }
         });
     }
 
