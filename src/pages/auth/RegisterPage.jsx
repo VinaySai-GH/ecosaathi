@@ -1,17 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { registerUser } from '../../services/auth.service.js';
+import { registerUser, getCities } from '../../services/auth.service.js';
 import './auth.css';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [city, setCity] = useState('');
+  const [cities, setCities] = useState([]);
+  const [isOtherCity, setIsOtherCity] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+
+  // Fetch existing cities for the dropdown
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const { cities } = await getCities();
+        // Add default cities if none found in DB yet
+        const defaultCities = ['Tirupati', 'Chittoor', 'Chennai', 'Bangalore', 'Hyderabad'];
+        const combined = Array.from(new Set([...cities, ...defaultCities])).sort();
+        setCities(combined);
+      } catch (err) {
+        // Fallback to defaults on error
+        setCities(['Tirupati', 'Chittoor', 'Chennai', 'Bangalore', 'Hyderabad']);
+      }
+    };
+    fetchCities();
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -32,9 +52,14 @@ export default function RegisterPage() {
       setError('Password must be at least 6 characters (e.g., MyPass123)'); 
       return; 
     }
+    const finalCity = isOtherCity ? city : city; // city is synced
+    if (!city.trim()) {
+      setError('Please select or enter your city.');
+      return;
+    }
     setIsSubmitting(true);
     try {
-      const userData = await registerUser(name, phone, password);
+      const userData = await registerUser(name, phone, password, city);
       // Save phone number for future login
       localStorage.setItem('@remember_phone', phone);
       signIn(userData);
@@ -72,6 +97,62 @@ export default function RegisterPage() {
           <label className="auth-label" style={{ marginTop: 20 }}>Password</label>
           <input type="password" placeholder="6+ characters (e.g., MyPass123)" value={password}
             onChange={(e) => { setPassword(e.target.value); setError(''); }} />
+
+          <label className="auth-label" style={{ marginTop: 20 }}>City</label>
+          {!isOtherCity ? (
+            <select 
+              className="auth-input" 
+              value={city} 
+              onChange={(e) => {
+                if (e.target.value === 'OTHER') {
+                  setIsOtherCity(true);
+                  setCity('');
+                } else {
+                  setCity(e.target.value);
+                  setError('');
+                }
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'rgba(255,255,255,0.05)',
+                color: 'white',
+                marginTop: '8px'
+              }}
+            >
+              <option value="">Select your city</option>
+              {cities.map(c => <option key={c} value={c}>{c}</option>)}
+              <option value="OTHER">+ Other (Type manually)</option>
+            </select>
+          ) : (
+            <div style={{ position: 'relative' }}>
+              <input 
+                type="text" 
+                placeholder="Enter your city" 
+                value={city}
+                onChange={(e) => { setCity(e.target.value); setError(''); }}
+                style={{ marginTop: '8px' }}
+              />
+              <button 
+                type="button"
+                onClick={() => setIsOtherCity(false)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '55%',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--accent)',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Back to list
+              </button>
+            </div>
+          )}
 
           {error && <p className="auth-error">{error}</p>}
           <button type="submit" className="auth-btn" disabled={isSubmitting}>

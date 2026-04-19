@@ -5,13 +5,13 @@ const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Apply the protect middleware to all routes in this router
+// OCR endpoint does NOT require auth — it's a utility feature
+router.post('/ocr/hf', hfOcr);
+
+// Apply the protect middleware to data endpoints
 router.use(protect);
 
 router.post('/log', logWater);
 router.get('/history', getHistory);
-
-// Hugging Face OCR endpoint
-router.post('/ocr/hf', hfOcr);
 
 module.exports = router;

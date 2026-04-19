@@ -14,7 +14,9 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+// Increase JSON body limit from default 100KB to 50MB (for base64-encoded bill images)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
@@ -38,8 +40,17 @@ mongoose
     .connect(process.env.MONGODB_URI)//|| 'mongodb://localhost:27017/ecosaathi')
     .then(() => {
         console.log('✅ Connected to MongoDB');
-        app.listen(PORT, () => {
+        const server = app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
+        });
+
+        server.on('error', (err) => {
+            if (err && err.code === 'EADDRINUSE') {
+                console.error(`port ${PORT} already in use — another process may be running`);
+                process.exit(1);
+            }
+            console.error('server error:', err);
+            process.exit(1);
         });
     })
     .catch((err) => {

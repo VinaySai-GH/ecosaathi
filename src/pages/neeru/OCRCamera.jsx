@@ -14,6 +14,7 @@ export default function OCRCamera({ onExtractedKL, onCancel }) {
   const [showRawText, setShowRawText] = useState(false);
   const cameraInputRef = useRef(null);
   const canvasRef = useRef(null);
+  const isExtractingRef = useRef(false);
 
   // Pre-warm Tesseract worker in the background as soon as the modal opens.
   // This way the worker is already initialized by the time the user captures a photo.
@@ -53,31 +54,49 @@ export default function OCRCamera({ onExtractedKL, onCancel }) {
   const handleExtract = async () => {
     if (!capturedImage) return;
 
+    isExtractingRef.current = true;
     setStep('extracting');
     setError('');
     setProgressMessage('Starting OCR engines...');
 
-    // 45s timeout — parallel HF + Tesseract should finish well within this
+    // Show a non-blocking warning after 32s, but keep processing.
     const timeoutId = setTimeout(() => {
-      setError('OCR is taking too long. Please enter manually.');
-      setStep('manual');
-    }, 45000);
+      if (isExtractingRef.current) {
+        setError('OCR is taking longer than expected. Please enter manually or try a clearer photo.');
+        setProgressMessage('Still processing your bill...');
+      }
+    }, 32000);
 
     try {
-      const result = await scanBillImage(capturedImage.file, (msg) => setProgressMessage(msg));
-      clearTimeout(timeoutId);
+    const result = await scanBillImage(capturedImage.file, (msg) => setProgressMessage(msg));
+    isExtractingRef.current = false;
+    clearTimeout(timeoutId);
 
-      // If we didn't get a KL but we do have some candidates to pick from, show those.
-      const hasCandidates = result.candidates && result.candidates.length > 0;
-      if (result.kl === null && !hasCandidates) {
-        // Extraction failed - show manual entry instead
+    // If we didn't get a KL but we do have some candidates to pick from, show those.
+    const hasCandidates = result.candidates && result.candidates.length > 0;
+    if (result.kl === null && !hasCandidates) {
+        setExtractedData({
+          kl: null,
+          candidates: [],
+          rawText: result.rawText || '',
+          ocrConfidence: result.ocrConfidence,
+          billInfo: result.billInfo,
+          primaryPattern: null,
+          isMeterInference: false,
+        });
         setError('Couldn\'t read the number automatically. No problem — just enter it below!');
         setStep('manual');
       } else {
+        // if we have a KL, auto-confirm and return immediately (user requested automatic use)
+        if (typeof result.kl === 'number') {
+          onExtractedKL(result.kl);
+          return;
+        }
         setExtractedData(result);
         setStep('result');
       }
     } catch (err) {
+      isExtractingRef.current = false;
       clearTimeout(timeoutId);
       setError(err.message || 'OCR processing failed. Please enter manually.');
       setStep('manual');
@@ -119,7 +138,8 @@ export default function OCRCamera({ onExtractedKL, onCancel }) {
   // When we have extracted data, preselect the value only if we're confident.
   useEffect(() => {
     if (!extractedData) return;
-    if (extractedData.confidence === 'high' && typeof extractedData.kl === 'number') {
+    // auto-select scanned KL when parser confidence is medium or high
+    if (typeof extractedData.kl === 'number' && extractedData.confidence !== 'low') {
       setSelectedKL(extractedData.kl);
     } else {
       setSelectedKL(null);
@@ -225,10 +245,14 @@ export default function OCRCamera({ onExtractedKL, onCancel }) {
           <div className="ocr-content" style={{ textAlign: 'center', padding: '48px 24px' }}>
             <div className="spinner"></div>
             <p className="extracting-text">{progressMessage || 'Reading your bill...'}</p>
-            <p className="extracting-subtext">First time may take up to 60 seconds</p>
+            <p className="extracting-subtext">Usually completes in 5–20 seconds</p>
             <button
               className="btn-text"
-              onClick={() => { setStep('manual'); setProgressMessage(''); }}
+              onClick={() => {
+                isExtractingRef.current = false;
+                setStep('manual');
+                setProgressMessage('');
+              }}
               style={{ marginTop: '16px' }}
             >
               Taking too long? Enter manually →
@@ -321,8 +345,36 @@ export default function OCRCamera({ onExtractedKL, onCancel }) {
               <div className="detection-details" style={{ marginTop: 12 }}>
                 {typeof extractedData.ocrConfidence === 'number' && (
                   <div className="detection-item">
-                    OCR confidence (approx): {Math.round(extractedData.ocrConfidence)}%
+                    <div>
+                      Scan quality (whole page): {Math.round(extractedData.ocrConfidence)}%
+                    </div>
+                    <p
+                      style={{
+                        margin: '8px 0 0',
+                        fontSize: 12,
+                        lineHeight: 1.45,
+                        opacity: 0.88,
+                        fontWeight: 400,
+                      }}
+                    >
+                      {
+                        "This is the text engine's average for all characters — lighting, blur, and angle often land real photos around 50–75%. It does not measure how correct your KL number is."
+                      }
+                    </p>
                   </div>
+                )}
+                {extractedData.isMeterInference && (
+                  <p
+                    style={{
+                      margin: '10px 0 0',
+                      fontSize: 12,
+                      lineHeight: 1.45,
+                      opacity: 0.9,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Usage was computed as <strong>current reading − previous</strong> from the scanned text. If OCR misread any digit (e.g. 3 vs 8), the subtraction can still look consistent but be wrong — compare with the printed <strong>Consumed / Units (KL)</strong> row on your bill when in doubt.
+                  </p>
                 )}
                 <button
                   className="btn-text"
@@ -429,6 +481,24 @@ export default function OCRCamera({ onExtractedKL, onCancel }) {
                 ✓ Check your bill for "units consumed", "total usage", or "KL used"
               </p>
             </div>
+
+            {extractedData?.rawText && (
+              <div style={{ marginBottom: 16 }}>
+                <button
+                  type="button"
+                  className="btn-text"
+                  onClick={() => setShowRawText((v) => !v)}
+                  style={{ padding: 0 }}
+                >
+                  {showRawText ? 'Hide' : 'Show'} scanned text (debug)
+                </button>
+                {showRawText && (
+                  <pre className="ocr-raw-text" style={{ marginTop: 8, maxHeight: 160, overflow: 'auto', fontSize: 11 }}>
+                    {extractedData.rawText}
+                  </pre>
+                )}
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: 12 }}>
               {capturedImage && (
