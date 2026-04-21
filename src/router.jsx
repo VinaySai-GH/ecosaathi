@@ -14,9 +14,9 @@ import ProfileSettings from './pages/dashboard/ProfileSettings.jsx';
 import NeeruHomeScreen from './pages/neeru/NeeruHome.jsx';
 import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
 import CarbonHome from './pages/carbonprints/CarbonPrintsPage';
-import ComingSoon from './ComingSoon.jsx';
 import GreenSpotHome from './pages/greenspot/GreenSpotHome.jsx';
 import EcoPulseHome from './pages/ecopulse/EcoPulseHome.jsx';
+import RaatKaHisaab from './pages/raatkahisaab/RaatKaHisaab.jsx';
 
 // Wrapper that redirects to /login if not authenticated
 function PrivateRoute({ children }) {
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
       { path: 'neeru/result', element: <NeeruResultScreen /> },
       { path: 'carbon', element: <CarbonHome /> },
       { path: 'greenspot', element: <GreenSpotHome /> },
-      { path: 'raatkahisaab', element: <ComingSoon title="Raat Ka Hisaab" icon="🌙" /> },
+      { path: 'raatkahisaab', element: <RaatKaHisaab /> },
       { path: 'ecopulse', element: <EcoPulseHome /> },
     ],
   },

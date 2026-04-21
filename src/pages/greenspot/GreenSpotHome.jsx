@@ -3,6 +3,7 @@ import { Colors, Spacing, Radius } from '../../constants/theme.js';
 import { getSpots, verifySpot } from '../../services/greenspot.service.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AddSpotModal from './AddSpotModal.jsx';
+import CityEcoScoreBanner from './components/CityEcoScoreBanner.jsx';
 import { TIRUPATI_INDUSTRIES } from '../pollutionsense/data/industries.js';
 import { TIRUPATI_RISK_ZONES } from '../pollutionsense/data/riskZones.js';
 import './greenspot.css';
@@ -434,6 +435,11 @@ export default function GreenSpotHome() {
                     <div style={{ color: Colors.text }}>Loading map...</div>
                 </div>
             )}
+            {/* City Eco Score Banner */}
+            <div style={{ padding: Spacing.md, paddingTop: 0 }}>
+                <CityEcoScoreBanner />
+            </div>
+
             {/* Search Bar */}
             <div className="greenspot-search-bar">
                 <input

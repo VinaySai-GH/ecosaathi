@@ -36,3 +36,13 @@ exports.verifySpot = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getCityEcoScore = async (req, res, next) => {
+    try {
+        const { city } = req.query;
+        const score = await greenspotService.getCityEcoScore(city);
+        res.status(200).json(score);
+    } catch (error) {
+        next(error);
+    }
+};

@@ -77,6 +77,53 @@ exports.verifySpot = async (spotId, userId) => {
     return spot.populate('added_by', 'name phone');
 };
 
+exports.getCityEcoScore = async (city = 'Tirupati') => {
+    const spots = await Spot.find({}).populate('added_by', '_id').lean();
+    
+    const totalSpots = spots.length;
+    const verifiedSpots = spots.filter(s => s.verified_by && s.verified_by.length >= 2).length;
+    const totalVerifications = spots.reduce((sum, s) => sum + (s.verified_by ? s.verified_by.length : 0), 0);
+    
+    // Get unique contributors
+    const contributorSet = new Set();
+    spots.forEach(s => {
+        if (s.added_by && s.added_by._id) {
+            contributorSet.add(s.added_by._id.toString());
+        }
+    });
+    const activeContributors = contributorSet.size;
+    
+    // Calculate score: 0-100
+    // Verified spots worth 15pts each, verifications 5pts each, contributors 2pts each
+    const scoreNumerator = (verifiedSpots * 15) + (totalVerifications * 5) + (activeContributors * 2);
+    const scoreDenominator = Math.max(20, totalSpots + 20); // Avoid division by 0
+    const ecoScore = Math.round((scoreNumerator / scoreDenominator) * 100);
+    
+    return {
+        city,
+        ecoScore: Math.min(100, Math.max(0, ecoScore)), // Clamp 0-100
+        totalSpots,
+        verifiedSpots,
+        totalVerifications,
+        activeContributors,
+        categories: groupByCategory(spots),
+    };
+};
+
+function groupByCategory(spots) {
+    const categories = {};
+    spots.forEach(spot => {
+        if (!categories[spot.category]) {
+            categories[spot.category] = { count: 0, verified: 0 };
+        }
+        categories[spot.category].count++;
+        if (spot.verified_by && spot.verified_by.length >= 2) {
+            categories[spot.category].verified++;
+        }
+    });
+    return categories;
+}
+
 // Haversine formula to calculate distance between two lat/lng points (in km)
 function calculateDistance(lat1, lng1, lat2, lng2) {
     const R = 6371; // Earth's radius in km

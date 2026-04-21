@@ -16,14 +16,19 @@ export default function EcoPulseHome() {
 
   const fetchLeaderboard = async () => {
     try {
-      const [boardRes, myRes] = await Promise.all([
-        apiFetch('/leaderboard', { requireAuth: true }),
-        apiFetch('/leaderboard/me', { requireAuth: true })
-      ]);
+      // Public leaderboard — no auth needed
+      const boardRes = await apiFetch('/leaderboard', { requireAuth: false });
       setBoardData(boardRes);
-      setMyData(myRes);
     } catch (err) {
       console.error('Failed to load leaderboard', err);
+    }
+
+    try {
+      // Personal stats — auth required, but failure is non-fatal
+      const myRes = await apiFetch('/leaderboard/me', { requireAuth: true });
+      setMyData(myRes);
+    } catch (err) {
+      console.warn('Could not load personal leaderboard stats:', err.message);
     } finally {
       setLoading(false);
     }
@@ -63,7 +68,7 @@ export default function EcoPulseHome() {
           </div>
           <div style={styles.statCard}>
             <p style={styles.statLabel}>City Average</p>
-            <p style={styles.statValue}>{myData.city_score.toFixed(1)}</p>
+            <p style={styles.statValue}>{(myData.city_score ?? 0).toFixed(1)}</p>
           </div>
         </div>
       </AnimatedCard>
