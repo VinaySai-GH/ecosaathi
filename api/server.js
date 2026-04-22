@@ -10,6 +10,8 @@ const carbonRoutes = require('./routes/carbon.routes');
 const greenspotRoutes = require('./routes/greenspot.routes');
 const ecopulseRoutes = require('./routes/ecopulse.routes');
 const botRoutes = require('./routes/bot.routes');
+const postRoutes = require('./routes/post.routes');
+const userRoutes = require('./routes/user.routes');
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use('/api/carbon', carbonRoutes);
 app.use('/api/spots', greenspotRoutes);
 app.use('/api/leaderboard', ecopulseRoutes);
 app.use('/api/bot', botRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/users', userRoutes);
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {

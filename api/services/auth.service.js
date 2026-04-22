@@ -61,6 +61,7 @@ exports.updateUser = async (userId, updateData) => {
     if (updateData.name) user.name = updateData.name;
     if (updateData.password) user.password = updateData.password;
     if (updateData.city) user.city = updateData.city;
+    if (updateData.bio !== undefined) user.bio = updateData.bio;
 
     await user.save();
 
@@ -69,6 +70,7 @@ exports.updateUser = async (userId, updateData) => {
         name: user.name,
         phone: user.phone,
         city: user.city,
+        bio: user.bio || '',
         points: user.points,
         token: generateToken(user._id),
     };

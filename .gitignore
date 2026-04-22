@@ -70,6 +70,13 @@ build.log
 build_error.log
 depcheck-*.txt
 api/crash.log
+temp_log.txt
+status.txt
+test_*.js
+test_features.*
+PROGRESS_REPORT.md
+COMPLETION_REPORT.md
+tirupati_water_bill (1).png
 
 # Redundant assets
 assets/android-icon-*.png

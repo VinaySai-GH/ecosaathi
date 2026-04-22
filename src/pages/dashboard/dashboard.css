@@ -1,161 +1,304 @@
-/* Dashboard Styles (Google Classroom Aesthetic) */
+/* ============================================
+   Local Network Feed — Dashboard
+   Instagram-style scrollable feed layout
+   ============================================ */
 
-.dashboard-container {
-    width: 100%;
+/* ---------- PAGE WRAPPER ---------- */
+.feed-page {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.dashboard-header {
-    margin-bottom: 32px;
+/* ---------- PULL-TO-REFRESH INDICATOR ---------- */
+.ptr-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  transition: height 0.2s;
+  color: #6ee7b7;
+  font-size: 13px;
 }
 
-.welcome-text {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 8px;
+.ptr-spinner {
+  font-size: 20px;
+  display: inline-block;
+  transition: transform 0.3s;
 }
 
-.welcome-subtext {
-    font-size: 16px;
-    color: var(--textMuted);
+.ptr-spinner.spinning {
+  animation: spin 0.8s linear infinite;
 }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* Feature Card (Google Classroom style converted to Premium Glassmorphism) */
-.feature-card {
-    background-color: rgba(17, 34, 28, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    height: 260px;
-    /* Fixed height to match classroom look */
+/* ---------- FEED CONTAINER ---------- */
+.feed-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 100px;
+  scroll-behavior: smooth;
 }
 
-.feature-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+.feed-container::-webkit-scrollbar { width: 4px; }
+.feed-container::-webkit-scrollbar-track { background: transparent; }
+.feed-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
 }
 
-/* Top Banner with dynamic gradient based on theme */
-.card-top-banner {
-    height: 120px;
-    padding: 16px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+/* ---------- FEED HEADER ---------- */
+.feed-header {
+  padding: 20px 16px 10px;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-.card-header-content {
-    z-index: 2;
+.feed-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text, #e2f5ee);
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
 }
 
-.card-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #ffffff;
-    margin: 0 0 4px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 85%;
+.feed-subtitle {
+  font-size: 13px;
+  color: var(--textMuted, #6b7280);
+  margin: 0;
 }
 
-.card-subtitle {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0 0 4px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+/* ---------- FEED LIST ---------- */
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 16px 0;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-.card-instructor {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
+/* ---------- LOADING SKELETONS ---------- */
+.feed-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 16px;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-/* Large overlapping icon circle */
-.card-icon-avatar {
-    position: absolute;
-    bottom: -36px;
+.post-skeleton {
+  background: rgba(17, 34, 28, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.sk-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.sk-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sk-line {
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+.sk-line-short { width: 60%; }
+.sk-line-xshort { width: 35%; }
+
+.sk-image {
+  height: 200px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ---------- EMPTY STATE ---------- */
+.feed-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--textMuted, #6b7280);
+}
+
+.feed-empty-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.feed-empty h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text, #e2f5ee);
+  margin: 0 0 8px;
+}
+
+.feed-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ============================================
+   FAB — Floating Action Button
+   ============================================ */
+
+.fab-area {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  z-index: 500;
+}
+
+.fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  color: #0a1f17;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(56, 239, 125, 0.4);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+}
+
+.fab-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(56, 239, 125, 0.55);
+}
+
+.fab-plus {
+  display: block;
+  transition: transform 0.25s;
+  line-height: 1;
+}
+
+.fab-btn.open .fab-plus {
+  transform: rotate(45deg);
+}
+
+/* FAB options dropdown */
+.fab-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  animation: fabDropIn 0.2s ease;
+}
+
+@keyframes fabDropIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fab-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 32, 23, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 239, 125, 0.2);
+  border-radius: 30px;
+  padding: 10px 16px;
+  color: #e2f5ee;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.fab-option:hover {
+  background: rgba(56, 239, 125, 0.12);
+  transform: scale(1.02);
+}
+
+.fab-option-icon { font-size: 18px; }
+.fab-option-label { font-size: 13px; }
+
+.fab-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 499;
+}
+
+/* ============================================
+   DESKTOP — wider cards, side-by-side comments
+   ============================================ */
+@media (min-width: 769px) {
+  .feed-list,
+  .feed-loading,
+  .feed-header,
+  .feed-empty {
+    max-width: 600px;
+  }
+
+  /* When comments are open on desktop,
+     the card wraps itself sideways — handled in PostCard.css */
+}
+
+/* ============================================
+   MOBILE adjustments
+   ============================================ */
+@media (max-width: 480px) {
+  .feed-list { padding: 12px 0 0; }
+  .feed-header { padding: 16px 14px 8px; }
+  .feed-loading { padding: 12px 0; }
+
+  .fab-area {
+    bottom: 20px;
     right: 16px;
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background-color: rgba(26, 43, 37, 0.8);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 3;
-}
-
-.card-bottom-content {
-    flex: 1;
-    background-color: transparent;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    /* Push actions to bottom */
-}
-
-.card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    border-top: 1px solid var(--border);
-    padding-top: 12px;
-    margin-top: auto;
-}
-
-.icon-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: var(--textMuted);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    border: 1px solid transparent;
-    transition: background-color 0.2s;
-}
-
-.icon-btn:hover {
-    background-color: var(--card);
-}
-
-/* Theme Gradients */
-.theme-neeru .card-top-banner {
-    background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
-}
-
-.theme-greenspot .card-top-banner {
-    background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
-}
-
-.theme-rkt .card-top-banner {
-    background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
-}
-
-.theme-ecopulse .card-top-banner {
-    background: linear-gradient(135deg, #b06ab3 0%, #4568dc 100%);
-}
-
-.theme-carbon .card-top-banner {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
 }

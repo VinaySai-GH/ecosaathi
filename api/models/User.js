@@ -12,6 +12,12 @@ const userSchema = new mongoose.Schema(
             type: String,
             trim: true
         },
+        bio: {
+            type: String,
+            trim: true,
+            maxlength: [160, 'Bio cannot exceed 160 characters'],
+            default: '',
+        },
         water_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'WaterLog' }],
         carbon_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CarbonLog' }],
         phone: {

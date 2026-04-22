@@ -1,0 +1,224 @@
+/* ============================
+   PostCard — Instagram-style
+   ============================ */
+
+.post-card {
+  background: rgba(17, 34, 28, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  color: var(--text, #e2f5ee);
+  /* On desktop with comments open, card expands sideways */
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+
+.post-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- HEADER ---------- */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 10px;
+}
+
+.post-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #0a1f17;
+  flex-shrink: 0;
+}
+
+.post-header-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.post-username {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #e2f5ee);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-location {
+  font-size: 11px;
+  color: #6ee7b7;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-location.clickable {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(110, 231, 183, 0.5);
+}
+
+.post-location.clickable:hover {
+  color: #a7f3d0;
+}
+
+.post-type-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--badge-color, #4ade80);
+  color: var(--badge-color, #4ade80);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- IMAGE ---------- */
+.post-image-wrapper {
+  width: 100%;
+  background: #000;
+  max-height: 480px;
+  overflow: hidden;
+}
+
+.post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- ACTION BAR ---------- */
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px 4px;
+}
+
+.post-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  color: var(--text, #e2f5ee);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.post-action-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: scale(1.1);
+}
+
+.post-action-btn.like-btn.liked .action-icon {
+  animation: heartPop 0.25s ease;
+}
+
+@keyframes heartPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.action-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- LIKES COUNT ---------- */
+.post-likes-count {
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #e2f5ee);
+  margin-bottom: 2px;
+}
+
+/* ---------- CAPTION ---------- */
+.post-caption-area {
+  padding: 4px 14px 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text, #e2f5ee);
+}
+
+.caption-author {
+  margin-right: 6px;
+}
+
+.post-caption {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: rgba(226, 245, 238, 0.85);
+}
+
+.post-caption.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+}
+
+.caption-toggle {
+  background: none;
+  border: none;
+  color: var(--textMuted, #6b7280);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.caption-toggle:hover { color: #a7f3d0; }
+
+/* ---------- COMMENTS TRIGGER ---------- */
+.view-comments-trigger {
+  background: none;
+  border: none;
+  color: var(--textMuted, #6b7280);
+  font-size: 13px;
+  padding: 2px 14px 6px;
+  cursor: pointer;
+  text-align: left;
+  display: block;
+}
+
+.view-comments-trigger:hover { color: #a7f3d0; }
+
+/* ---------- TIMESTAMP ---------- */
+.post-timestamp {
+  padding: 2px 14px 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(226, 245, 238, 0.3);
+}
+
