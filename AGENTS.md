@@ -9,32 +9,23 @@ Read this entire file before writing any code.
 EcoSaathi is a mobile app that makes sustainability tangible for Indian 
 college students, starting with IIT Tirupati as the pilot campus.
 
-**4 features:**
-- **Neeru** — user photographs their monthly water bill, app translates 
-  usage into human-scale comparisons (e.g. "enough water for 4 farming 
-  families in Tirupati for a month"), shows a 6-month trend, gives 3 
-  reduction tips specific to Indian households, generates a shareable 
-  certificate
-- **Green Spot** — community-maintained Google Maps overlay of eco-friendly 
-  places: e-waste centres, zero-waste stores, organic markets, water refill 
-  stations, composting facilities. Users add spots, upload photos, and verify 
-  each other's listings
-- **Raat Ka Hisaab** — nightly WhatsApp chatbot that sends 3 rotating 
-  reflection questions across food/water/transport/waste/nature. One-tap 
-  Y/N/Hmm replies. Tracks streaks. After 30 days generates a personalised 
-  behaviour insight report
-- **Eco Pulse** — aggregates all 3 features into a neighbourhood score. 
-  IIT Tirupati hostels compete on a live campus leaderboard. Weekly digest 
-  notification sent automatically
+**Core features:**
+- **Neeru** — User logs water usage; translates into human-scale comparisons (e.g. "enough water for 4 farming families in Tirupati"), shows 6-month trends, and gives reduction tips.
+- **Home (Social Feed)** — Community feed for sharing eco-news, events, and issues. Supports likes, comments, images, and map deep-linking.
+- **Eco Atlas (Green Spot)** — Community-maintained map of eco-friendly places (e-waste, refills, etc.). Users add spots, upload photos, and verify each other's listings. Includes City Eco Score.
+- **Carbon Prints** — Multi-category carbon footprint tracking (food, transport, electricity, waste) with real-time emission calculations and history.
+- **Pollution Sense** — Real-time Air Quality Index (AQI) monitoring using OpenAQ integration and community pollution reports.
+- **Raat Ka Hisaab** — Nightly WhatsApp chatbot for reflection. Tracks streaks and generates personalized behavior insights.
+- **Eco Pulse** — Live campus leaderboard aggregating points from all features.
 
 **Tech stack:**
 - Frontend: Vite + React (Web application)
 - Backend: Node.js + Express hosted on Render (free tier)
 - Database: MongoDB Atlas
-- Maps: Leaflet.js with OpenStreetMap (or Google Maps JS API for Places)
+<!-- - Maps: Leaflet.js with OpenStreetMap (or Google Maps JS API for Places)
 - Bot: Meta WhatsApp Cloud API (free tier, 1000 conversations/month)
 - OCR: Manual entry (Scanning coming soon)
-- Water benchmarks: CGWB public datasets + ICAR research for AP context
+- Water benchmarks: CGWB public datasets + ICAR research for AP context -->
 
 **Team:**
 - Nikhil, Dhanushya, Shruthika → Backend & API
@@ -82,86 +73,49 @@ Features never import from each other — only from their own folder or shared/.
 ### User
 ```
 {
-  _id, name, phone, hostel, points: number, createdAt
+  _id, name, phone, city, bio, points: number, 
+  water_logs: [ObjectId], carbon_logs: [ObjectId], 
+  createdAt
 }
 ```
 
-### WaterLog (Neeru)
+### Post (Home)
 ```
 {
-  _id, userId, month: number, year: number,
-  city: string, kl_used: number, createdAt
+  _id, user: ObjectId, type: "news"|"event"|"issue",
+  status: "persisting"|"solved", caption, image,
+  locationText, locationCoords: { lat, lng },
+  likes: [ObjectId], comments: [{ user, text, createdAt }],
+  createdAt
 }
 ```
 
-### Spot (Green Spot)
+### Spot (Eco Atlas)
 ```
 {
   _id, name, category, lat, lng, address,
   tips: string[], photos: string[], 
-  verified_by: userId[], added_by: userId,
+  verified_by: [userId], added_by: userId,
   createdAt
-  // category: "ewaste"|"zerowaste"|"organic"|"refill"|"composting"
-}
-```
-
-### BotUser (Raat Ka Hisaab)
-```
-{
-  _id, userId, phone, preferred_time: "21:00"|"21:30"|"22:00",
-  streak: number, last_answered: Date, createdAt
-}
-```
-
-### Answer (Raat Ka Hisaab)
-```
-{
-  _id, userId, date, question_ids: string[],
-  answers: ("Y"|"N"|"Hmm")[], points_awarded: number
-}
-```
-
-### LeaderboardEntry (Eco Pulse)
-```
-{
-  _id, hostel: string, month: number, year: number,
-  total_points: number, member_count: number, avg_score: number
 }
 ```
 
 ---
 
-## API CONTRACTS
+## API CONTRACTS (Key Endpoints)
 
-### Auth
+### Home Feed
 ```
-POST /api/auth/register  { name, phone, hostel }  →  { token, user }
-POST /api/auth/login     { phone }                →  { token, user }
-```
-
-### Neeru
-```
-POST /api/neeru/log      { month, year, city, kl_used }  →  { log, equivalencies }
-GET  /api/neeru/history  {}                              →  { logs[] }
+GET  /api/posts?page=1   → { posts[], page, hasMore }
+POST /api/posts         { type, caption, image, locationText, locationCoords }
+DELETE /api/posts/:id
+PUT    /api/posts/:id/status { status }
 ```
 
-### Green Spot
+### User Profile
 ```
-GET  /api/spots          { category?, lat?, lng? }            →  { spots[] }
-POST /api/spots          { name, category, lat, lng, address } →  { spot }
-POST /api/spots/:id/verify  {}                                →  { spot }
-```
-
-### Raat Ka Hisaab
-```
-POST /api/bot/register   { phone, preferred_time }  →  { success }
-POST /api/bot/webhook    WhatsApp payload            →  { success }
-```
-
-### Eco Pulse
-```
-GET  /api/leaderboard     { month? }  →  { entries[] }
-GET  /api/leaderboard/me  {}          →  { rank, points, hostel_score }
+GET  /api/users/:id     → { user, posts[] }
+PUT  /api/auth/profile  { name, bio, city, password }
 ```
 
 ---
@@ -175,7 +129,7 @@ GET  /api/leaderboard/me  {}          →  { rank, points, hostel_score }
 - Raat Ka Hisaab daily reply: 5 pts
 - Raat Ka Hisaab 30-day streak: +50 bonus pts
 (hostel changed to cities)
-Hostel score = sum of all member points ÷ number of members
+City score = sum of all member points ÷ number of members
 (prevents large cities from dominating)
 Leaderboard recalculates every 6 hours.
 
@@ -252,43 +206,40 @@ Rules for the AI:
 
 ---
 
-## PROGRESS
+### ✅ Done
+- [x] Repo setup and Clean Architecture
+- [x] Auth system (Register, Login, JWT protection)
+- [x] **Neeru**: Water tracking, history, and equivalency engine (100%)
+- [x] **Home**: Social feed with caching, likes, comments, and issue tracking (100%)
+- [x] **Profiles**: Bio, post history grid, and side-by-side edit UI (100%)
+- [x] **Eco Pulse**: Leaderboard and user ranking (100%)
+- [x] **Carbon Prints**: Multi-category tracking and trends (100%)
+- [x] **Green Spot**: Map integration, adding spots, and City Eco Score (100%)
+- [x] **Raat Ka Hisaab**: WhatsApp bot integration and insights (100%)
+- [x] **Pollution Sense**: AQI map and community reports (100%)
 
-### Done
-- [x] Repo setup and folder structure
-- [x] Clean architecture and design system (`shared/constants/theme.ts`)
-- [x] Neeru manual entry screen + equivalency calculator UI
-- [x] Neeru static datasets (equivalencies, cities, water tips)
-- [x] Bottom tab navigation setup
-- [x] MongoDB schemas (User, WaterLog, Spot, BotUser, Answer)
-- [x] Auth routes (register + login)
-- [x] Neeru integration (charts and real data)
-- [x] WhatsApp Bot Integration (Meta Cloud API + Webhooks)
-- [x] Raat Ka Hisaab (Nightly reflection logic, streak tracking, review)
-- [x] Personalized AI Insights (Gemini-powered coaching)
-- [x] Advanced Bot Settings (24h time picker, off switch, WhatsApp commands)
-
-### In Progress
-- [ ] Green Spot map with seed pins and verification logic
-- [ ] Eco Pulse Leaderboard (hostel/city comparison)
-
-### Next
-- [ ] Campus-wide leaderboard polishing
-- [ ] Automated weekly digest notifications
-- [ ] Final PWA optimization for IIT Tirupati rollout
+### 🟡 In Progress
+- [ ] Final production environment hardening (bcrypt hashing completion)
+- [ ] Cloudinary integration for image uploads (currently base64)
 
 ---
 
 ## HARD RULES & LEARNINGS
 
 ### 1. Technology Stack
-Ensure the frontend matches **React 18.3.1** and **Vite ^6.0.0**. The application is primarily a web-based PWA/Web app. Always verify API endoints pointing to the backend hosted on Render.
+Ensure the frontend matches **React 18.3.1** and **Vite ^6.0.0**. 
 
-### 2. TypeScript Strictness
-The project uses strict TypeScript compilation (`"strict": true`). Do not use smart/curly apostrophes (like `’` or `‘`) inside string literals in `.ts` files as it causes TypeScript Parser errors (`error TS1005: ':' expected`). Stick to plain ASCII straight quotes (`'`).
+### 2. User ID Consistency
+Always use `req.user._id` (ObjectId) instead of `req.user.id` to ensure proper MongoDB queries and data isolation.
 
-### 3. Running Locally
-Always run `npm run dev` in the root for the frontend and `npm run dev` in the `/api` directory for the backend. Ensure `.env` files are correctly configured in both locations.
+### 3. Feed Caching
+The Home feed uses a module-level cache in `Dashboard.jsx`. Navigating back to Home loads from cache unless a pull-to-refresh or a new post is triggered.
+
+### 4. Component Standards
+- One file = one job.
+- Functions max 30 lines.
+- Components never call APIs directly — use the service/api files.
+- TypeScript strict mode where applicable (migrating codebase to TS).
 
 <!-- Update this section as you build. The AI reads it to avoid 
 rebuilding things that already exist. -->

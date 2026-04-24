@@ -1,5 +1,8 @@
 const authService = require('../services/auth.service');
 const User = require('../models/User');
+const WaterLog = require('../models/WaterLog');
+const CarbonLog = require('../models/CarbonLog');
+const Spot = require('../models/Spot');
 
 exports.getCities = async (req, res, next) => {
     try {
@@ -52,9 +55,29 @@ exports.login = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        const { name, password, city } = req.body;
-        const updatedData = await authService.updateUser(userId, { name, password, city });
+        const { name, password, city, bio } = req.body;
+        const updatedData = await authService.updateUser(userId, { name, password, city, bio });
         res.status(200).json(updatedData);
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getProfileStats = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const [waterLogs, carbonLogs, spotsAdded, user] = await Promise.all([
+            WaterLog.countDocuments({ userId }),
+            CarbonLog.countDocuments({ userId }),
+            Spot.countDocuments({ added_by: userId }),
+            User.findById(userId).select('points'),
+        ]);
+        res.status(200).json({
+            waterLogs,
+            carbonLogs,
+            spotsAdded,
+            ecoScore: user ? user.points : 0,
+        });
     } catch (error) {
         next(error);
     }

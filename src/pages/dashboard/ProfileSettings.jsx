@@ -1,37 +1,63 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { updateProfile, getCities } from '../../services/auth.service.js';
+import { updateProfile, getCities, getProfileStats } from '../../services/auth.service.js';
+import { fetchUserProfile } from '../../api/userApi.js';
+import CommentsModal from './components/CommentsModal.jsx';
+import './profile.css';
+import './components/UserProfilePanel.css'; // Reuse grid classes
 
 export default function ProfileSettings() {
   const { user, signIn } = useAuth();
   const navigate = useNavigate();
-  
-  // Local state for edits
+
+  // Edit form state
   const [name, setName] = useState(user?.name || '');
   const [city, setCity] = useState(user?.city || '');
+  const [bio, setBio] = useState(user?.bio || '');
   const [password, setPassword] = useState('');
-  
   const [allCities, setAllCities] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionRef = useRef(null);
 
+  // Stats & Posts state
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null); // For viewing post in CommentsModal
+
+  // Form feedback
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  // Panel toggle: view vs edit
+  const [editOpen, setEditOpen] = useState(false);
+
   useEffect(() => {
-    getCities().then(res => setAllCities(res.cities || [])).catch(err => console.error(err));
-    
-    // click outside listener
+    getCities()
+      .then(res => setAllCities(res.cities || []))
+      .catch(err => console.error(err));
+
+    getProfileStats()
+      .then(data => setStats(data))
+      .catch(err => console.error(err))
+      .finally(() => setStatsLoading(false));
+
+    if (user?._id) {
+      fetchUserProfile(user._id)
+        .then(data => setPosts(data.posts || []))
+        .catch(err => console.error(err));
+    }
+
     const handleClickOutside = (event) => {
       if (suggestionRef.current && !suggestionRef.current.contains(event.target)) {
         setShowSuggestions(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -40,10 +66,10 @@ export default function ProfileSettings() {
     setIsSubmitting(true);
     try {
       const formattedCity = city.trim().charAt(0).toUpperCase() + city.trim().slice(1).toLowerCase();
-      const updatedUser = await updateProfile(name, password || undefined, formattedCity);
-      signIn(updatedUser); // Update local context and storage seamlessly
-      setMessage('Profile updated successfully!');
-      setPassword(''); 
+      const updatedUser = await updateProfile(name, password || undefined, formattedCity, bio.trim());
+      signIn(updatedUser);
+      setMessage('Profile updated!');
+      setPassword('');
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
       setError(err.message || 'Failed to update profile.');
@@ -52,278 +78,248 @@ export default function ProfileSettings() {
     }
   };
 
+  // Mask phone: show last 5 digits only
+  const maskPhone = (phone) => {
+    if (!phone) return '';
+    const str = String(phone);
+    return `+91 ${'•'.repeat(Math.max(0, str.length - 5))} ${str.slice(-5)}`;
+  };
+
+  const statItems = [
+    { label: 'Eco Score', value: statsLoading ? '—' : (stats?.ecoScore ?? 0) },
+    { label: 'Water Logs', value: statsLoading ? '—' : (stats?.waterLogs ?? 0) },
+    { label: 'Carbon Logs', value: statsLoading ? '—' : (stats?.carbonLogs ?? 0) },
+    { label: 'Spots Added', value: statsLoading ? '—' : (stats?.spotsAdded ?? 0) },
+  ];
+
   return (
-    <div style={styles.container}>
-      
-      {/* Hero Avatar Section (WhatsApp Style) */}
-      <div style={styles.heroSection}>
-        <div style={styles.avatarLarge}>
-          {user?.name ? user.name[0].toUpperCase() : 'U'}
+    <div className="profile-page anim-enter">
+      <div className={`profile-layout-split ${editOpen ? 'editing' : ''}`}>
+        
+        {/* Left/Top Column */}
+        <div className="profile-main-col">
+          {/* ── Hero Card (Instagram-style) ── */}
+          <div className="profile-hero-card">
+        <div className="profile-hero-inner">
+
+          {/* Avatar */}
+          <div className="profile-avatar-wrap">
+            <div className="profile-avatar-ring">
+              <div className="profile-avatar-inner">
+                {user?.name ? user.name[0].toUpperCase() : 'U'}
+              </div>
+            </div>
+          </div>
+
+          {/* Info */}
+          <div className="profile-hero-info">
+            <div className="profile-name-row">
+              <h1 className="profile-username">{user?.name || 'User'}</h1>
+              <span className="profile-badge">🌿</span>
+            </div>
+            <p className="profile-meta">
+              {maskPhone(user?.phone)}
+              {user?.city && <> &nbsp;•&nbsp; <span className="profile-city">{user.city}</span></>}
+            </p>
+            {user?.bio && <p className="profile-bio">{user.bio}</p>}
+
+            {/* Stats row */}
+            <div className="profile-stats-row">
+              {statItems.map((s, i) => (
+                <React.Fragment key={s.label}>
+                  {i > 0 && <div className="profile-stat-divider" />}
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{s.value}</span>
+                    <span className="profile-stat-lbl">{s.label}</span>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+
+            {/* Action buttons */}
+            <div className="profile-action-row">
+              <button
+                className="profile-action-btn primary"
+                onClick={() => setEditOpen(!editOpen)}
+              >
+                {editOpen ? 'Close Edit' : 'Edit Profile'}
+              </button>
+              <button
+                className="profile-action-btn"
+                onClick={() => navigate('/')}
+              >
+                Dashboard
+              </button>
+            </div>
+          </div>
+
         </div>
-        <h2 style={styles.heroName}>{user?.name}</h2>
-        <p style={styles.heroPhone}>+91 {user?.phone} • {user?.city || 'No City Assigned'}</p>
       </div>
 
-      <div style={styles.settingsCard}>
-        <h3 style={styles.sectionTitle}>Edit Profile</h3>
-        
-        <form onSubmit={handleUpdate} style={styles.formContainer}>
-          
-          {/* Read-Only Phone field mimicking WhatsApp static info */}
-          <div style={styles.formGroup}>
-            <div style={styles.iconCol}>📱</div>
-            <div style={styles.inputCol}>
-              <label style={styles.label}>Phone Number (Fixed)</label>
-              <input type="text" value={user?.phone || ''} disabled style={styles.inputDisabled} />
-            </div>
-          </div>
-          <hr style={styles.divider} />
+      </div> {/* End left/top column */}
 
-          <div style={styles.formGroup}>
-            <div style={styles.iconCol}>👤</div>
-            <div style={styles.inputCol}>
-              <label style={styles.label}>Display Name</label>
-              <input 
-                type="text" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)}
-                style={styles.input} 
-                required
-              />
-            </div>
-          </div>
-          <hr style={styles.divider} />
+      {/* ── Edit Form (collapsible panel) ── */}
+      {editOpen && (
+        <div className="profile-edit-card anim-enter">
+          <h3 className="profile-edit-title">Edit Profile</h3>
 
-          <div style={styles.formGroup}>
-            <div style={styles.iconCol}>🏢</div>
-            <div style={styles.inputCol}>
-              <label style={styles.label}>City (Eco Pulse Leaderboard)</label>
-              <div style={{ position: 'relative' }} ref={suggestionRef}>
-                <input 
-                  type="text" 
-                  value={city} 
-                  onChange={(e) => {
-                    setCity(e.target.value);
-                    setShowSuggestions(true);
-                  }}
+          <form onSubmit={handleUpdate} className="profile-form">
+
+            <div className="pf-group">
+              <span className="pf-icon">📱</span>
+              <div className="pf-field">
+                <label className="pf-label">Phone (cannot change)</label>
+                <input type="text" value={user?.phone || ''} disabled className="pf-input pf-input-disabled" />
+              </div>
+            </div>
+            <hr className="pf-divider" />
+
+            <div className="pf-group">
+              <span className="pf-icon">👤</span>
+              <div className="pf-field">
+                <label className="pf-label">Display Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="pf-input"
+                  required
+                />
+              </div>
+            </div>
+            <hr className="pf-divider" />
+
+            <div className="pf-group">
+              <span className="pf-icon">🏢</span>
+              <div className="pf-field" ref={suggestionRef} style={{ position: 'relative' }}>
+                <label className="pf-label">City (Eco Pulse Leaderboard)</label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => { setCity(e.target.value); setShowSuggestions(true); }}
                   onFocus={() => setShowSuggestions(true)}
                   placeholder="e.g. Tirupati"
-                  style={styles.input} 
+                  className="pf-input"
                 />
-                
                 {showSuggestions && city && allCities.filter(c => c.toLowerCase().includes(city.toLowerCase()) && c.toLowerCase() !== city.toLowerCase()).length > 0 && (
-                  <ul style={styles.suggestionsList}>
+                  <ul className="pf-suggestions">
                     {allCities
                       .filter(c => c.toLowerCase().includes(city.toLowerCase()) && c.toLowerCase() !== city.toLowerCase())
                       .map((c, i) => (
-                      <li key={i} style={styles.suggestionItem} onClick={() => {
-                        setCity(c);
-                        setShowSuggestions(false);
-                      }}>
-                        {c}
-                      </li>
-                    ))}
+                        <li key={i} className="pf-suggestion-item" onClick={() => { setCity(c); setShowSuggestions(false); }}>
+                          {c}
+                        </li>
+                      ))}
                   </ul>
                 )}
               </div>
             </div>
-          </div>
-          <hr style={styles.divider} />
+            <hr className="pf-divider" />
 
-          <div style={styles.formGroup}>
-            <div style={styles.iconCol}>🔒</div>
-            <div style={styles.inputCol}>
-              <label style={styles.label}>Password</label>
-              <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Leave blank to remain unchanged"
-                style={styles.input} 
-              />
+            <div className="pf-group">
+              <span className="pf-icon">📝</span>
+              <div className="pf-field">
+                <label className="pf-label">Bio (Caption in profile)</label>
+                <textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell us about yourself..."
+                  className="pf-input"
+                  rows="3"
+                  maxLength="160"
+                  style={{ resize: 'none' }}
+                />
+              </div>
+            </div>
+            <hr className="pf-divider" />
+
+            <div className="pf-group">
+              <span className="pf-icon">🔒</span>
+              <div className="pf-field">
+                <label className="pf-label">New Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Leave blank to keep current"
+                  className="pf-input"
+                />
+              </div>
+            </div>
+
+            <div className="pf-actions">
+              {error && <p className="pf-error">{error}</p>}
+              {message && <p className="pf-success">{message}</p>}
+              <button type="submit" className="pf-save-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      )}
+
+      </div> {/* End .profile-layout-split */}
+
+      {/* ── Posts Section (Instagram-style grid) ── */}
+      {!editOpen && (
+        <div className="profile-posts-wrapper anim-enter">
+          <div className="upp-divider" style={{ margin: '30px 0 0' }} />
+          <div className="upp-tabs">
+            <div className="upp-tab active">
+              <svg aria-label="Posts" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
+                <rect fill="none" height="18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" width="18" x="3" y="3"></rect>
+                <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="9.015" x2="9.015" y1="3" y2="21"></line>
+                <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="14.985" x2="14.985" y1="3" y2="21"></line>
+                <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="21" x2="3" y1="9.015" y2="9.015"></line>
+                <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="21" x2="3" y1="14.985" y2="14.985"></line>
+              </svg>
+              <span>POSTS</span>
             </div>
           </div>
-
-          <div style={styles.actionContainer}>
-            {error && <p style={styles.errorText}>{error}</p>}
-            {message && <p style={styles.successText}>{message}</p>}
-
-            <div style={{ display: 'flex', gap: '15px' }}>
-              <button type="button" onClick={() => navigate(-1)} style={styles.cancelBtn}>
-                Cancel
-              </button>
-              <button type="submit" disabled={isSubmitting} style={styles.saveBtn}>
-                 {isSubmitting ? 'Saving...' : 'Save Profile Changes'}
-              </button>
-            </div>
+          <div className="upp-posts-section">
+            {posts.length === 0 ? (
+              <div className="upp-empty">
+                <span className="upp-empty-icon">📷</span>
+                <p>No posts yet</p>
+              </div>
+            ) : (
+              <div className="upp-posts-grid">
+                {posts.map(post => (
+                  <div key={post._id} className="upp-grid-item" onClick={() => setSelectedPost(post)} style={{cursor: 'pointer'}}>
+                    {post.image ? (
+                      <img src={post.image} alt="post" />
+                    ) : (
+                      <div className="upp-grid-text">
+                        <span className="upp-badge" style={{ backgroundColor: post.type === 'news' ? '#4ade80' : post.type === 'event' ? '#60a5fa' : '#fb923c' }}>
+                          {post.type}
+                        </span>
+                        <p>{post.caption || 'No caption'}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
+      )}
 
-        </form>
-      </div>
+      {selectedPost && (
+        <CommentsModal
+          post={selectedPost}
+          currentUserId={user?._id || user?.id}
+          onClose={() => setSelectedPost(null)}
+          onPostUpdated={(updated) => {
+            setSelectedPost(updated);
+            setPosts(posts.map(p => p._id === updated._id ? updated : p));
+          }}
+          onPostDeleted={(deletedId) => {
+            setSelectedPost(null);
+            setPosts(posts.filter(p => p._id !== deletedId));
+          }}
+        />
+      )}
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: '20px',
-    maxWidth: '600px',
-    margin: '0 auto',
-    fontFamily: 'system-ui, -apple-system, sans-serif'
-  },
-  heroSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '30px',
-  },
-  avatarLarge: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    backgroundColor: '#075E54', // WhatsApp classic green primary
-    color: '#fff',
-    fontSize: '56px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '15px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-  },
-  heroName: {
-    margin: 0,
-    fontSize: '24px',
-    fontWeight: '600',
-    color: '#fff'
-  },
-  heroPhone: {
-    margin: '5px 0 0 0',
-    fontSize: '15px',
-    color: '#aaa'
-  },
-  settingsCard: {
-    backgroundColor: '#11221c',
-    borderRadius: '16px',
-    padding: '24px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
-  },
-  sectionTitle: {
-    margin: '0 0 20px 0',
-    color: '#25D366', // WhatsApp bright green
-    fontSize: '16px',
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  },
-  formContainer: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  formGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '10px 0'
-  },
-  iconCol: {
-    width: '40px',
-    fontSize: '22px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#888'
-  },
-  inputCol: {
-    flex: 1,
-    paddingLeft: '10px'
-  },
-  label: {
-    display: 'block',
-    fontSize: '13px',
-    color: '#888',
-    marginBottom: '4px'
-  },
-  input: {
-    width: '100%',
-    backgroundColor: 'transparent',
-    border: 'none',
-    borderBottom: '2px solid transparent',
-    color: '#fff',
-    fontSize: '16px',
-    padding: '4px 0',
-    outline: 'none',
-    transition: 'border-color 0.2s',
-  },
-  inputDisabled: {
-    width: '100%',
-    backgroundColor: 'transparent',
-    border: 'none',
-    color: '#666',
-    fontSize: '16px',
-    padding: '4px 0',
-    cursor: 'not-allowed'
-  },
-  divider: {
-    border: 'none',
-    borderBottom: '1px solid #22332c',
-    margin: '4px 0 4px 50px' // Align divider under text only, WhatsApp style
-  },
-  actionContainer: {
-    marginTop: '30px',
-    textAlign: 'center'
-  },
-  saveBtn: {
-    flex: 2,
-    backgroundColor: '#075E54',
-    color: '#fff',
-    border: 'none',
-    padding: '16px',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s'
-  },
-  cancelBtn: {
-    flex: 1,
-    backgroundColor: '#1a2b25',
-    color: '#aaa',
-    border: '1px solid #22332c',
-    padding: '16px',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s'
-  },
-  suggestionsList: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    backgroundColor: '#1a3f2b',
-    border: '1px solid #1e4a32',
-    borderRadius: '12px',
-    marginTop: '4px',
-    padding: 0,
-    listStyle: 'none',
-    maxHeight: '160px',
-    overflowY: 'auto',
-    zIndex: 100,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-  },
-  suggestionItem: {
-    padding: '12px 16px',
-    color: '#fff',
-    cursor: 'pointer',
-    borderBottom: '1px solid #122d1e',
-    fontSize: '15px'
-  },
-  errorText: {
-    color: '#ef5350',
-    marginBottom: '15px'
-  },
-  successText: {
-    color: '#25D366',
-    marginBottom: '15px'
-  }
-};

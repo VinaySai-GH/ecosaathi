@@ -11,6 +11,8 @@ const greenspotRoutes = require('./routes/greenspot.routes');
 const ecopulseRoutes  = require('./routes/ecopulse.routes');
 const botRoutes       = require('./routes/bot.routes');
 const insightsRoutes  = require('./routes/insights.routes');
+const postRoutes      = require('./routes/post.routes');
+const userRoutes      = require('./routes/user.routes');
 const scheduler       = require('./services/scheduler');
 
 const app = express();
@@ -29,6 +31,8 @@ app.use('/api/spots',       greenspotRoutes);
 app.use('/api/leaderboard', ecopulseRoutes);
 app.use('/api/bot',         botRoutes);
 app.use('/api/insights',    insightsRoutes);
+app.use('/api/posts',       postRoutes);
+app.use('/api/users',       userRoutes);
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {

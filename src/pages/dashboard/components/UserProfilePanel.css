@@ -1,0 +1,294 @@
+/* ============================================================
+   UserProfilePanel
+   Desktop: Fixed drawer on the right
+   Mobile: Full-screen modal
+   ============================================================ */
+
+.upp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 8000;
+  display: flex;
+  justify-content: flex-end;
+  animation: uppFadeIn 0.2s ease;
+}
+
+@keyframes uppFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.upp-panel {
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  background: #0f2017;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  animation: uppSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes uppSlideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ---------- HEADER ---------- */
+.upp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 32, 23, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.upp-close-btn {
+  background: none;
+  border: none;
+  color: #e2f5ee;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.upp-close-btn:hover {
+  transform: translateX(-4px);
+}
+
+.upp-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2f5ee;
+  margin: 0;
+}
+
+/* ---------- CONTENT ---------- */
+.upp-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.upp-content::-webkit-scrollbar { width: 4px; }
+.upp-content::-webkit-scrollbar-track { background: transparent; }
+.upp-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+
+/* ---------- LOADING & ERROR ---------- */
+.upp-loading, .upp-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: rgba(226, 245, 238, 0.6);
+}
+
+.upp-error button {
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ---------- PROFILE INFO SECTION ---------- */
+.upp-info-section {
+  padding: 32px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.upp-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 700;
+  color: #0a1f17;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(56, 239, 125, 0.2);
+}
+
+.upp-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: #e2f5ee;
+  margin: 0 0 6px;
+}
+
+.upp-city {
+  font-size: 14px;
+  color: #6ee7b7;
+  margin: 0 0 20px;
+}
+
+.upp-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+.upp-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upp-stat-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e2f5ee;
+}
+
+.upp-stat-lbl {
+  font-size: 12px;
+  color: rgba(226, 245, 238, 0.6);
+}
+
+.upp-bio {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(226, 245, 238, 0.85);
+  margin: 0;
+  max-width: 90%;
+}
+
+.upp-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 24px;
+}
+
+/* ---------- TABS ---------- */
+.upp-tabs {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.upp-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+  color: rgba(226, 245, 238, 0.4);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-top: 1px solid transparent;
+  transition: color 0.2s;
+}
+
+.upp-tab.active {
+  color: #e2f5ee;
+  border-top: 1px solid #e2f5ee;
+  margin-top: -1px;
+}
+
+/* ---------- POSTS SECTION ---------- */
+.upp-posts-section {
+  padding: 2px;
+}
+
+.upp-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.upp-grid-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #11221c;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upp-grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.upp-grid-item:hover img {
+  transform: scale(1.05);
+}
+
+.upp-grid-text {
+  padding: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.upp-grid-text p {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: rgba(226, 245, 238, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.upp-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #000;
+  text-transform: uppercase;
+}
+
+.upp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: rgba(226, 245, 238, 0.4);
+}
+
+.upp-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 768px) {
+  .upp-panel {
+    max-width: 100%;
+    border-left: none;
+  }
+}

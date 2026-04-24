@@ -75,6 +75,7 @@ exports.updateUser = async (userId, updateData) => {
         user.password = await bcrypt.hash(updateData.password, salt);
     }
     if (updateData.city) user.city = updateData.city;
+    if (updateData.bio !== undefined) user.bio = updateData.bio;
 
     await user.save();
 
@@ -83,6 +84,7 @@ exports.updateUser = async (userId, updateData) => {
         name: user.name,
         phone: user.phone,
         city: user.city,
+        bio: user.bio || '',
         points: user.points,
         token: generateToken(user._id),
     };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import AnimatedCard from '../../components/animations/AnimatedCard.jsx';
+import UserProfilePanel from '../dashboard/components/UserProfilePanel.jsx';
 
 export default function EcoPulseHome() {
   const { user } = useAuth();
@@ -9,6 +10,7 @@ export default function EcoPulseHome() {
   const [myData, setMyData] = useState({ rank: 0, points: 0, city_score: 0 });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('users'); // 'users' or 'cities'
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -93,7 +95,15 @@ export default function EcoPulseHome() {
         {activeTab === 'users' && (
           <div style={styles.list}>
             {boardData.topUsers.map((u, i) => (
-              <div key={u._id} style={{ ...styles.listItem, ...(u._id === user._id ? styles.highlightItem : {}) }}>
+              <div 
+                key={u._id} 
+                style={{ 
+                  ...styles.listItem, 
+                  ...(u._id === user._id ? styles.highlightItem : {}),
+                  cursor: 'pointer' 
+                }}
+                onClick={() => setSelectedUserId(u._id)}
+              >
                 <div style={styles.rankBox}>{i + 1}</div>
                 <div style={styles.userInfo}>
                   <p style={styles.userName}>{u.name} {u._id === user._id && '(You)'}</p>
@@ -123,6 +133,15 @@ export default function EcoPulseHome() {
         )}
         </div>
       </AnimatedCard>
+
+      {/* User Profile Panel */}
+      {selectedUserId && (
+        <UserProfilePanel
+          userId={selectedUserId}
+          currentUserId={user?._id || user?.id}
+          onClose={() => setSelectedUserId(null)}
+        />
+      )}
     </div>
   );
 }
