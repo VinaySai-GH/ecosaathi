@@ -16,11 +16,10 @@ exports.getCities = async (req, res, next) => {
 
 exports.register = async (req, res, next) => {
     try {
-        const { name, phone, password } = req.body;
-        const city = req.body.city || ''; // Optional
-
-        if (!name || !phone || !password) {
-            return res.status(400).json({ error: 'Please provide name, phone and password' });
+        const { name, phone, password, city } = req.body;
+        
+        if (!name || !phone || !password || !city) {
+            return res.status(400).json({ error: 'Please provide name, phone, password and city' });
         }
 
         const userData = await authService.registerUser({ name, phone, password, city });

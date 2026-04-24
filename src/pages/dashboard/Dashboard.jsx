@@ -121,7 +121,6 @@ export default function Dashboard() {
     setPosts(updated);
     cachedPosts = updated;
   };
->>>>>>> origin/main
 
   return (
     <div className="feed-page">
@@ -135,69 +134,76 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Feed */}
-      <div
-        className="feed-container"
-        ref={feedRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <div className="feed-header">
-          <h1 className="feed-title">Local Network</h1>
-          <p className="feed-subtitle">News, events & issues from your community</p>
-        </div>
+      {/* Layout Wrapper for Desktop Two-Column */}
+      <div className="dashboard-layout">
+        
+        {/* Left Column: Main Feed */}
+        <div
+          className="feed-container dashboard-main-feed"
+          ref={feedRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className="feed-header">
+            <h1 className="feed-title">Local Network</h1>
+            <p className="feed-subtitle">News, events & issues from your community</p>
+          </div>
 
-        {loading && (
-          <div className="feed-loading">
-            {[1,2,3].map((i) => (
-              <div key={i} className="post-skeleton">
-                <div className="sk-header">
-                  <div className="sk-avatar" />
-                  <div className="sk-lines">
-                    <div className="sk-line sk-line-short" />
-                    <div className="sk-line sk-line-xshort" />
+          {loading && (
+            <div className="feed-loading">
+              {[1,2,3].map((i) => (
+                <div key={i} className="post-skeleton">
+                  <div className="sk-header">
+                    <div className="sk-avatar" />
+                    <div className="sk-lines">
+                      <div className="sk-line sk-line-short" />
+                      <div className="sk-line sk-line-xshort" />
+                    </div>
                   </div>
+                  <div className="sk-image" />
+                  <div className="sk-line" />
+                  <div className="sk-line sk-line-short" />
                 </div>
-                <div className="sk-image" />
-                <div className="sk-line" />
-                <div className="sk-line sk-line-short" />
-              </div>
+              ))}
+            </div>
+          )}
+
+          {!loading && posts.length === 0 && (
+            <div className="feed-empty">
+              <span className="feed-empty-icon">🌿</span>
+              <h3>No posts yet</h3>
+              <p>Be the first to share something with your community!</p>
+            </div>
+          )}
+
+          <div className="feed-list">
+            {posts.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                currentUserId={user?._id || user?.id}
+                onUserClick={(id) => id && setSelectedUserId(id)}
+              />
             ))}
           </div>
-        )}
-
-        {!loading && posts.length === 0 && (
-          <div className="feed-empty">
-            <span className="feed-empty-icon">🌿</span>
-            <h3>No posts yet</h3>
-            <p>Be the first to share something with your community!</p>
-          </div>
-        )}
-
-        <div className="feed-list">
-          {posts.map((post) => (
-            <PostCard
-              key={post._id}
-              post={post}
-              currentUserId={user?._id || user?.id}
-              onUserClick={(id) => id && setSelectedUserId(id)}
-            />
-          ))}
         </div>
+
+        {/* Right Column: Sidebar (Desktop only or stacked on Mobile) */}
+        <div className="dashboard-right-sidebar">
+          {insight && !dismissed && (
+            <div className="insight-sidebar-wrapper">
+              <InsightCard
+                insight={insight}
+                isNew={insightNew}
+                generatedAt={insightDate}
+                onDismiss={() => setDismissed(true)}
+              />
+            </div>
+          )}
+        </div>
+        
       </div>
-
-      {/* AI Insight Card — Top Right Overlay */}
-      {insight && !dismissed && (
-        <div className="insight-top-right-wrapper">
-          <InsightCard
-            insight={insight}
-            isNew={insightNew}
-            generatedAt={insightDate}
-            onDismiss={() => setDismissed(true)}
-          />
-        </div>
-      )}
 
       {/* FAB */}
       <div className="fab-area">

@@ -10,7 +10,7 @@
   border-radius: 12px;
   overflow: hidden;
   width: 100%;
-  max-width: 480px;
+  max-width: 620px;
   margin: 0 auto;
   color: var(--text, #e2f5ee);
   /* On desktop with comments open, card expands sideways */

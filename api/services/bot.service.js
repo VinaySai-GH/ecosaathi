@@ -3,6 +3,7 @@ const User     = require('../models/User');
 const Answer   = require('../models/Answer');
 const { getDailyQuestions, getPersonalizedQuestions, findQuestionById, ALL_QUESTIONS } = require('../data/questions');
 const { getDailyQuote } = require('../data/quotes');
+const insightsService = require('./insights.service');
 
 // ─── Registration ─────────────────────────────────────────────────────────────
 
@@ -137,8 +138,21 @@ exports.submitInAppAnswer = async (userId, question_ids, answers) => {
     await botUser.save();
 
     // Award 5 pts + 50 bonus on 30-day streak
-    const bonusPoints = botUser.streak === 30 ? 50 : 0;
-    await User.findByIdAndUpdate(userId, { $inc: { points: 5 + bonusPoints } });
+    const user = await User.findByIdAndUpdate(userId, { $inc: { points: 5 + bonusPoints } }, { new: true });
+
+    // ─── TRIGGER INSIGHT PUSH (once every 2-3 days) ───────────────────────────
+    // We call getOrGenerateInsight which respects the cooldown.
+    // If it returns isNew: true, we push it to WhatsApp.
+    setTimeout(async () => {
+        try {
+            const { insight, isNew } = await insightsService.getOrGenerateInsight(userId);
+            if (isNew) {
+                await insightsService.pushToWhatsApp(userId, insight, user.name);
+            }
+        } catch (err) {
+            console.error('[BotService] Insight push failed:', err.message);
+        }
+    }, 1000); // Small delay to let DB settle
 
     return {
         success: true,
@@ -200,6 +214,18 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
     await botUser.save();
 
     await User.findByIdAndUpdate(userId, { $inc: { points: 5 } });
+
+    // ─── TRIGGER INSIGHT PUSH (once every 2-3 days) ───────────────────────────
+    setTimeout(async () => {
+        try {
+            const { insight, isNew } = await insightsService.getOrGenerateInsight(userId);
+            if (isNew) {
+                await insightsService.pushToWhatsApp(userId, insight, botUser.userId.name);
+            }
+        } catch (err) {
+            console.error('[BotService] Insight push failed:', err.message);
+        }
+    }, 1000);
 
     if (botUser.streak === 30) {
         await User.findByIdAndUpdate(userId, { $inc: { points: 50 } });

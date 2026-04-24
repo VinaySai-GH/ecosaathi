@@ -302,3 +302,80 @@
     right: 16px;
   }
 }
+
+/* ============================================
+   TWO-COLUMN DESKTOP LAYOUT (INSTAGRAM STYLE)
+   ============================================ */
+
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-main-feed {
+  width: 100%;
+}
+
+/* Sidebar wrapper for Insight card */
+.insight-sidebar-wrapper {
+  padding: 16px;
+  width: 100%;
+}
+
+/* Desktop layout */
+@media (min-width: 900px) {
+  .dashboard-layout {
+    flex-direction: row;
+    justify-content: center; /* Centers the entire block on ultra-wide screens */
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    gap: 24px; /* Reduced gap so Insight sits closer to feed */
+    padding-top: 24px;
+    height: 100%;
+    overflow: hidden; /* Prevent body scroll, let columns scroll */
+  }
+
+  .dashboard-main-feed {
+    /* Feed container slightly wider than 620px posts */
+    flex: 0 1 650px;
+    max-width: 650px;
+    height: 100%;
+    overflow-y: auto;
+    /* Hide scrollbar for cleaner look like IG */
+    scrollbar-width: none; 
+  }
+  .dashboard-main-feed::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Right sidebar width and positioning */
+  .dashboard-right-sidebar {
+    flex: 0 0 360px; /* Widened slightly to prevent text cutting */
+    width: 360px;
+    position: sticky;
+    top: 24px;
+    /* Adjust height so it doesn't push past screen */
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  
+  .dashboard-right-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .insight-sidebar-wrapper {
+    padding: 0;
+  }
+  
+  /* Reset max-widths inside the wider feed container */
+  .feed-header, 
+  .feed-list, 
+  .feed-loading, 
+  .feed-empty {
+    max-width: 100%;
+  }
+}

@@ -127,6 +127,7 @@ async function buildContext(userId) {
     return {
         userName:      user.name,
         city:          user.city || 'unknown city',
+        bio:           user.bio || 'Not provided',
         totalPoints:   user.points,
         streak,
         lastAnswered,
@@ -146,7 +147,7 @@ Generate a SHORT, COMPELLING eco insight for ${ctx.userName} from ${ctx.city}, I
 
 DATA SUMMARY:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Name: ${ctx.userName} | City: ${ctx.city} | Points: ${ctx.totalPoints} | Streak: ${ctx.streak} days
+Name: ${ctx.userName} | City: ${ctx.city} | Bio: ${ctx.bio} | Points: ${ctx.totalPoints} | Streak: ${ctx.streak} days
 
 WATER USAGE (last 6 months):
 ${ctx.waterSection}
@@ -162,18 +163,18 @@ ${ctx.rkhSection}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 INSTRUCTIONS:
-1. Write EXACTLY 4 complete sentences (no fragments, no bullet points).
-2. Pick ONE meaningful pattern from the data above. CRITICAL: Provide completely different advice from previous sessions.
-3. Include AT LEAST ONE specific number or fact from their data.
-4. Provide ONE actionable, concrete tip they can do SPECIFICALLY in ${ctx.city} TODAY (e.g., mention local weather, local markets, or local infrastructure).
-5. Make it warm, personal, and motivating — like a friend who cares.
+1. Write a rich, detailed paragraph consisting of EXACTLY 3 to 4 complete sentences.
+2. Analyze MULTIPLE patterns from their data (e.g., water trends AND carbon footprint or reflections).
+3. Include at least TWO specific numbers or facts from their data.
+4. Provide a detailed, actionable tip they can do SPECIFICALLY in ${ctx.city} TODAY to improve.
+5. Make it warm, personal, deeply encouraging, and insightful — like a mentor who cares.
 6. End with an encouraging emoji or phrase.
 7. Do NOT mention "the app" or that you're an AI.
 8. Do NOT use bold, italics, or special formatting.
 9. RANDOM SEED for variation: ${Math.random().toString(36).substring(7)}
 
 EXAMPLE OUTPUT:
-"Your water usage dropped from 12 KL to 9 KL last month — that's amazing! By consistently fixing small leaks and taking shorter showers, you're already making a real difference. This month, try challenging yourself to reach 8 KL by fixing that dripping tap in your hostel bathroom. Small changes compound into big wins. Keep it going! 🌿"
+"Your water usage dropped beautifully from 12 KL to 9 KL last month, showing exactly how much impact your daily habits can make. It's truly inspiring to see your 5-day reflection streak alongside such real-world results. However, your transport footprint increased slightly due to those extra car trips. Since the weather in your city is getting nicer, consider taking the bus or carpooling for your campus commute tomorrow to offset those emissions. Every small choice compounds, and your dedication to vegetarian meals is already saving significant amounts of water. You have the momentum to make this your greenest month yet. Keep shining and inspiring those around you! 🌿"
 
 NOW WRITE THE INSIGHT FOR ${ctx.userName}:`;
 }
@@ -189,7 +190,7 @@ async function callGemini(prompt) {
             {
                 role: 'user',
                 parts: [{ 
-                    text: `SYSTEM: You are EcoSaathi AI. You MUST write exactly 2 sentences. You MUST NOT cut off. You MUST end with a period.\n\nDATA:\n${prompt}` 
+                    text: `SYSTEM: You are EcoSaathi AI. You MUST write a detailed, flowing paragraph of exactly 3 to 4 sentences. You MUST NOT cut off. You MUST end with a period.\n\nDATA:\n${prompt}` 
                 }]
             }
         ],
@@ -198,20 +199,84 @@ async function callGemini(prompt) {
         }
     };
 
-    const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+    const MODELS_TO_TRY = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+    let lastError = null;
+
+    for (const model of MODELS_TO_TRY) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        try {
+            const res = await fetch(url, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify(body),
+            });
+
+            if (!res.ok) {
+                const errText = await res.text().catch(() => '');
+                console.error(`[Gemini] Model ${model} failed (${res.status}):`, errText.substring(0, 200));
+                lastError = new Error(`Gemini API error ${res.status}`);
+                continue; // Try the next model!
+            }
+
+            const data = await res.json();
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) {
+                lastError = new Error(`Empty response from ${model}`);
+                continue;
+            }
+            
+            console.log(`[Gemini] Successfully generated using ${model}`);
+            return text.trim();
+        } catch (err) {
+            console.error(`[Gemini] Network error for ${model}:`, err.message);
+            lastError = err;
+            continue;
+        }
+    }
+
+    throw lastError || new Error("All Gemini models failed");
+}
+
+// ─── Groq caller ──────────────────────────────────────────────────────────────
+
+async function callGroq(prompt) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) throw new Error('GROQ_API_KEY not set in environment');
+
+    const body = {
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+            {
+                role: 'system',
+                content: 'You are EcoSaathi AI. You MUST write a detailed, flowing paragraph of exactly 3 to 4 sentences. You MUST NOT cut off. You MUST end with a period.'
+            },
+            {
+                role: 'user',
+                content: prompt
+            }
+        ],
+        temperature: 0.1
+    };
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+        },
         body:    JSON.stringify(body),
     });
 
     if (!res.ok) {
-        const err = await res.text().catch(() => '');
-        throw new Error(`Gemini API error ${res.status}: ${err}`);
+        const errText = await res.text().catch(() => '');
+        throw new Error(`Groq API error ${res.status}: ${errText}`);
     }
 
     const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('Empty response from Gemini');
+    const text = data?.choices?.[0]?.message?.content;
+    if (!text) throw new Error('Empty response from Groq');
+    
+    console.log('[Groq] Successfully generated insight');
     return text.trim();
 }
 
@@ -233,32 +298,42 @@ function pickNextInsightDate() {
  */
 exports.getOrGenerateInsight = async (userId, force = false) => {
     const user = await User.findById(userId).select(
-        'name city points cached_insight last_insight_at next_insight_after'
+        'name city bio points cached_insight last_insight_at next_insight_after'
     );
     if (!user) throw new Error('User not found');
 
     const now = new Date();
-    // Caching disabled for demo purposes — generate fresh every time.
-    // (Previously this checked next_insight_after to avoid rate limits).
+    if (!force && user.next_insight_after && now < new Date(user.next_insight_after)) {
+        console.log(`[Insights] Returning cached insight for ${user.name}`);
+        return { insight: user.cached_insight, isNew: false, generatedAt: user.last_insight_at };
+    }
 
     // Generate a fresh insight
     const ctx    = await buildContext(userId);
     const prompt = buildPrompt(ctx);
     
-    console.log(`[Insights] Generating for ${ctx.userName}...`);
+    console.log(`[Insights] Generating fresh insight for ${ctx.userName}...`);
     let insight;
     try {
         insight = await callGemini(prompt);
     } catch (err) {
-        console.error('[Insights] Gemini failed, using fallback:', err.message);
+        console.error('[Insights] Gemini call failed:', err.message);
         
-        // Beautiful fallback insights if API limits are hit during demo
-        const fallbacks = [
-            `You are doing great, ${ctx.userName}! With ${ctx.totalPoints} points and a ${ctx.streak}-day streak, your commitment to the environment is truly inspiring. Keep up the amazing work!`,
-            `Consistent reflection is the key to a greener life. It's wonderful to see your ${ctx.streak}-day streak, ${ctx.userName}. Let's try to reduce our water usage by just 1 KL this month!`,
-            `${ctx.userName}, your dedication is making a real difference in ${ctx.city}. Every drop of water and every vegetarian meal counts. Keep shining and inspiring your hostel mates!`
-        ];
-        insight = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        // --- GROQ FALLBACK ---
+        try {
+            console.log(`[Insights] Attempting Groq fallback for ${ctx.userName}...`);
+            insight = await callGroq(prompt);
+        } catch (groqErr) {
+            console.error('[Insights] Groq fallback failed:', groqErr.message);
+
+            // Beautiful hardcoded fallback insights if API limits are hit during demo
+            const fallbacks = [
+                `You are doing great, ${ctx.userName}! With ${ctx.totalPoints} points and a ${ctx.streak}-day streak, your commitment to the environment is truly inspiring. Keep up the amazing work!`,
+                `Consistent reflection is the key to a greener life. It's wonderful to see your ${ctx.streak}-day streak, ${ctx.userName}. Let's try to reduce our water usage by just 1 KL this month!`,
+                `${ctx.userName}, your dedication is making a real difference in ${ctx.city}. Every drop of water and every vegetarian meal counts. Keep shining and inspiring your hostel mates!`
+            ];
+            insight = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        }
     }
 
     // Cache it on the user document
@@ -269,21 +344,26 @@ exports.getOrGenerateInsight = async (userId, force = false) => {
         next_insight_after: next,
     });
 
-    // PUSH TO WHATSAPP if user is registered for the bot
+    return { insight, isNew: true, generatedAt: now };
+};
+
+/**
+ * Specifically pushes a new insight to WhatsApp
+ */
+exports.pushToWhatsApp = async (userId, insight, userName) => {
     try {
         const botUser = await BotUser.findOne({ userId });
         if (botUser && botUser.phone) {
-            const message = `🌿 *Personal Eco-Insight for ${ctx.userName}*\n\n` +
+            const message = `🌿 *Personal Eco-Insight for ${userName}*\n\n` +
                 `${insight}\n\n` +
                 `_Generated by EcoSaathi AI based on your recent habits._`;
             
             await whatsappService.sendTextMessage(botUser.phone, message);
-            console.log(`[Insights] Pushed new insight to WhatsApp for ${botUser.phone}`);
+            console.log(`[Insights] WhatsApp push sent to ${botUser.phone}`);
+            return true;
         }
     } catch (wsErr) {
-        console.error('[Insights] Failed to push to WhatsApp:', wsErr.message);
-        // We don't fail the whole request if WhatsApp fails
+        console.error('[Insights] WhatsApp push failed:', wsErr.message);
     }
-
-    return { insight, isNew: true, generatedAt: now };
+    return false;
 };
