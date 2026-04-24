@@ -260,15 +260,22 @@ Rules for the AI:
 - [x] Neeru manual entry screen + equivalency calculator UI
 - [x] Neeru static datasets (equivalencies, cities, water tips)
 - [x] Bottom tab navigation setup
+- [x] MongoDB schemas (User, WaterLog, Spot, BotUser, Answer)
+- [x] Auth routes (register + login)
+- [x] Neeru integration (charts and real data)
+- [x] WhatsApp Bot Integration (Meta Cloud API + Webhooks)
+- [x] Raat Ka Hisaab (Nightly reflection logic, streak tracking, review)
+- [x] Personalized AI Insights (Gemini-powered coaching)
+- [x] Advanced Bot Settings (24h time picker, off switch, WhatsApp commands)
 
 ### In Progress
-- [ ] Connect Neeru UI to backend (swap mock data for real API)
+- [ ] Green Spot map with seed pins and verification logic
+- [ ] Eco Pulse Leaderboard (hostel/city comparison)
 
 ### Next
-- [ ] MongoDB schemas (User, WaterLog, Spot, BotUser, Answer)
-- [ ] Auth routes (register + login)
-- [ ] Neeru integration (charts and real data)
-- [ ] Green Spot map with seed pins
+- [ ] Campus-wide leaderboard polishing
+- [ ] Automated weekly digest notifications
+- [ ] Final PWA optimization for IIT Tirupati rollout
 
 ---
 

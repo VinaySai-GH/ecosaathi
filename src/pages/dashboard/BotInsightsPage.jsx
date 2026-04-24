@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext.jsx';
-import { Colors, Spacing } from '../../../constants/theme.js';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { Colors, Spacing } from '../../constants/theme.js';
 
 export default function BotInsightsPage() {
     const { token } = useAuth();

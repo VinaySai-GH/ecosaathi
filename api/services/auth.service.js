@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 const generateToken = (id) => {
@@ -16,8 +17,12 @@ exports.registerUser = async (userData) => {
         throw new Error('User already exists with this phone number');
     }
 
-    // Create user with plain password and city
-    const user = await User.create({ name, phone, password, city });
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user with hashed password and city
+    const user = await User.create({ name, phone, password: hashedPassword, city });
 
     return {
         _id: user._id,
@@ -37,8 +42,14 @@ exports.loginUser = async (phone, password) => {
         throw new Error('Invalid phone number or password');
     }
 
-    // Compare provided password with stored password (plain text as requested)
-    const isPasswordValid = password === user.password;
+    // Compare provided password with stored password
+    // Support legacy plain text passwords during transition
+    let isPasswordValid = false;
+    if (user.password.startsWith('$2a$') || user.password.startsWith('$2b$')) {
+        isPasswordValid = await bcrypt.compare(password, user.password);
+    } else {
+        isPasswordValid = password === user.password;
+    }
 
     if (!isPasswordValid) {
         throw new Error('Invalid phone number or password');
@@ -59,7 +70,10 @@ exports.updateUser = async (userId, updateData) => {
     if (!user) throw new Error('User not found');
 
     if (updateData.name) user.name = updateData.name;
-    if (updateData.password) user.password = updateData.password;
+    if (updateData.password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(updateData.password, salt);
+    }
     if (updateData.city) user.city = updateData.city;
 
     await user.save();

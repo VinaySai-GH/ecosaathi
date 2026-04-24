@@ -19,7 +19,7 @@ exports.calculateCarbonLog = async (req, res) => {
 
 exports.saveCarbonLog = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const { month, year, ...inputs } = req.body;
 
         if (!month || !year) {
@@ -84,7 +84,7 @@ exports.saveCarbonLog = async (req, res) => {
 
 exports.getCarbonHistory = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         // Fetch all logs, sorted by year and month descending (newest first)
         const history = await CarbonLog.find({ userId }).sort({ year: -1, month: -1 });
         res.status(200).json({ logs: history });

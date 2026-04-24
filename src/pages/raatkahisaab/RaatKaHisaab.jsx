@@ -23,13 +23,35 @@ function getTodayLabel() {
   });
 }
 
+/** Returns { hours, minutes, seconds } until the target HH:mm today/tomorrow */
+function getCountdown(preferredTime, forceTomorrow = false) {
+  const now = new Date();
+  const [h, m] = (preferredTime || '21:00').split(':').map(Number);
+
+  const target = new Date();
+  target.setHours(h, m, 0, 0);
+
+  // If target already passed today OR we want tomorrow's countdown
+  if (target <= now || forceTomorrow) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  const diff = target - now;
+  return {
+    hours:   Math.floor(diff / (1000 * 60 * 60)),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+    total:   diff,
+  };
+}
+
 // ── Sub-components ───────────────────────────────────────────────────────────
 
-function StreakCalendar({ streak }) {
+function StreakCalendar({ history = [] }) {
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    const isAnswered = i >= 7 - Math.min(streak, 7);
+    const isAnswered = history[i] || false;
     const isToday = i === 6;
     return { label: DAYS[d.getDay()], isAnswered, isToday };
   });
@@ -74,6 +96,54 @@ function StreakCalendar({ streak }) {
   );
 }
 
+function CountdownTimer({ preferredTime, forceTomorrow }) {
+  const [time, setTime] = useState(getCountdown(preferredTime, forceTomorrow));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(getCountdown(preferredTime, forceTomorrow));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [preferredTime, forceTomorrow]);
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  return (
+    <div className="rkh-countdown">
+      <p className="rkh-countdown-label">
+        {forceTomorrow ? '📅 Next reflection tomorrow' : '⏰ Next set of questions in'}
+      </p>
+      <div className="rkh-countdown-timer">
+        <div className="rkh-countdown-block">
+          <span className="rkh-countdown-num">{pad(time.hours)}</span>
+          <span className="rkh-countdown-unit">hrs</span>
+        </div>
+        <span className="rkh-countdown-sep">:</span>
+        <div className="rkh-countdown-block">
+          <span className="rkh-countdown-num">{pad(time.minutes)}</span>
+          <span className="rkh-countdown-unit">min</span>
+        </div>
+        <span className="rkh-countdown-sep">:</span>
+        <div className="rkh-countdown-block">
+          <span className="rkh-countdown-num">{pad(time.seconds)}</span>
+          <span className="rkh-countdown-unit">sec</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuoteCard({ quote }) {
+  if (!quote) return null;
+  return (
+    <div className="rkh-quote-card">
+      <span className="rkh-quote-icon">💡</span>
+      <p className="rkh-quote-text">"{quote.text}"</p>
+      <p className="rkh-quote-author">— {quote.author}</p>
+    </div>
+  );
+}
+
 function QuestionCard({ question, index, selectedAnswer, onSelect, disabled }) {
   const emoji = CATEGORY_EMOJI[question.category] || '🌍';
   const answers = [
@@ -112,8 +182,11 @@ export default function RaatKaHisaab() {
   const [loading, setLoading]         = useState(true);
   const [questions, setQuestions]     = useState([]);
   const [streak, setStreak]           = useState(0);
+  const [preferredTime, setPreferred] = useState('21:00');
+  const [history, setHistory]         = useState([]);
+  const [quote, setQuote]             = useState(null);
   const [alreadyAnswered, setAlready] = useState(false);
-  const [selections, setSelections]   = useState({}); // { 0: 'Y', 1: 'N', 2: 'Hmm' }
+  const [selections, setSelections]   = useState({});
   const [submitting, setSubmitting]   = useState(false);
   const [submitResult, setResult]     = useState(null);
   const [error, setError]             = useState('');
@@ -131,6 +204,9 @@ export default function RaatKaHisaab() {
         setQuestions(data.questions || []);
         setStreak(data.streak || 0);
         setAlready(data.alreadyAnswered);
+        setPreferred(data.preferredTime || '21:00');
+        setHistory(data.last7Days || []);
+        setQuote(data.quote || null);
       } catch (err) {
         setError('Could not load today\'s questions. Is the server running?');
         console.error(err);
@@ -163,6 +239,13 @@ export default function RaatKaHisaab() {
       setResult(res);
       setAlready(true);
       setStreak(res.streak);
+      
+      // Update local history for today
+      setHistory(prev => {
+        const next = [...prev];
+        next[6] = true;
+        return next;
+      });
       const milestone = res.milestone === '30_day_streak'
         ? '🎉 30-day streak! +50 bonus points!'
         : `🔥 Streak: ${res.streak} days! +${res.pointsAwarded} pts`;
@@ -176,6 +259,21 @@ export default function RaatKaHisaab() {
       }
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleTimeChange = async (e) => {
+    const newTime = e.target.value;
+    setPreferred(newTime);
+    try {
+      await apiFetch('/bot/register', {
+        requireAuth: true,
+        method: 'POST',
+        body: JSON.stringify({ preferred_time: newTime }),
+      });
+      showToast(newTime === 'Off' ? 'Bot messages turned off.' : `Reminder set for ${newTime}`);
+    } catch (err) {
+      showToast('Failed to update preference.');
     }
   };
 
@@ -212,15 +310,40 @@ export default function RaatKaHisaab() {
             </p>
           </div>
           <div className="rkh-stat-card">
-            <p className="rkh-stat-label">✅ Status</p>
-            <p className="rkh-stat-value" style={{ fontSize: '18px', paddingTop: '5px' }}>
-              {alreadyAnswered ? 'Done today!' : 'Pending'}
-            </p>
+            <p className="rkh-stat-label">⚙️ Bot Settings</p>
+            {preferredTime === 'Off' ? (
+              <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span style={{ color: '#ef4444', fontSize: '14px', flex: 1 }}>Turned Off</span>
+                <button
+                  onClick={() => handleTimeChange({ target: { value: '21:00' } })}
+                  style={{ padding: '6px 12px', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+                >
+                  Turn On
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  type="time"
+                  value={preferredTime}
+                  onChange={handleTimeChange}
+                  className="rkh-time-select"
+                  style={{ flex: 1, margin: 0 }}
+                />
+                <button
+                  onClick={() => handleTimeChange({ target: { value: 'Off' } })}
+                  style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}
+                  title="Turn off nightly messages"
+                >
+                  Stop
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* 7-day streak calendar */}
-        <StreakCalendar streak={streak} />
+        <StreakCalendar history={history} />
       </AnimatedCard>
 
       {/* Date banner */}
@@ -232,53 +355,45 @@ export default function RaatKaHisaab() {
 
       {/* Questions or Already-answered */}
       {alreadyAnswered ? (
-        <AnimatedCard delay={240}>
-          <div className="rkh-done-banner">
-            <span className="rkh-done-icon">🌟</span>
-            <h2 className="rkh-done-title">
-              {submitResult ? "Tonight's reflection done!" : "Already reflected today!"}
-            </h2>
-            <p className="rkh-done-sub">
-              {submitResult
-                ? `You earned +${submitResult.pointsAwarded} points. Your streak is now ${submitResult.streak} days.`
-                : "You've already answered today's questions. Great job staying consistent!"}
-            </p>
-            <div className="rkh-done-streak">
-              🔥 {streak}-day streak — come back tomorrow!
+        <>
+          <AnimatedCard delay={240}>
+            <div className="rkh-done-banner">
+              <span className="rkh-done-icon">🌟</span>
+              <h2 className="rkh-done-title">
+                {submitResult ? "Tonight's reflection done!" : "Already reflected today!"}
+              </h2>
+              <p className="rkh-done-sub">
+                {submitResult
+                  ? `You earned +${submitResult.pointsAwarded} points. Your streak is now ${submitResult.streak} days.`
+                  : "You've already answered today's questions. Great job staying consistent!"}
+              </p>
+              <div className="rkh-done-streak">
+                🔥 {streak}-day streak — come back tomorrow!
+              </div>
             </div>
-          </div>
-        </AnimatedCard>
+          </AnimatedCard>
+
+          {/* Motivational Quote */}
+          <AnimatedCard delay={320}>
+            <QuoteCard quote={quote} />
+          </AnimatedCard>
+
+          {/* Countdown to next session */}
+          <AnimatedCard delay={400}>
+            <CountdownTimer preferredTime={preferredTime} forceTomorrow={true} />
+          </AnimatedCard>
+        </>
       ) : (
         <>
-          <div className="rkh-questions-section">
-            {questions.map((q, i) => (
-              <AnimatedCard key={q.id} delay={240 + i * 100}>
-                <QuestionCard
-                  question={q}
-                  index={i}
-                  selectedAnswer={selections[i]}
-                  onSelect={handleSelect}
-                  disabled={submitting}
-                />
-              </AnimatedCard>
-            ))}
+          <div className="rkh-whatsapp-prompt" style={{ textAlign: 'center', marginTop: '32px', padding: '24px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>📱</span>
+            <h3 style={{ color: '#fff', marginBottom: '8px' }}>Time to reflect!</h3>
+            <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: '1.5' }}>
+              We've moved the daily reflection exclusively to WhatsApp to make it even easier for you. 
+              <br/><br/>
+              Wait for your scheduled message, or text <strong>"hello"</strong> to the bot right now to get today's questions!
+            </p>
           </div>
-
-          {error && <p className="rkh-error">{error}</p>}
-
-          <AnimatedCard delay={560}>
-            <button
-              className="rkh-submit-btn"
-              onClick={handleSubmit}
-              disabled={!allAnswered || submitting}
-            >
-              {submitting
-                ? '⏳ Saving…'
-                : allAnswered
-                  ? '✨ Submit Reflection'
-                  : `Answer all 3 questions (${Object.keys(selections).length}/3)`}
-            </button>
-          </AnimatedCard>
         </>
       )}
 

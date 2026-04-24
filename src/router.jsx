@@ -17,6 +17,7 @@ import CarbonHome from './pages/carbonprints/CarbonPrintsPage';
 import GreenSpotHome from './pages/greenspot/GreenSpotHome.jsx';
 import EcoPulseHome from './pages/ecopulse/EcoPulseHome.jsx';
 import RaatKaHisaab from './pages/raatkahisaab/RaatKaHisaab.jsx';
+import BotInsightsPage from './pages/dashboard/BotInsightsPage.jsx';
 
 // Wrapper that redirects to /login if not authenticated
 function PrivateRoute({ children }) {
@@ -65,6 +66,7 @@ const router = createBrowserRouter([
       { path: 'greenspot', element: <GreenSpotHome /> },
       { path: 'raatkahisaab', element: <RaatKaHisaab /> },
       { path: 'ecopulse', element: <EcoPulseHome /> },
+      { path: 'insights', element: <BotInsightsPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

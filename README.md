@@ -43,21 +43,38 @@ All three features feed into a single Eco Pulse score. Hostels compete on a live
 - MongoDB Atlas account
 - `.env` files set up in both root and `/api` (see `.env.example`)
 
-### Install and run
+### Install and Run
 
+1. **Install Dependencies**
+   ```bash
+   npm install
+   cd api && npm install
+   ```
+
+2. **Start the App (The Easy Way)**
+   Open two terminals in the root folder:
+   - **Terminal 1 (Web Interface):** `npm run dev`
+   - **Terminal 2 (WhatsApp Bot):** `npm run dev:bot`
+
+   *Note: `dev:bot` automatically kills lingering processes on port 5000 and starts both the backend server and the local tunnel.*
+
+3. **Database Cleanup**
+   If you need to reset "unknown" users or sync city names:
+   ```bash
+   cd api
+   node scripts/cleanup_users.js
+   ```
+
+---
+
+## 🧹 Repository Maintenance
+
+Keep the repo clean by avoiding committing `.env` files or temporary logs. 
+If you need to clear all node_modules and start fresh:
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/ecosaathi.git
-cd ecosaathi
-
-# 1. Start the Frontend
-npm install
-npm run dev
-
-# 2. Start the Backend (separate terminal)
-cd api
-npm install
-npm run dev
+# Clean project
+npm run clean  # if script added, otherwise:
+rm -rf node_modules api/node_modules dist
 ```
 
 ---

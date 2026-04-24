@@ -73,7 +73,7 @@ const extractInlineConsumptionTriplet = (text) => {
   const out = [];
   const sep = '(?:\\s*\\|\\s*|\\s+)+';
   const anchoredTriplet = new RegExp(
-    `^(\\d{1,3}(?:,\\d{3})+|\\d{3,6})${sep}(\\d{1,3}(?:,\\d{3})+|\\d{3,6})${sep}(\\d{1,3}(?:,\\d{3})?)\\b`,
+    `^(\\d{1,3}(?:[,\\.]\\d{3})+|\\d{3,6})${sep}(\\d{1,3}(?:[,\\.]\\d{3})+|\\d{3,6})${sep}(\\d{1,3}(?:[,\\.]\\d{3})?)\\b`,
   );
 
   for (const line of lines) {
@@ -83,9 +83,9 @@ const extractInlineConsumptionTriplet = (text) => {
       if (pos > 0 && /[A-Za-z0-9_]/.test(line[pos - 1])) continue;
       const m = anchoredTriplet.exec(line.slice(pos));
       if (!m) continue;
-      const raw1 = m[1].replace(/,/g, '');
-      const raw2 = m[2].replace(/,/g, '');
-      const raw3 = m[3].replace(/,/g, '');
+      const raw1 = m[1].replace(/[,.]/g, '');
+      const raw2 = m[2].replace(/[,.]/g, '');
+      const raw3 = m[3].replace(/[,.]/g, '');
       if (/^0\d{3,}$/.test(raw1)) continue;
       const v1 = parseFloat(raw1);
       const v2 = parseFloat(raw2);
@@ -112,7 +112,7 @@ const extractInlineConsumptionTriplet = (text) => {
 /** Highest listed tier on many Indian bills (Slab IV) includes the current usage ceiling in parentheses. */
 const extractSlabIvUpperFromCharges = (text) => {
   const re =
-    /Water\s+Charges[^\n]{0,120}?(?:Slab|Sab)\s*I[Vv][^\n]{0,40}?\(\s*(\d{1,2})\s*[-–]\s*(\d{1,3})\s*KL/gi;
+    /(?:Water\s+Charges[^\n]{0,120}?)?(?:Slab|Sab)\s*I[Vv][^\n]{0,40}?\(\s*(\d{1,2})\s*[-–]\s*(\d{1,3})\s*KL/gi;
   const out = [];
   let m;
   while ((m = re.exec(text)) !== null) {
@@ -423,10 +423,10 @@ const extractConsumptionFromMeterReadings = (text) => {
 
   for (const line of lines) {
     const nums = [];
-    const re = /\d{1,3}(?:,\d{3})+|\d{4,6}/g;
+    const re = /\d{1,3}(?:[,.]\d{3})+|\d{4,6}/g;
     let m;
     while ((m = re.exec(line)) !== null) {
-      const v = parseFloat(m[0].replace(/,/g, ''));
+      const v = parseFloat(m[0].replace(/[,.]/g, ''));
       if (!Number.isNaN(v) && v >= 100 && v <= 999999) nums.push(v);
     }
     if (nums.length >= 2) {
@@ -437,11 +437,11 @@ const extractConsumptionFromMeterReadings = (text) => {
   }
 
   const joined = text.replace(/\s+/g, ' ');
-  const pairRe = /(\d{1,3}(?:,\d{3})+|\d{4,6})\s+(\d{1,3}(?:,\d{3})+|\d{4,6})/g;
+  const pairRe = /(\d{1,3}(?:[,.]\d{3})+|\d{4,6})\s+(\d{1,3}(?:[,.]\d{3})+|\d{4,6})/g;
   let pm;
   while ((pm = pairRe.exec(joined)) !== null) {
-    const a = parseFloat(pm[1].replace(/,/g, ''));
-    const b = parseFloat(pm[2].replace(/,/g, ''));
+    const a = parseFloat(pm[1].replace(/[,.]/g, ''));
+    const b = parseFloat(pm[2].replace(/[,.]/g, ''));
     if (Number.isNaN(a) || Number.isNaN(b)) continue;
     pushDiff(a, b, 'meter_pair_diff', 41);
   }

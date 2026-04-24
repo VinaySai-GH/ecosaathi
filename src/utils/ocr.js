@@ -9,10 +9,10 @@ setLogging(false);
 
 let ocrWorker = null;
 const OCR_TIMEOUTS = {
-  hfFastMs: 8000,
+  hfFastMs: 25000,
   /** Several preprocess × PSM passes can exceed 30s on slower devices. */
   tesseractMaxMs: 90000,
-  hfLateRetryMs: 5000,
+  hfLateRetryMs: 10000,
 };
 
 /** Scale so the shorter side is readable (Tesseract otherwise estimates ~100 DPI and skips most text). */

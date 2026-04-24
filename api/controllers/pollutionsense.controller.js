@@ -40,7 +40,7 @@ exports.getAQI = async (req, res) => {
 exports.createReport = async (req, res) => {
     try {
         const { issueType, description, location, photoUrl } = req.body;
-        const userId = req.user.id; // from auth middleware
+        const userId = req.user._id; // from auth middleware
 
         const newReport = new CommunityReport({
             userId,
@@ -80,7 +80,7 @@ exports.getReports = async (req, res) => {
 exports.upvoteReport = async (req, res) => {
     try {
         const reportId = req.params.id;
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         const report = await CommunityReport.findById(reportId);
         if (!report) return res.status(404).json({ error: 'Report not found' });

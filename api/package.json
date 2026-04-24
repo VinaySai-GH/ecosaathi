@@ -6,6 +6,8 @@
     "scripts": {
         "start": "node server.js",
         "dev": "nodemon server.js",
+        "predev:bot": "npx kill-port 5000 || true",
+        "dev:bot": "node start-bot.js",
         "seed:spots": "node scripts/seedSpots.js"
     },
     "dependencies": {
@@ -15,7 +17,11 @@
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
         "jsonwebtoken": "^9.0.2",
-        "mongoose": "^8.3.2"
+        "localtunnel": "^2.0.2",
+        "mongoose": "^8.3.2",
+        "node-cron": "^4.2.1"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "nodemon": "^3.1.14"
+    }
 }

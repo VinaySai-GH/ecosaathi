@@ -1,9 +1,41 @@
-const botService = require('../services/bot.service');
+const botService       = require('../services/bot.service');
+const whatsappService  = require('../services/whatsapp.service');
+const insightsService  = require('../services/insights.service');
+const { getDailyQuote } = require('../data/quotes');
+
+// Helper to get dynamic base URL from request (for clickable links in WhatsApp)
+function getBaseUrl(req) {
+    if (process.env.WEBAPP_URL) return process.env.WEBAPP_URL;
+    // Fallback to detecting from request headers (useful for ngrok/localtunnel)
+    const host = req.get('host');
+    const protocol = req.protocol;
+    return `${protocol}://${host}`;
+}
+
+/**
+ * Parse a reply like "YNY", "Y N H", "y,n,hmm" -> ['Y','N','Hmm']
+ */
+function parseMultiAnswer(text) {
+    const raw = text.trim().toUpperCase().replace(/[,|\s]+/g, '');
+    const MAP = { 'Y': 'Y', 'N': 'N', 'H': 'Hmm', 'HMM': 'Hmm' };
+
+    // Try full-word tokens first (e.g. "Y N HMM")
+    const tokens = text.trim().toUpperCase().split(/[,|\s]+/);
+    if (tokens.length === 3 && tokens.every(t => ['Y','N','HMM','H'].includes(t))) {
+        return tokens.map(t => MAP[t]);
+    }
+
+    // Try compact 3-char (e.g. "YNY")
+    if (raw.length === 3 && [...raw].every(c => ['Y','N','H'].includes(c))) {
+        return [...raw].map(c => MAP[c]);
+    }
+
+    return null;
+}
 
 /**
  * Register user for WhatsApp bot
  * POST /api/bot/register
- * Body: { preferred_time: '21:00' | '21:30' | '22:00' }
  */
 exports.registerForBot = async (req, res, next) => {
     try {
@@ -11,9 +43,10 @@ exports.registerForBot = async (req, res, next) => {
         const { preferred_time } = req.body;
         const phone = req.user.phone;
 
-        if (!['21:00', '21:30', '22:00'].includes(preferred_time)) {
+        const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        if (preferred_time !== 'Off' && !timeRegex.test(preferred_time)) {
             return res.status(400).json({
-                error: 'Invalid preferred_time. Choose from: 21:00, 21:30, 22:00',
+                error: 'Invalid preferred_time. Choose a valid 24-hour time like 21:30, or Off',
             });
         }
 
@@ -36,10 +69,10 @@ exports.registerForBot = async (req, res, next) => {
 /**
  * Handle incoming WhatsApp webhook message
  * POST /api/bot/webhook
- * Meta WhatsApp webhook payload
  */
-exports.handleWebhook = async (req, res, next) => {
+exports.handleWebhook = async (req, res) => {
     try {
+        const webappUrl = getBaseUrl(req);
         const { entry } = req.body;
 
         if (!entry || !entry[0]) {
@@ -48,34 +81,185 @@ exports.handleWebhook = async (req, res, next) => {
 
         const changes = entry[0].changes[0];
         const messages = changes?.value?.messages;
-        const contacts = changes?.value?.contacts;
 
         if (!messages || messages.length === 0) {
             return res.status(200).json({ received: true });
         }
 
-        // Process each message
         for (const message of messages) {
-            const phoneNumber = message.from; // Sender's phone number
+            const from        = message.from;
             const messageText = message.text?.body || '';
-
             if (!messageText) continue;
 
-            // Handle the message
-            const result = await botService.handleWebhookMessage(phoneNumber, messageText);
+            console.log(`[Webhook] Incoming from: "${from}" | Message: "${messageText}"`);
 
-            // Log for debugging
-            console.log(`Bot message from ${phoneNumber}: "${messageText}"`, result);
+            // 1. Find the user from phone number (try with and without country code)
+            const BotUser = require('../models/BotUser');
+            let botUser = await BotUser.findOne({ phone: from });
+            if (!botUser && from.length > 10) {
+                const last10 = from.slice(-10);
+                botUser = await BotUser.findOne({ phone: last10 });
+            }
 
-            // Send response back via WhatsApp (if using WhatsApp API client)
-            // You'd call sendWhatsAppMessage(phoneNumber, result.message) here
+            if (!botUser) {
+                // If user not in DB, send registration nudge
+                await whatsappService.sendTextMessage(
+                    from,
+                    `❌ *Registration Required*\n\n` +
+                    `You're not registered for EcoSaathi yet. Please sign up on the app to start tracking your eco-journey!\n\n` +
+                    `👉 Join now: ${webappUrl}`
+                );
+                continue;
+            }
+
+            // 2. Handle settings commands
+            const lowerMsg = messageText.toLowerCase().trim();
+            if (lowerMsg === 'stop' || lowerMsg === 'off') {
+                botUser.preferred_time = 'Off';
+                await botUser.save();
+                await whatsappService.sendTextMessage(from, `✅ Nightly messages turned off. You can still log in the app! To turn back on, reply "start".`);
+                continue;
+            }
+            if (lowerMsg === 'start' || lowerMsg.includes('change time to 21:00')) {
+                botUser.preferred_time = '21:00';
+                await botUser.save();
+                await whatsappService.sendTextMessage(from, `✅ Nightly messages set to 21:00.`);
+                continue;
+            }
+            if (lowerMsg.includes('change time to 21:30')) {
+                botUser.preferred_time = '21:30';
+                await botUser.save();
+                await whatsappService.sendTextMessage(from, `✅ Nightly messages set to 21:30.`);
+                continue;
+            }
+            if (lowerMsg.includes('change time to 22:00')) {
+                botUser.preferred_time = '22:00';
+                await botUser.save();
+                await whatsappService.sendTextMessage(from, `✅ Nightly messages set to 22:00.`);
+                continue;
+            }
+            
+            // 2.5 Handle "yes" / "ready" to get questions immediately
+            if (lowerMsg === 'yes' || lowerMsg === 'ready' || lowerMsg === 'questions') {
+                const { questions, alreadyAnswered } = await botService.getTodayQuestions(botUser.userId);
+                if (alreadyAnswered) {
+                    await whatsappService.sendTextMessage(from, `✅ You've already answered today's questions! Your streak is safe. See you tomorrow 🌙`);
+                } else {
+                    let qText = `Here are today's questions:\n\n`;
+                    questions.forEach((q, i) => {
+                        qText += `*${i+1}.* ${q.text}\n`;
+                    });
+                    qText += `\nReply with 3 letters (e.g., *YNY*) to log your reflection!`;
+                    await whatsappService.sendTextMessage(from, qText);
+                }
+                continue;
+            }
+
+            // 3. Handle review command
+            if (lowerMsg === 'review') {
+                const { questions, alreadyAnswered, todayAnswer } = await botService.getTodayQuestions(botUser.userId);
+                if (alreadyAnswered && todayAnswer) {
+                    let reviewText = `📝 *Today's Review*\n\n`;
+                    questions.forEach((q, i) => {
+                        reviewText += `*Q${i+1}:* ${q.text}\n*Your Answer:* ${todayAnswer.answers[i]}\n\n`;
+                    });
+                    await whatsappService.sendTextMessage(from, reviewText.trim());
+                } else {
+                    await whatsappService.sendTextMessage(from, `You haven't answered today's questions yet!`);
+                }
+                continue;
+            }
+
+            // 4. Try to parse as 3-answer reply
+            const answers = parseMultiAnswer(messageText);
+
+            if (!answers) {
+                // If not an answer, behave like a standard bot (No Gemini AI Chat)
+                await whatsappService.sendTextMessage(
+                    from,
+                    `Hello! I am your EcoSaathi bot. 🌿\n\n` +
+                    `_Are you ready to answer today's questions now? Reply *"yes"* to get them, or wait for your scheduled time._\n\n` +
+                    `⚙️ To update your reminder time or view your stats, visit the app:\n🔗 ${webappUrl}/raatkahisaab`
+                );
+                continue;
+            }
+
+            // Check if already answered
+            const { questions, alreadyAnswered } = await botService.getTodayQuestions(botUser.userId);
+            if (alreadyAnswered) {
+                await whatsappService.sendTextMessage(
+                    from,
+                    `✅ You've already reflected today!\n` +
+                    `🔥 Your streak is going strong.\n\n` +
+                    `📊 See your eco profile → ${webappUrl}/raatkahisaab`
+                );
+                continue;
+            }
+
+            // Submit the answers
+            const question_ids = questions.map(q => q.id);
+            const result = await botService.submitInAppAnswer(botUser.userId, question_ids, answers);
+
+            if (result.alreadyAnswered) {
+                await whatsappService.sendTextMessage(
+                    from,
+                    `✅ Already saved today's reflection! Come back tomorrow 🌙`
+                );
+                continue;
+            }
+
+            // Build confirmation + webapp link
+            const quote = getDailyQuote();
+            let reviewText = `\n\n📝 *Your Answers:*\n`;
+            questions.forEach((q, i) => {
+                reviewText += `*Q${i+1}:* ${q.text}\n*A:* ${answers[i]}\n\n`;
+            });
+
+            let replyText = '';
+            const isStreak30 = result.milestone === '30_day_streak';
+
+            if (isStreak30) {
+                replyText =
+                    `🎉 *30-DAY STREAK!* Incredible!\n\n` +
+                    `You've completed a full month of reflections!\n` +
+                    `+${result.pointsAwarded} points earned 🌱\n\n` +
+                    `💡 _"${quote.text}"_\n— ${quote.author}` +
+                    reviewText +
+                    `🏆 See your insights → ${webappUrl}/raatkahisaab`;
+            } else {
+                replyText =
+                    `🌙 *Reflection saved!*\n\n` +
+                    `🔥 Streak: *${result.streak} days*\n` +
+                    `⭐ +${result.pointsAwarded} points\n\n` +
+                    `💡 _"${quote.text}"_\n— ${quote.author}` +
+                    reviewText +
+                    `📱 See your full eco profile → ${webappUrl}/raatkahisaab`;
+            }
+
+            await whatsappService.sendTextMessage(from, replyText);
+            console.log(`[Webhook] Processed reply from ${from}, streak: ${result.streak}`);
+
+            // ── INSIGHT GENERATION (Once every 3 days) ──────────────────────────
+            try {
+                const User = require('../models/User');
+                const userDoc = await User.findById(botUser.userId);
+                
+                const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+                const lastInsightTime = userDoc && userDoc.last_insight_at ? userDoc.last_insight_at.getTime() : 0;
+                
+                if (Date.now() - lastInsightTime >= THREE_DAYS_MS) {
+                    console.log(`[Webhook] 3 days passed. Generating new insight for ${from}...`);
+                    await insightsService.getOrGenerateInsight(botUser.userId);
+                }
+            } catch (insightErr) {
+                console.error(`[Webhook] Insight generation failed:`, insightErr.message);
+            }
         }
 
         res.status(200).json({ received: true });
     } catch (error) {
-        console.error('Webhook error:', error);
-        // Always return 200 to prevent WhatsApp from retrying
-        res.status(200).json({ received: true, error: error.message });
+        console.error('[Webhook] Error:', error);
+        res.status(200).json({ received: true });
     }
 };
 
@@ -104,21 +288,9 @@ exports.getBotStatus = async (req, res, next) => {
         const userId = req.user._id;
         const botUser = await botService.getBotUser(userId);
 
-        if (!botUser) {
-            return res.status(404).json({
-                registered: false,
-                message: 'Not registered for bot yet',
-            });
-        }
-
         res.status(200).json({
-            registered: true,
-            botUser: {
-                phone: botUser.userId.phone,
-                preferred_time: botUser.preferred_time,
-                streak: botUser.streak,
-                last_answered: botUser.last_answered,
-            },
+            registered: !!botUser,
+            botUser: botUser || null,
         });
     } catch (error) {
         next(error);
@@ -126,91 +298,37 @@ exports.getBotStatus = async (req, res, next) => {
 };
 
 /**
- * Get 30-day insights
- * GET /api/bot/insights
- */
-exports.getInsights = async (req, res, next) => {
-    try {
-        const userId = req.user._id;
-        const insights = await botService.generateInsights(userId);
-
-        res.status(200).json(insights);
-    } catch (error) {
-        next(error);
-    }
-};
-
-/**
- * Update bot preferences
- * PATCH /api/bot/preferences
- * Body: { preferred_time: '21:00' }
- */
-exports.updatePreferences = async (req, res, next) => {
-    try {
-        const userId = req.user._id;
-        const { preferred_time } = req.body;
-
-        if (!['21:00', '21:30', '22:00'].includes(preferred_time)) {
-            return res.status(400).json({
-                error: 'Invalid preferred_time. Choose from: 21:00, 21:30, 22:00',
-            });
-        }
-
-        const botUser = await botService.updateBotUserPreferences(userId, preferred_time);
-
-        res.status(200).json({
-            message: 'Preferences updated',
-            botUser: {
-                preferred_time: botUser.preferred_time,
-            },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-/**
- * Get today's 3 questions for the logged-in user
+ * Get today's questions for in-app display
  * GET /api/bot/today
  */
 exports.getTodayQuestionsHandler = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const data = await botService.getTodayQuestions(userId);
-        res.status(200).json(data);
+        const result = await botService.getTodayQuestions(req.user._id);
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
 };
 
 /**
- * Submit answers for today's questions (in-app)
+ * Submit in-app answer
  * POST /api/bot/answer
- * Body: { question_ids: string[], answers: ('Y'|'N'|'Hmm')[] }
  */
 exports.submitAnswerHandler = async (req, res, next) => {
     try {
-        const userId = req.user._id;
         const { question_ids, answers } = req.body;
 
-        if (!question_ids || !answers || question_ids.length !== answers.length) {
-            return res.status(400).json({ error: 'question_ids and answers arrays required and must match in length' });
+        if (!question_ids || !answers || question_ids.length !== 3 || answers.length !== 3) {
+            return res.status(400).json({ error: 'Provide exactly 3 question_ids and 3 answers' });
         }
 
-        const validAnswers = ['Y', 'N', 'Hmm'];
-        for (const a of answers) {
-            if (!validAnswers.includes(a)) {
-                return res.status(400).json({ error: `Invalid answer "${a}". Must be Y, N, or Hmm` });
-            }
-        }
-
-        const result = await botService.submitInAppAnswer(userId, question_ids, answers);
+        const result = await botService.submitInAppAnswer(req.user._id, question_ids, answers);
 
         if (result.alreadyAnswered) {
-            return res.status(409).json({ error: 'Already answered today. Come back tomorrow!' });
+            return res.status(409).json({ error: 'Already answered today', alreadyAnswered: true });
         }
 
-        res.status(200).json(result);
+        res.status(201).json(result);
     } catch (error) {
         next(error);
     }

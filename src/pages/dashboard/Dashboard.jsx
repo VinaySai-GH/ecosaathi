@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AnimatedCard from '../../components/animations/AnimatedCard.jsx';
+import InsightCard from '../../components/InsightCard.jsx';
+// import BotRegisterCard from './components/BotRegisterCard.jsx';
+import { apiFetch } from '../../api/client.js';
 import './dashboard.css';
 
 const FEATURES = [
@@ -53,7 +56,25 @@ const FEATURES = [
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+
+  const [insight,   setInsight]   = useState(null);
+  const [insightNew, setInsightNew] = useState(false);
+  const [insightDate, setInsightDate] = useState(null);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    // Fetch insight in background — page renders immediately regardless
+    apiFetch('/insights/eco', { requireAuth: true })
+      .then(res => {
+        if (res.insight) {
+          setInsight(res.insight);
+          setInsightNew(res.isNew);
+          setInsightDate(res.generatedAt);
+        }
+      })
+      .catch(err => console.warn('[Insight] Could not load insight:', err.message));
+  }, []);
 
   return (
     <div className="dashboard-container anim-enter">
@@ -61,6 +82,21 @@ export default function Dashboard() {
         <h1 className="welcome-text">Hello, {user?.name || 'Eco Saathi'} 👋</h1>
         <p className="welcome-subtext">Choose a module to start your journey.</p>
       </div>
+
+      {/* AI Insight Card — shows when available and not dismissed */}
+      {insight && !dismissed && (
+        <InsightCard
+          insight={insight}
+          isNew={insightNew}
+          generatedAt={insightDate}
+          onDismiss={() => setDismissed(true)}
+        />
+      )}
+
+      {/* Bot Registration / Status Card removed per user request */}
+      {/* <div style={{ marginBottom: '24px' }}>
+        <BotRegisterCard />
+      </div> */}
 
       <div className="dashboard-grid">
         {FEATURES.map((feature, index) => (
@@ -93,3 +129,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

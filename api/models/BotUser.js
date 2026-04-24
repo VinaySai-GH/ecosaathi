@@ -13,7 +13,6 @@ const botUserSchema = new mongoose.Schema(
         },
         preferred_time: {
             type: String,
-            enum: ['21:00', '21:30', '22:00'],
             default: '21:00',
         },
         streak: {
@@ -21,6 +20,9 @@ const botUserSchema = new mongoose.Schema(
             default: 0,
         },
         last_answered: {
+            type: Date,
+        },
+        last_notified_at: {
             type: Date,
         },
     },

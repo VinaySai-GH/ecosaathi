@@ -138,4 +138,19 @@ bash test_features.sh "your_token"
 
 ---
 
+## 🆕 April 23 Updates
+
+### Three Critical Fixes Applied:
+1. ✅ **Fixed conflicting messages** — No more "already answered" + insight simultaneously
+2. ✅ **Improved AI insights** — Now complete 4-sentence insights with specific data
+3. ✅ **Added documentation** — Complete WhatsApp setup guides
+
+### New Documentation:
+- `WHATSAPP_SETUP.md` — Complete Meta account setup (12 KB guide)
+- `PHONE_MANAGEMENT.md` — How to add new phone numbers (8 KB guide)
+- `QUICK_REFERENCE.md` — Quick troubleshooting & checklists
+- `FIXES_SUMMARY.md` — Before/after comparison of fixes
+
+---
+
 **Ready to demo!** 🎉

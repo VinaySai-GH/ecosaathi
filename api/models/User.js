@@ -32,6 +32,9 @@ const userSchema = new mongoose.Schema(
             default: 0,
             min: 0,
         },
+        last_insight_at:    { type: Date, default: null },
+        next_insight_after: { type: Date, default: null },
+        cached_insight:     { type: String, default: null },
     },
     { timestamps: true }
 );

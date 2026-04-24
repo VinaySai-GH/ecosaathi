@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "verify:bill": "node scripts/verify_bill_image.mjs"
+    "verify:bill": "node scripts/verify_bill_image.mjs",
+    "dev:bot": "npm run dev:bot --prefix api",
+    "clean": "rimraf node_modules api/node_modules dist"
   },
   "dependencies": {
     "axios": "^1.13.6",
