@@ -1,6 +1,7 @@
 const BotUser  = require('../models/BotUser');
 const User     = require('../models/User');
 const Answer   = require('../models/Answer');
+const Notification = require('../models/Notification');
 const { getDailyQuestions, getPersonalizedQuestions, findQuestionById, ALL_QUESTIONS } = require('../data/questions');
 const { getDailyQuote } = require('../data/quotes');
 const insightsService = require('./insights.service');
@@ -138,7 +139,16 @@ exports.submitInAppAnswer = async (userId, question_ids, answers) => {
     await botUser.save();
 
     // Award 5 pts + 50 bonus on 30-day streak
+    const bonusPoints = botUser.streak % 30 === 0 ? 50 : 0;
     const user = await User.findByIdAndUpdate(userId, { $inc: { points: 5 + bonusPoints } }, { new: true });
+    
+    await Notification.create({
+        user: userId,
+        message: bonusPoints > 0 
+            ? `Incredible! You earned 5 points for reflecting today, plus a 50 point bonus for your ${botUser.streak}-day streak! 🌟`
+            : `You earned 5 points for completing your daily reflection!`,
+        link: '/raatkahisaab'
+    });
 
     // ─── TRIGGER INSIGHT PUSH (once every 2-3 days) ───────────────────────────
     // We call getOrGenerateInsight which respects the cooldown.
@@ -214,6 +224,11 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
     await botUser.save();
 
     await User.findByIdAndUpdate(userId, { $inc: { points: 5 } });
+    await Notification.create({
+        user: userId,
+        message: `You earned 5 points for completing your daily reflection!`,
+        link: '/raatkahisaab'
+    });
 
     // ─── TRIGGER INSIGHT PUSH (once every 2-3 days) ───────────────────────────
     setTimeout(async () => {
@@ -229,6 +244,11 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
 
     if (botUser.streak === 30) {
         await User.findByIdAndUpdate(userId, { $inc: { points: 50 } });
+        await Notification.create({
+            user: userId,
+            message: `Incredible! You earned a 50 point bonus for your 30-day reflection streak! 🌟`,
+            link: '/raatkahisaab'
+        });
         return {
             success: true,
             milestone: '30_day_streak',

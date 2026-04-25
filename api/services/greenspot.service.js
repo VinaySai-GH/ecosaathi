@@ -1,5 +1,6 @@
 const Spot = require('../models/Spot');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 exports.getSpots = async (filters = {}) => {
     const { category, lat, lng, q, limit = 100 } = filters;
@@ -56,6 +57,11 @@ exports.createSpot = async (spotData, userId) => {
 
     // Award 30 points for adding a verified listing
     await User.findByIdAndUpdate(userId, { $inc: { points: 30 } });
+    await Notification.create({
+        user: userId,
+        message: `Great find! You earned 30 points for adding a new Green Spot.`,
+        link: '/greenspot'
+    });
 
     return spot.populate('added_by', 'name phone');
 };
@@ -72,6 +78,11 @@ exports.verifySpot = async (spotId, userId) => {
         
         // Award 5 points for verifying
         await User.findByIdAndUpdate(userId, { $inc: { points: 5 } });
+        await Notification.create({
+            user: userId,
+            message: `Thanks for helping the community! You earned 5 points for verifying a Green Spot.`,
+            link: '/greenspot'
+        });
     }
 
     return spot.populate('added_by', 'name phone');

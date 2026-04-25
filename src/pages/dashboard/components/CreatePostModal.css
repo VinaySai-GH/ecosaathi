@@ -316,7 +316,134 @@
 }
 .cpm-confirm-location-btn:disabled { opacity: 0.4; cursor: default; }
 
+/* ---------- GRIEVANCE SECTION ---------- */
+.cpm-grievance-section {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 4px;
+}
+
+.cpm-grievance-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cpm-gt-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cpm-gt-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.cpm-gt-desc {
+  font-size: 11px;
+  color: rgba(226, 245, 238, 0.4);
+}
+
+/* Switch styling */
+.cpm-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.cpm-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.cpm-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.cpm-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .cpm-slider {
+  background-color: #10b981;
+}
+
+input:focus + .cpm-slider {
+  box-shadow: 0 0 1px #10b981;
+}
+
+input:checked + .cpm-slider:before {
+  transform: translateX(20px);
+}
+
+.cpm-grievance-fields {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.cpm-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cpm-field-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(226, 245, 238, 0.7);
+}
+
+.cpm-field-group select,
+.cpm-field-group textarea {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  color: #e2f5ee;
+  outline: none;
+  font-family: inherit;
+}
+
+.cpm-field-group select:focus,
+.cpm-field-group textarea:focus {
+  border-color: #10b981;
+}
+
+.animate-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Scrollbar for modal */
 .cpm-modal::-webkit-scrollbar { width: 4px; }
 .cpm-modal::-webkit-scrollbar-track { background: transparent; }
 .cpm-modal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius:2px; }
+

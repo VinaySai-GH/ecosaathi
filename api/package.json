@@ -11,6 +11,7 @@
         "seed:spots": "node scripts/seedSpots.js"
     },
     "dependencies": {
+        "@sendgrid/mail": "^8.1.6",
         "axios": "^1.13.6",
         "bcryptjs": "^3.0.3",
         "cors": "^2.8.5",

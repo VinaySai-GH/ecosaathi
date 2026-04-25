@@ -35,6 +35,12 @@ const postSchema = new mongoose.Schema(
     },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [commentSchema],
+    isGrievance: { type: Boolean, default: false },
+    grievanceDetails: {
+      category: { type: String, default: null },
+      subCategory: { type: String, default: null },
+      description: { type: String, default: null },
+    },
   },
   { timestamps: true }
 );

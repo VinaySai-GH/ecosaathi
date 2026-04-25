@@ -94,6 +94,19 @@
   color: var(--badge-color, #4ade80);
   white-space: nowrap;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grievance-tag {
+  background: #ef4444;
+  color: white;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  border: none;
 }
 
 /* ---------- IMAGE ---------- */

@@ -19,6 +19,38 @@ const POST_TYPES = [
   { id: 'issue', label: 'Issue', icon: '⚠️', desc: 'Report an environmental issue' },
 ];
 
+const GRIEVANCE_CATEGORIES = {
+  'Public Health & sanitation': [
+    'Complaints Regarding Public Toilets',
+    'Removal of Debris',
+    'Death of Stray Animals',
+    'Removal of garbage',
+    'Improper Sweeping',
+    'Yellow Spot Removal'
+  ],
+  'water supply': [
+    'Issues related to drinking water supply',
+    'Water pipe leakage',
+    'Contamination of water'
+  ],
+  'Engineering': [
+    'Repair to existing footpath',
+    'Replacement of cover for manholes',
+    'Repair Bore Wells'
+  ],
+  'park & greenery': [
+    'Complaint Regarding Tree Guards',
+    'Unauthorissed Tree Cutting',
+    'Maintenance of parks'
+  ],
+  'public property': [
+    'Hanging of streetlight wires',
+    'Non burning of Street lights',
+    'Broken Bin',
+    'Encroachment on the Public Property'
+  ]
+};
+
 function MapClickHandler({ onPick }) {
   useMapEvents({ click: (e) => onPick(e.latlng) });
   return null;
@@ -59,6 +91,13 @@ export default function CreatePostModal({ initialType, onClose, onCreated }) {
   const [locating, setLocating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  
+  // Grievance States
+  const [isGrievance, setIsGrievance] = useState(false);
+  const [grievanceCategory, setGrievanceCategory] = useState('');
+  const [grievanceSubCategory, setGrievanceSubCategory] = useState('');
+  const [grievanceDescription, setGrievanceDescription] = useState('');
+
   const fileInputRef = useRef(null);
   const typeMeta = POST_TYPES.find((t) => t.id === type);
 
@@ -129,10 +168,30 @@ export default function CreatePostModal({ initialType, onClose, onCreated }) {
       setError('Please add a caption or an image.');
       return;
     }
+
+    if (isGrievance) {
+      if (!grievanceCategory || !grievanceSubCategory || !grievanceDescription.trim()) {
+        setError('Please fill all grievance fields.');
+        return;
+      }
+    }
+
     setSubmitting(true);
     setError('');
     try {
-      const res = await createPost({ type, caption, image, locationText, locationCoords });
+      const res = await createPost({ 
+        type, 
+        caption, 
+        image, 
+        locationText, 
+        locationCoords,
+        isGrievance,
+        grievanceDetails: isGrievance ? {
+          category: grievanceCategory,
+          subCategory: grievanceSubCategory,
+          description: grievanceDescription
+        } : null
+      });
       onCreated(res.post);
       onClose();
     } catch (err) {
@@ -202,6 +261,71 @@ export default function CreatePostModal({ initialType, onClose, onCreated }) {
               </button>
             </div>
 
+            {/* Grievance Option */}
+            {type === 'issue' && (
+              <div className="cpm-grievance-section">
+                <div className="cpm-grievance-toggle">
+                  <div className="cpm-gt-info">
+                    <span className="cpm-gt-title">Complain Authorities</span>
+                    <span className="cpm-gt-desc">Puramithra Grievance - report an issue</span>
+                  </div>
+                  <label className="cpm-switch">
+                    <input 
+                      type="checkbox" 
+                      checked={isGrievance} 
+                      onChange={(e) => setIsGrievance(e.target.checked)} 
+                    />
+                    <span className="cpm-slider round"></span>
+                  </label>
+                </div>
+
+                {isGrievance && (
+                  <div className="cpm-grievance-fields animate-in">
+                    <div className="cpm-field-group">
+                      <label>Category</label>
+                      <select 
+                        value={grievanceCategory} 
+                        onChange={(e) => {
+                          setGrievanceCategory(e.target.value);
+                          setGrievanceSubCategory(''); // reset sub
+                        }}
+                      >
+                        <option value="">Select Category</option>
+                        {Object.keys(GRIEVANCE_CATEGORIES).map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {grievanceCategory && (
+                      <div className="cpm-field-group">
+                        <label>Sub Category</label>
+                        <select 
+                          value={grievanceSubCategory} 
+                          onChange={(e) => setGrievanceSubCategory(e.target.value)}
+                        >
+                          <option value="">Select Sub Category</option>
+                          {GRIEVANCE_CATEGORIES[grievanceCategory].map(sub => (
+                            <option key={sub} value={sub}>{sub}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    <div className="cpm-field-group">
+                      <label>Describe your Problem in detail</label>
+                      <textarea
+                        placeholder="Please be professional and clear..."
+                        value={grievanceDescription}
+                        onChange={(e) => setGrievanceDescription(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {error && <p className="cpm-error">{error}</p>}
 
             <button
@@ -219,11 +343,12 @@ export default function CreatePostModal({ initialType, onClose, onCreated }) {
             {/* Search bar */}
             <div className="cpm-search-row">
               <input
-                className="cpm-search-input"
-                placeholder="Search a place..."
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="Search city, state... (Optional for News)"
+                className="cpm-search-input"
               />
               <button className="cpm-search-btn" onClick={handleSearch} disabled={searching}>
                 {searching ? '…' : '🔍'}

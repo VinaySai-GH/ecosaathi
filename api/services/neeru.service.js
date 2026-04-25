@@ -1,5 +1,6 @@
 const WaterLog = require('../models/WaterLog');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 exports.saveWaterLog = async (userId, payload, overwrite = false) => {
     const { month, year, city, kl_used } = payload;
@@ -27,6 +28,11 @@ exports.saveWaterLog = async (userId, payload, overwrite = false) => {
         await User.findByIdAndUpdate(userId, { 
             $inc: { points: 50 },
             $addToSet: { water_logs: log._id }
+        });
+        await Notification.create({
+            user: userId,
+            message: `Awesome! You earned 50 points for tracking your water usage (${kl_used} kL) this month.`,
+            link: '/neeru'
         });
     } else {
         // Ensure log ID is stored even on updates if missing

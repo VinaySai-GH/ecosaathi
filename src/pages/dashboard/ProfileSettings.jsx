@@ -94,7 +94,7 @@ export default function ProfileSettings() {
 
   return (
     <div className="profile-page anim-enter">
-      <div className={`profile-layout-split ${editOpen ? 'editing' : ''}`}>
+      <div className="profile-layout-split">
         
         {/* Left/Top Column */}
         <div className="profile-main-col">
@@ -140,9 +140,9 @@ export default function ProfileSettings() {
             <div className="profile-action-row">
               <button
                 className="profile-action-btn primary"
-                onClick={() => setEditOpen(!editOpen)}
+                onClick={() => setEditOpen(true)}
               >
-                {editOpen ? 'Close Edit' : 'Edit Profile'}
+                Edit Profile
               </button>
               <button
                 className="profile-action-btn"
@@ -158,10 +158,14 @@ export default function ProfileSettings() {
 
       </div> {/* End left/top column */}
 
-      {/* ── Edit Form (collapsible panel) ── */}
+      {/* ── Edit Form (Hovering Modal) ── */}
       {editOpen && (
-        <div className="profile-edit-card anim-enter">
-          <h3 className="profile-edit-title">Edit Profile</h3>
+        <div className="profile-edit-modal-overlay" onClick={(e) => e.target === e.currentTarget && setEditOpen(false)}>
+          <div className="profile-edit-modal anim-enter">
+            <div className="profile-edit-header">
+              <h3 className="profile-edit-title">Edit Profile</h3>
+              <button className="profile-edit-close" onClick={() => setEditOpen(false)}>✕</button>
+            </div>
 
           <form onSubmit={handleUpdate} className="profile-form">
 
@@ -250,20 +254,25 @@ export default function ProfileSettings() {
             <div className="pf-actions">
               {error && <p className="pf-error">{error}</p>}
               {message && <p className="pf-success">{message}</p>}
-              <button type="submit" className="pf-save-btn" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save Changes'}
-              </button>
+              <div className="pf-action-buttons">
+                <button type="button" className="pf-cancel-btn" onClick={() => setEditOpen(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="pf-save-btn" disabled={isSubmitting}>
+                  {isSubmitting ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
 
           </form>
+        </div>
         </div>
       )}
 
       </div> {/* End .profile-layout-split */}
 
       {/* ── Posts Section (Instagram-style grid) ── */}
-      {!editOpen && (
-        <div className="profile-posts-wrapper anim-enter">
+      <div className="profile-posts-wrapper anim-enter">
           <div className="upp-divider" style={{ margin: '30px 0 0' }} />
           <div className="upp-tabs">
             <div className="upp-tab active">
@@ -303,7 +312,6 @@ export default function ProfileSettings() {
             )}
           </div>
         </div>
-      )}
 
       {selectedPost && (
         <CommentsModal

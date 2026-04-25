@@ -78,6 +78,9 @@ export default function PostCard({ post: initialPost, currentUserId, onUserClick
                 • {post.status}
               </span>
             )}
+            {post.isGrievance && (
+              <span className="grievance-tag">Grievance Reported</span>
+            )}
           </span>
         </div>
 

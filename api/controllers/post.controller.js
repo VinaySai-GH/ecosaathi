@@ -1,5 +1,7 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
+const mailService = require('../services/mail.service');
 
 // Trending score: recency + like-weight
 function trendScore(post) {
@@ -33,7 +35,7 @@ exports.getPosts = async (req, res, next) => {
 // POST /api/posts
 exports.createPost = async (req, res, next) => {
   try {
-    const { type, caption, image, locationText, locationCoords } = req.body;
+    const { type, caption, image, locationText, locationCoords, isGrievance, grievanceDetails } = req.body;
 
     if (!type) {
       return res.status(400).json({ error: 'Post type is required.' });
@@ -46,12 +48,91 @@ exports.createPost = async (req, res, next) => {
       image: image || null,
       locationText: locationText || '',
       locationCoords: locationCoords || { lat: null, lng: null },
+      isGrievance: isGrievance || false,
+      grievanceDetails: grievanceDetails || { category: null, subCategory: null, description: null },
     });
 
-    await post.populate('user', 'name city');
+    await post.populate('user', 'name city phone');
 
     // Award points for posting
-    await User.findByIdAndUpdate(req.user._id, { $inc: { points: 10 } });
+    await User.findByIdAndUpdate(req.user._id, { $inc: { points: 3 } });
+
+    // Send notification for points
+    await Notification.create({
+      user: req.user._id,
+      message: `You earned 3 points for creating a new ${type} post!`,
+    });
+
+    // Handle Grievance in background
+    if (isGrievance) {
+      const draftGrievanceMail = async () => {
+        try {
+          const user = post.user;
+          const { category, subCategory, description } = grievanceDetails;
+          
+          // Basic extraction of city/address parts
+          const addressParts = locationText.split(',').map(s => s.trim());
+          const city = addressParts[0] || 'Unknown City';
+          const locality = addressParts.slice(1, 3).join(', ') || 'Unknown Locality';
+
+          const subject = `Grievance Regarding ${category} (${subCategory}) – ${city}`;
+          
+          const html = `
+            <h3>Civic Issue Grievance Report</h3>
+            <p><strong>To,</strong><br/>The Commissioner & Director of Municipal Administration's Head office, Andhra Pradesh.</p>
+            
+            <p><strong>Dear Sir/Madam,</strong></p>
+            
+            <p>I am writing to report a civic issue in my locality. Below are my details:</p>
+            
+            <ul>
+              <li><strong>Full Name:</strong> ${user.name}</li>
+              <li><strong>Mobile Number:</strong> ${user.phone || 'Not provided'}</li>
+              <li><strong>Address:</strong> ${locationText}</li>
+              <li><strong>Category:</strong> ${category}</li>
+              <li><strong>Sub-Category:</strong> ${subCategory}</li>
+            </ul>
+            
+            <p><strong>Issue Description:</strong><br/>
+            ${description}</p>
+            
+            <p>I have attached a photo of the issue for your reference.</p>
+            
+            <p>Kindly look into this matter and resolve it at the earliest.</p>
+            
+            <p><strong>Sincerely,</strong><br/>
+            ${user.name}<br/>
+            Resident/Citizen</p>
+          `;
+
+          await mailService.sendGrievanceEmail({
+            to: 'yuvabhargav27@gmail.com',
+            subject,
+            html,
+            image: post.image,
+          });
+
+          // Create success notification
+          await Notification.create({
+            user: user._id,
+            message: 'Your grievance is mailed to CDMA, and kindly raise your grievance at https://cdma.ap.gov.in',
+            link: 'https://cdma.ap.gov.in',
+          });
+
+        } catch (error) {
+          console.error('[Grievance] Background process failed:', error);
+          // Create failure notification
+          await Notification.create({
+            user: req.user._id,
+            message: 'Failed to send your grievance email to CDMA. Please try again or visit https://cdma.ap.gov.in directly.',
+            link: 'https://cdma.ap.gov.in',
+          });
+        }
+      };
+
+      // Execute in background
+      draftGrievanceMail();
+    }
 
     res.status(201).json({ post });
   } catch (error) {

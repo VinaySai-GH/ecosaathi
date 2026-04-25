@@ -13,6 +13,7 @@ const botRoutes       = require('./routes/bot.routes');
 const insightsRoutes  = require('./routes/insights.routes');
 const postRoutes      = require('./routes/post.routes');
 const userRoutes      = require('./routes/user.routes');
+const notificationRoutes = require('./routes/notification.routes');
 const scheduler       = require('./services/scheduler');
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/bot',         botRoutes);
 app.use('/api/insights',    insightsRoutes);
 app.use('/api/posts',       postRoutes);
 app.use('/api/users',       userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {

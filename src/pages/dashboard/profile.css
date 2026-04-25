@@ -23,16 +23,7 @@
         max-width: 960px; /* Wider to accommodate split */
     }
     .profile-layout-split.editing {
-        flex-direction: row;
-        align-items: flex-start;
-    }
-    .profile-layout-split.editing .profile-main-col {
-        flex: 1;
-        position: sticky;
-        top: 24px;
-    }
-    .profile-layout-split.editing .profile-edit-card {
-        flex: 1;
+        /* No longer split layout, editing is a modal */
     }
 }
 
@@ -213,14 +204,37 @@
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
 }
 
-/* ── Edit Form Card ── */
-.profile-edit-card {
+/* ── Edit Form Modal ── */
+.profile-edit-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+}
+
+.profile-edit-modal {
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-xl);
     padding: 28px 32px;
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.profile-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .profile-edit-title {
@@ -229,7 +243,20 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    margin-bottom: 20px;
+    margin: 0;
+}
+
+.profile-edit-close {
+    background: none;
+    border: none;
+    color: rgba(226, 245, 238, 0.5);
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.profile-edit-close:hover {
+    color: #e2f5ee;
 }
 
 .profile-form {
@@ -304,8 +331,30 @@
     gap: 10px;
 }
 
+.pf-action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.pf-cancel-btn {
+    flex: 1;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(226, 245, 238, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pf-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 .pf-save-btn {
-    width: 100%;
+    flex: 2;
     padding: 15px;
     background: var(--accent-dim);
     color: var(--accent);
