@@ -24,12 +24,12 @@ const CARDS = [
     bg: 'rgba(59,130,246,0.08)',
   },
   {
-    icon: '📢',
-    title: 'Report & Engage',
+    icon: '🤝',
+    title: 'Civic Engagement & Action',
     description:
-      'Report local environmental issues like illegal dumping, open burning, air pollution, or water contamination in your area. Other users can upvote and verify reports. High impact reports get flagged as Community Verified and earn you Eco Pulse points.',
-    button: 'Report an Issue →',
-    route: '/ecolearn/reports',
+      'Your central repository for real-world environmental education. Discover direct links to civic engagement platforms, apps, and learning resources to turn awareness into action.',
+    button: 'Explore Resources →',
+    route: '/ecolearn/engagement',
     accent: '#f97316',
     bg: 'rgba(249,115,22,0.08)',
   },

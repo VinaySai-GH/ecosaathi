@@ -25,8 +25,7 @@ import LessonPage from './pages/ecolearn/lessons/LessonPage.jsx';
 import QuizPage from './pages/ecolearn/lessons/QuizPage.jsx';
 import PoliciesHome from './pages/ecolearn/policies/PoliciesHome.jsx';
 import PolicyDetail from './pages/ecolearn/policies/PolicyDetail.jsx';
-import ReportsHome from './pages/ecolearn/reports/ReportsHome.jsx';
-import CreateReport from './pages/ecolearn/reports/CreateReport.jsx';
+import EngagementHome from './pages/ecolearn/engagement/EngagementHome.jsx';
 
 // Wrapper that redirects to /login if not authenticated
 function PrivateRoute({ children }) {
@@ -83,8 +82,7 @@ const router = createBrowserRouter([
       { path: 'ecolearn/lessons/:moduleId/quiz', element: <QuizPage /> },
       { path: 'ecolearn/policies', element: <PoliciesHome /> },
       { path: 'ecolearn/policies/:policyId', element: <PolicyDetail /> },
-      { path: 'ecolearn/reports', element: <ReportsHome /> },
-      { path: 'ecolearn/reports/new', element: <CreateReport /> },
+      { path: 'ecolearn/engagement', element: <EngagementHome /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },
