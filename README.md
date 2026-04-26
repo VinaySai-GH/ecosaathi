@@ -8,17 +8,29 @@ EcoSaathi makes environmental action tangible, social, and specific to the India
 
 ## ✨ Features
 
-### 💧 Neeru — Water Bill Translator
-Photograph your monthly water bill. Neeru translates raw kilolitres into human-scale comparisons that actually hit home — *"your household used enough water to sustain 3 farming families in Tirupati for a month."* Tracks your 6-month trend, benchmarks you against your city's per-capita average using CGWB data, and gives 3 reduction tips specific to Indian households. Generates a shareable monthly certificate.
+### 🏠 Home Feed — Community Hub
+A dedicated social feed for sharing eco-news, sustainable events, and reporting civic issues. Supports images, deep-linked location tags, and community discussions. It's the central town square for sustainability.
 
-### 🗺️ Green Spot — Community Eco Map
+### 💧 Neeru — Water Bill Translator
+Log your monthly water usage, and Neeru translates raw kilolitres into human-scale comparisons that actually hit home — *"your household used enough water to sustain 3 farming families in Tirupati for a month."* Tracks your 6-month trend and gives actionable reduction tips specific to Indian households.
+
+### 👣 Carbon Prints — Footprint Wizard
+A dynamic, multi-category carbon footprint tracker (electricity, transport, food, shopping, waste). An intuitive wizard calculates your monthly emissions with real-time feedback, showing exactly where your impact comes from and how to trim it down.
+
+### 🗺️ Eco Atlas (Green Spot) — Community Eco Map
 A community-maintained map of eco-friendly places near you: e-waste drop-off centres, zero-waste stores, organic markets, water refill stations, and composting facilities. Anyone can add a spot, upload photos, and verify each other's listings. The green choice becomes the easy choice.
 
+### 🌬️ Pollution Sense — Real-time Air Quality
+Stay informed with live Air Quality Index (AQI) monitoring. Uses OpenAQ integration to show accurate local pollution levels, combined with community-reported pollution hotspots on the map.
+
 ### 🌙 Raat Ka Hisaab — Nightly Reflection Bot
-A WhatsApp chatbot that messages you every night at a time you choose. Three rotating questions across food, water, transport, waste, and nature categories. Reply Y / N / Hmm — that's it. After 30 days your answers become a personalised eco-journal with behavioural insights. No app download required — it meets you where you already are.
+A WhatsApp chatbot that messages you every night for reflection. Tracks daily streaks across eco-friendly habits. Reply quickly, and over time your answers become a personalised eco-journal with behavioural insights. No app download required — it meets you where you already are.
 
 ### 🏆 Eco Pulse — Campus Leaderboard
-All three features feed into a single Eco Pulse score. Hostels compete on a live campus leaderboard — individual daily habits become collective identity and healthy competition. Weekly digest notifications keep the momentum going.
+All app features feed into a single Eco Pulse score. Users and cities compete on a live leaderboard — individual daily habits become collective identity and healthy competition. Points are dynamically awarded for logging water, verifying spots, or maintaining chat streaks.
+
+### 📚 Eco Learn — Knowledge Hub
+Your central repository for real-world environmental education. Users can get all the info related to practical environmental practices, sustainability, the plastic lifecycle, and good practices of urban/rural planning. Discover policies on environment and sustainable development in India, along with direct links to civic engagement platforms and learning resources to turn awareness into action.
 
 ---
 
@@ -48,7 +60,8 @@ All three features feed into a single Eco Pulse score. Hostels compete on a live
 1. **Install Dependencies**
    ```bash
    npm install
-   cd api && npm install
+   cd api
+   npm install
    ```
 
 2. **Start the App (The Easy Way)**
@@ -81,6 +94,6 @@ rm -rf node_modules api/node_modules dist
 
 ## 🌱 The Goal
 
-50+ active users on campus, 65+ verified eco-friendly locations on the map, and real measurable reduction in water usage — all driven by small daily actions.
+50k+ active users in India, 6500+ verified eco-friendly locations(spot) on the map, and real measurable reduction in water usage — all driven by small daily actions.
 
 *Small daily actions. Collective campus-scale impact.*

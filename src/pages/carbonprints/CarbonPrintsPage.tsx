@@ -149,6 +149,7 @@ export default function CarbonPrintsPage() {
               <div 
                 key={h._id || h.month.toString() + h.year.toString()}
                 onClick={() => viewHistoryItem(h)} 
+                className="history-item"
                 style={{ 
                   background: '#1a3626', borderRadius: '16px', padding: '20px 24px', 
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer',
@@ -158,14 +159,14 @@ export default function CarbonPrintsPage() {
                 onMouseOut={(e) => (e.currentTarget.style.borderColor = 'transparent')}
               >
                  <div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f8fafc' }}>
+                    <div className="history-date" style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f8fafc' }}>
                       {new Date(0, h.month-1).toLocaleString('en', { month: 'long' })} {h.year}
                     </div>
                     <div style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '4px' }}>
                       Eco Score: {h.eco_score}/100
                     </div>
                  </div>
-                 <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#10B981' }}>
+                 <div className="history-value" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#10B981' }}>
                     {h.monthly_carbon} kg CO₂
                  </div>
               </div>

@@ -20,8 +20,10 @@
 
 @media (min-width: 769px) {
     .profile-page {
-        max-width: 960px; /* Wider to accommodate split */
+        max-width: 960px;
+        /* Wider to accommodate split */
     }
+
     .profile-layout-split.editing {
         /* No longer split layout, editing is a modal */
     }
@@ -39,8 +41,65 @@
 
 .profile-hero-inner {
     display: flex;
-    align-items: flex-start;
-    gap: 36px;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-top-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+}
+
+.profile-primary-stats {
+    display: flex;
+    justify-content: space-around;
+    flex: 1;
+}
+
+.profile-stat-ig {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-stat-val-ig {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e2f5ee;
+}
+
+.profile-stat-lbl-ig {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.profile-secondary-stats {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.profile-stat-sec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.profile-stat-val-sec {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2f5ee;
+}
+
+.profile-stat-lbl-sec {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: capitalize;
 }
 
 /* ── Avatar ── */
@@ -123,45 +182,32 @@
 .profile-stats-row {
     display: flex;
     align-items: center;
-    gap: 0;
-    margin-top: 6px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
+    gap: 24px;
+    margin-top: 12px;
+    flex-wrap: wrap;
 }
 
 .profile-stat {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 8px;
-    gap: 2px;
 }
 
 .profile-stat-val {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--accent);
+    font-size: 18px;
+    font-weight: 700;
+    color: #e2f5ee;
     letter-spacing: -0.5px;
     font-variant-numeric: tabular-nums;
 }
 
 .profile-stat-lbl {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
+    font-size: 12px;
+    color: rgba(226, 245, 238, 0.6);
+    text-transform: capitalize;
     letter-spacing: 0.4px;
     white-space: nowrap;
     font-weight: 600;
-}
-
-.profile-stat-divider {
-    width: 1px;
-    height: 40px;
-    background: var(--border);
-    flex-shrink: 0;
 }
 
 /* ── Action Buttons ── */

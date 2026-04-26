@@ -6,7 +6,7 @@ const mailService = require('../services/mail.service');
 // Trending score: recency + like-weight
 function trendScore(post) {
   const ageHours = (Date.now() - new Date(post.createdAt).getTime()) / 3600000;
-  return post.likes.length * 3 - ageHours * 0.5;
+  return post.likes.length * 10 - ageHours * 0.5;
 }
 
 // GET /api/posts?page=1&limit=20

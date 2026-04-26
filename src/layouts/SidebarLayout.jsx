@@ -17,8 +17,8 @@ const SIDEBAR_LINKS = [
 ];
 
 export default function SidebarLayout() {
-  // Mobile: hamburger-controlled
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Mobile: top-left dropdown menu
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // Desktop: hover-controlled expansion
   const [isExpanded, setIsExpanded] = useState(false);
   // Desktop Notifications Panel
@@ -28,8 +28,10 @@ export default function SidebarLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Close dropdown if clicked outside (simple overlay strategy inside render)
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
@@ -38,7 +40,7 @@ export default function SidebarLayout() {
 
   const handleNavClick = (path) => {
     navigate(path);
-    closeSidebar();
+    closeMobileMenu();
   };
 
   const handleNotificationClick = () => {
@@ -60,10 +62,22 @@ export default function SidebarLayout() {
       {/* Top Navbar */}
       <header className="top-navbar">
         <div className="nav-left">
-          {/* Hamburger: only visible on mobile */}
-          <button className="menu-toggle-btn" onClick={toggleSidebar} aria-label="Toggle menu">
-            ☰
-          </button>
+          {/* Hamburger: toggles dropdown on mobile */}
+          <div className="mobile-menu-container">
+            <button className="menu-toggle-btn" onClick={toggleMobileMenu} aria-label="Toggle menu">
+              ☰
+            </button>
+            {isMobileMenuOpen && (
+              <>
+                <div className="mobile-dropdown-overlay" onClick={closeMobileMenu} />
+                <div className="mobile-dropdown-menu">
+                  <button className="dropdown-item danger" onClick={signOut}>
+                    <span className="dropdown-icon">🚪</span> Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
           <div className="brand-logo" onClick={() => handleNavClick('/')}>
             <span className="brand-icon">🌿</span>
             <span className="brand-text">EcoSaathi</span>
@@ -85,7 +99,7 @@ export default function SidebarLayout() {
       <div className="layout-body">
         {/* Desktop Sidebar — hover to expand */}
         <aside
-          className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'} ${isSidebarOpen ? 'open' : ''}`}
+          className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}
           onMouseEnter={() => setIsExpanded(true)}
           onMouseLeave={() => setIsExpanded(false)}
         >
@@ -115,11 +129,6 @@ export default function SidebarLayout() {
           </div>
         </aside>
 
-        {/* Overlay for mobile */}
-        {isSidebarOpen && (
-          <div className="sidebar-overlay" onClick={closeSidebar} />
-        )}
-
         {/* Main Content */}
         <main className="main-content">
           <div className="content-container">
@@ -128,6 +137,20 @@ export default function SidebarLayout() {
           <Footer />
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="bottom-navbar">
+        {SIDEBAR_LINKS.filter(link => link.path !== '/profile').map((link) => (
+          <button
+            key={link.path}
+            className={`bottom-nav-item ${isActive(link.path) ? 'active' : ''}`}
+            onClick={() => handleNavClick(link.path)}
+            title={link.label}
+          >
+            <span className="bottom-nav-icon">{link.icon}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

@@ -222,6 +222,9 @@
   display: block;
   transition: transform 0.25s;
   line-height: 1;
+  font-size: 36px;
+  font-weight: 700;
+  color: #0a1f17; /* 2d shape, flat color */
 }
 
 .fab-btn.open .fab-plus {
@@ -298,7 +301,7 @@
   .feed-loading { padding: 12px 0; }
 
   .fab-area {
-    bottom: 20px;
+    bottom: 84px; /* Raised above bottom nav */
     right: 16px;
   }
 }

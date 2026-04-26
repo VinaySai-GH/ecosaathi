@@ -165,13 +165,13 @@ export default function DashboardStats({ data, history, onRecalculate, onViewHis
           <div className="stat-card">
             <span style={{ fontSize: '3rem' }}>{scoreInfo.emoji}</span>
             <div className="stat-value" style={{ color: scoreInfo.color }}>{log.eco_score}/100</div>
-            <div className="stat-label">Eco Score ({scoreInfo.label})</div>
+            <div className="stat-label">Carbon Score ({scoreInfo.label})</div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card" style={{ gridColumn: '1 / -1' }}>
             <TreePine size={48} color="#10B981" />
             <div className="stat-value">{log.trees_needed}</div>
-            <div className="stat-label">Trees needed to offset yearly output ({log.yearly_carbon} kg)</div>
+            <div className="stat-label">Trees needed to offset yearly emission ({log.yearly_carbon} kg)</div>
           </div>
         </div>
 
