@@ -13,6 +13,7 @@ const SIDEBAR_LINKS = [
   { path: '/greenspot', label: 'Eco Atlas', icon: '🗺️' },
   { path: '/raatkahisaab', label: 'Raat Ka Hisaab', icon: '🌙' },
   { path: '/ecopulse', label: 'Eco Pulse', icon: '🏆' },
+  { path: '/ecolearn', label: 'EcoLearn', icon: '📚' },
   { path: '/profile', label: 'Profile', icon: '👤' },
 ];
 

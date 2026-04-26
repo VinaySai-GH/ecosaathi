@@ -14,6 +14,8 @@ const insightsRoutes  = require('./routes/insights.routes');
 const postRoutes      = require('./routes/post.routes');
 const userRoutes      = require('./routes/user.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const ecoLearnRoutes  = require('./routes/ecolearn.routes');
+const ecoReportRoutes = require('./routes/ecoreport.routes');
 const scheduler       = require('./services/scheduler');
 
 const app = express();
@@ -35,6 +37,8 @@ app.use('/api/insights',    insightsRoutes);
 app.use('/api/posts',       postRoutes);
 app.use('/api/users',       userRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ecolearn',  ecoLearnRoutes);
+app.use('/api/ecoreport', ecoReportRoutes);
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {
