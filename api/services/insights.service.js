@@ -6,7 +6,7 @@ const BotUser   = require('../models/BotUser');
 const whatsappService = require('./whatsapp.service');
 
 const GEMINI_URL =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 const MONTHS = [
     'January','February','March','April','May','June',
@@ -199,7 +199,7 @@ async function callGemini(prompt) {
         }
     };
 
-    const MODELS_TO_TRY = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+    const MODELS_TO_TRY = ['gemini-1.5-flash', 'gemini-1.5-flash-latest'];
     let lastError = null;
 
     for (const model of MODELS_TO_TRY) {

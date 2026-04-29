@@ -1,7 +1,7 @@
 const insightsService = require('./insights.service');
 
 const GEMINI_URL =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 /**
  * AI Service for conversational bot responses
