@@ -148,7 +148,7 @@ exports.handleWebhook = async (req, res) => {
             if (lowerMsg === 'yes' || lowerMsg === 'ready' || lowerMsg === 'questions') {
                 const { questions, alreadyAnswered } = await botService.getTodayQuestions(botUser.userId);
                 if (alreadyAnswered) {
-                    await whatsappService.sendTextMessage(from, `✅ You've already answered today's questions! Your streak is safe. See you tomorrow 🌙`);
+                    await whatsappService.sendTextMessage(from, `🌟 *You're a legend!* You've already completed your reflection today. Your eco-streak is glowing! 🌿✨\n\nRest up, and let's save the planet again tomorrow 🌙`);
                 } else {
                     let qText = `Here are today's questions:\n\n`;
                     questions.forEach((q, i) => {
@@ -228,9 +228,9 @@ exports.handleWebhook = async (req, res) => {
             if (alreadyAnswered) {
                 await whatsappService.sendTextMessage(
                     from,
-                    `✅ You've already reflected today!\n` +
-                    `🔥 Your streak is going strong.\n\n` +
-                    `📊 See your eco profile → ${webappUrl}/raatkahisaab`
+                    `🌿 *High Five!* You've already done your part today.\n` +
+                    `🔥 Your eco-streak is safe and sound.\n\n` +
+                    `📊 See your progress here → ${webappUrl}/raatkahisaab`
                 );
                 continue;
             }

@@ -6,6 +6,7 @@ import './auth.css';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
+  const [countryCode, setCountryCode] = useState('91');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [city, setCity] = useState('');
@@ -40,28 +41,30 @@ export default function RegisterPage() {
       setError('Please enter your name.'); 
       return; 
     }
-    if (!phone || phone.length !== 10) { 
-      setError('Phone must be 10 digits (e.g., 9919492311)'); 
-      return; 
-    }
-    if (!/^\d{10}$/.test(phone)) {
-      setError('Phone must contain only numbers (e.g., 9919492311)');
+    if (!countryCode.trim()) {
+      setError('Please enter a country code.');
       return;
     }
-    if (!password || password.length < 6) { 
-      setError('Password must be at least 6 characters (e.g., MyPass123)'); 
+    if (!phone || phone.length < 7) { 
+      setError('Please enter a valid phone number.'); 
       return; 
     }
-    const finalCity = isOtherCity ? city : city; // city is synced
+    if (!password || password.length < 6) { 
+      setError('Password must be at least 6 characters.'); 
+      return; 
+    }
     if (!city.trim()) {
       setError('Please select or enter your city.');
       return;
     }
+
+    const fullPhone = countryCode.replace(/\D/g, '') + phone.replace(/\D/g, '');
+
     setIsSubmitting(true);
     try {
-      const userData = await registerUser(name, phone, password, city);
+      const userData = await registerUser(name, fullPhone, password, city);
       // Save phone number for future login
-      localStorage.setItem('@remember_phone', phone);
+      localStorage.setItem('@remember_phone', fullPhone);
       signIn(userData);
       navigate('/');
     } catch (err) {
@@ -91,9 +94,36 @@ export default function RegisterPage() {
           <input type="text" placeholder="Your Name" value={name}
             onChange={(e) => { setName(e.target.value); setError(''); }} autoFocus />
           <label className="auth-label" style={{ marginTop: 20 }}>Phone Number</label>
-          <input type="tel" placeholder="10-digit number (e.g., 9919492311)" value={phone} maxLength={10}
-            onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError(''); }} />
-          <p className="auth-hint" style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 4 }}>Enter without spaces or dashes</p>
+          <div className="phone-input-container" style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <div style={{ position: 'relative', width: '70px' }}>
+              <span style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent)', fontWeight: 'bold' }}>+</span>
+              <input 
+                type="text" 
+                value={countryCode} 
+                onChange={(e) => setCountryCode(e.target.value.replace(/\D/g, ''))}
+                maxLength={4}
+                style={{
+                  paddingLeft: '20px',
+                  textAlign: 'center',
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  width: '100%'
+                }}
+              />
+            </div>
+            <input 
+              type="tel" 
+              placeholder="10-digit number" 
+              value={phone} 
+              maxLength={10}
+              onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError(''); }}
+              style={{ flex: 1, marginTop: 0 }} 
+            />
+          </div>
+          <p className="auth-hint" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>Enter country code and your number</p>
           <label className="auth-label" style={{ marginTop: 20 }}>Password</label>
           <input type="password" placeholder="6+ characters (e.g., MyPass123)" value={password}
             onChange={(e) => { setPassword(e.target.value); setError(''); }} />

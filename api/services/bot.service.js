@@ -113,7 +113,7 @@ exports.submitInAppAnswer = async (userId, question_ids, answers) => {
         date: new Date(),
         question_ids,
         answers,
-        points_awarded: 5,
+        points_awarded: 50,
     });
 
     // Update streak
@@ -140,13 +140,13 @@ exports.submitInAppAnswer = async (userId, question_ids, answers) => {
 
     // Award 5 pts + 50 bonus on 30-day streak
     const bonusPoints = botUser.streak % 30 === 0 ? 50 : 0;
-    const user = await User.findByIdAndUpdate(userId, { $inc: { points: 5 + bonusPoints } }, { new: true });
+    const user = await User.findByIdAndUpdate(userId, { $inc: { points: 50 + bonusPoints } }, { new: true });
     
     await Notification.create({
         user: userId,
         message: bonusPoints > 0 
-            ? `Incredible! You earned 5 points for reflecting today, plus a 50 point bonus for your ${botUser.streak}-day streak! 🌟`
-            : `You earned 5 points for completing your daily reflection!`,
+            ? `Incredible! You earned 50 points for reflecting today, plus a 50 point bonus for your ${botUser.streak}-day streak! 🌟`
+            : `You earned 50 points for completing your daily reflection!`,
         link: '/raatkahisaab'
     });
 
@@ -167,7 +167,7 @@ exports.submitInAppAnswer = async (userId, question_ids, answers) => {
     return {
         success: true,
         streak: botUser.streak,
-        pointsAwarded: 5 + bonusPoints,
+        pointsAwarded: 50 + bonusPoints,
         milestone: botUser.streak === 30 ? '30_day_streak' : null,
     };
 };
@@ -209,7 +209,7 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
         date: new Date(),
         question_ids: [questions[0].id],
         answers: [response === 'HMM' ? 'Hmm' : response],
-        points_awarded: 5,
+        points_awarded: 50,
     });
 
     // Update streak
@@ -223,10 +223,10 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
     botUser.last_answered = new Date();
     await botUser.save();
 
-    await User.findByIdAndUpdate(userId, { $inc: { points: 5 } });
+    await User.findByIdAndUpdate(userId, { $inc: { points: 50 } });
     await Notification.create({
         user: userId,
-        message: `You earned 5 points for completing your daily reflection!`,
+        message: `You earned 50 points for completing your daily reflection!`,
         link: '/raatkahisaab'
     });
 
@@ -259,7 +259,7 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
     return {
         success: true,
         streak: botUser.streak,
-        points: 5,
+        points: 50,
         message: `Thanks! Streak: ${botUser.streak} days 🔥`,
     };
 };

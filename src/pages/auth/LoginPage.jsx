@@ -5,6 +5,7 @@ import { loginUser } from '../../services/auth.service.js';
 import './auth.css';
 
 export default function LoginPage() {
+  const [countryCode, setCountryCode] = useState('91');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -17,7 +18,18 @@ export default function LoginPage() {
   React.useEffect(() => {
     try {
       const savedPhone = localStorage.getItem('@remember_phone');
-      if (savedPhone) {
+      if (savedPhone && savedPhone.length >= 11) {
+        // Assume first few digits are country code
+        if (savedPhone.startsWith('91')) {
+          setCountryCode('91');
+          setPhone(savedPhone.slice(2));
+        } else {
+          // Fallback for other codes
+          setCountryCode(savedPhone.slice(0, savedPhone.length - 10));
+          setPhone(savedPhone.slice(-10));
+        }
+        setRememberMe(true);
+      } else if (savedPhone) {
         setPhone(savedPhone);
         setRememberMe(true);
       }
@@ -29,25 +41,21 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    if (!phone || phone.length !== 10) { 
-      setError('Phone must be 10 digits (e.g., 9919492311)'); 
+    
+    if (!countryCode.trim() || !phone || phone.length < 7) { 
+      setError('Please enter a valid phone number.'); 
       return; 
     }
-    if (!/^\d{10}$/.test(phone)) {
-      setError('Phone must contain only numbers (e.g., 9919492311)');
-      return;
-    }
-    if (!password) { 
-      setError('Please enter your password.'); 
-      return; 
-    }
+    
+    const fullPhone = countryCode.replace(/\D/g, '') + phone.replace(/\D/g, '');
+
     setIsSubmitting(true);
     try {
-      const userData = await loginUser(phone, password);
+      const userData = await loginUser(fullPhone, password);
       
       // Save phone if "Remember me" is checked
       if (rememberMe) {
-        localStorage.setItem('@remember_phone', phone);
+        localStorage.setItem('@remember_phone', fullPhone);
       } else {
         localStorage.removeItem('@remember_phone');
       }
@@ -78,9 +86,37 @@ export default function LoginPage() {
         </div>
         <form className="auth-form" onSubmit={handleLogin} noValidate>
           <label className="auth-label">Phone Number</label>
-          <input type="tel" placeholder="10-digit number (e.g., 9919492311)" value={phone} maxLength={10}
-            onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError(''); }} autoFocus />
-          <p className="auth-hint" style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 4 }}>Enter without spaces or dashes</p>
+          <div className="phone-input-container" style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <div style={{ position: 'relative', width: '70px' }}>
+              <span style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent)', fontWeight: 'bold' }}>+</span>
+              <input 
+                type="text" 
+                value={countryCode} 
+                onChange={(e) => setCountryCode(e.target.value.replace(/\D/g, ''))}
+                maxLength={4}
+                style={{
+                  paddingLeft: '20px',
+                  textAlign: 'center',
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  width: '100%'
+                }}
+              />
+            </div>
+            <input 
+              type="tel" 
+              placeholder="10-digit number" 
+              value={phone} 
+              maxLength={10}
+              onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError(''); }}
+              style={{ flex: 1, marginTop: 0 }} 
+              autoFocus
+            />
+          </div>
+          <p className="auth-hint" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>Login with country code and number</p>
           <label className="auth-label" style={{ marginTop: 20 }}>Password</label>
           <input type="password" placeholder="Your password" value={password}
             onChange={(e) => { setPassword(e.target.value); setError(''); }} />
