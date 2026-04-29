@@ -30,9 +30,10 @@ export default function Dashboard() {
   const [insightNew, setInsightNew] = useState(false);
   const [insightDate, setInsightDate] = useState(null);
   const [dismissed, setDismissed] = useState(false);
+  const [insightLoading, setInsightLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch insight in background
+    setInsightLoading(true);
     apiFetch('/insights/eco', { requireAuth: true })
       .then(res => {
         if (res.insight) {
@@ -41,7 +42,8 @@ export default function Dashboard() {
           setInsightDate(res.generatedAt);
         }
       })
-      .catch(err => console.warn('[Insight] Could not load insight:', err.message));
+      .catch(err => console.warn('[Insight] Could not load insight:', err.message))
+      .finally(() => setInsightLoading(false));
   }, []);
   const [posts, setPosts] = useState(cachedPosts || []);
   const [loading, setLoading] = useState(cachedPosts === null);
@@ -191,6 +193,13 @@ export default function Dashboard() {
 
         {/* Right Column: Sidebar (Desktop only or stacked on Mobile) */}
         <div className="dashboard-right-sidebar">
+          {insightLoading && (
+            <div className="insight-loading-skeleton">
+              <div className="skeleton-glow" />
+              <p>🤖 Generating your eco-insight...</p>
+            </div>
+          )}
+          
           {insight && !dismissed && (
             <div className="insight-sidebar-wrapper">
               <InsightCard

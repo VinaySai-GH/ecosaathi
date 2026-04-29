@@ -4,6 +4,7 @@ const psController = require('../controllers/pollutionsense.controller');
 const auth = require('../middleware/auth'); // assuming auth.protect is the middleware
 
 router.get('/aqi', psController.getAQI);
+router.get('/live-aqi', psController.getLiveAQI);
 router.get('/score', psController.getScore);
 router.get('/reports', psController.getReports);
 

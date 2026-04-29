@@ -9,7 +9,7 @@ import InsightCard from './components/InsightCard.jsx';
 import BillAnalysisCard from './components/BillAnalysisCard.jsx';
 import TrendChart from './components/TrendChart.jsx';
 import StreakCounter from './components/StreakCounter.jsx';
-import InsightCarousel from './InsightCarousel.jsx';
+import HorizontalScroller from '../../components/HorizontalScroller.jsx';
 import { pickEquivalencies } from '../../data/equivalencies.js';
 import { findCity, getBenchmarkStatus } from '../../data/cities.js';
 import { pickTips } from '../../data/tips.js';
@@ -115,19 +115,19 @@ export default function NeeruResult() {
 
         <h3 className="section-heading">What does this actually mean?</h3>
         
-        {/* Insight Carousel with equivalencies, insight card, and tips */}
-        <InsightCarousel slides={[
-          ...equivalencies.map(eq => <EquivalencyCard key={eq.id} equivalency={eq} kl={kl} />),
-          ...(billText ? [<BillAnalysisCard key="bill" kl={kl} billText={billText} city={city} previousKL={userHistory[0]?.kl_used} />] : []),
+        {/* Smooth horizontal scroll for impact cards, comparisons, and tips */}
+        <HorizontalScroller>
+          {equivalencies.map(eq => <EquivalencyCard key={eq.id} equivalency={eq} kl={kl} />)}
+          {billText && <BillAnalysisCard key="bill" kl={kl} billText={billText} city={city} previousKL={userHistory[0]?.kl_used} />}
           <InsightCard
             kl={kl}
             city={city}
             status={status}
             prevKl={userHistory[0]?.kl_used}
             hostelAvg={null}
-          />,
-          ...tips.map(tip => <TipCard key={tip.id} tip={tip} />)
-        ]} />
+          />
+          {tips.map(tip => <TipCard key={tip.id} tip={tip} />)}
+        </HorizontalScroller>
 
         <h3 className="section-heading">vs. {cityLabel}</h3>
         <BenchmarkBar kl={kl} city={city} />

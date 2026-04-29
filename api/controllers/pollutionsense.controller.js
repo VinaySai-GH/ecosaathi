@@ -2,6 +2,9 @@ const axios = require('axios');
 const CommunityReport = require('../models/CommunityReport.model');
 const AQICache = require('../models/AQICache.model');
 
+const GOOGLE_AQI_URL = 'https://airquality.googleapis.com/v1/currentConditions:lookup';
+const WAQI_BASE_URL = 'https://api.waqi.info';
+
 exports.getAQI = async (req, res) => {
     try {
         const city = req.query.city || 'Tirupati';
@@ -34,6 +37,80 @@ exports.getAQI = async (req, res) => {
             return res.status(200).json({ source: 'stale_cache', results: cached.data });
         }
         res.status(500).json({ error: 'Failed to fetch AQI' });
+    }
+};
+
+exports.getLiveAQI = async (req, res) => {
+    try {
+        const { lat, lng } = req.query;
+        if (!lat || !lng) return res.status(400).json({ error: 'Lat and Lng are required' });
+
+        const GOOGLE_KEY = process.env.GOOGLE_MAPS_API_KEY || process.env.GEMINI_API_KEY;
+        const WAQI_KEY = process.env.WAQI_API_KEY || 'e3d6acbfed67e3e2968f9e3d6a0c6c0e9f8a1d3e';
+
+        console.log(`[AQI Proxy] Using Google Key: ${GOOGLE_KEY ? GOOGLE_KEY.substring(0, 8) + '...' : 'MISSING'}`);
+
+        // Try Google Air Quality API
+        if (GOOGLE_KEY) {
+            try {
+                console.log(`[AQI Proxy] Fetching from Google for: ${lat}, ${lng}`);
+                const response = await axios.post(`${GOOGLE_AQI_URL}?key=${GOOGLE_KEY}`, {
+                    location: { latitude: Number(lat), longitude: Number(lng) },
+                    extraComputations: ['POLLUTANT_CONCENTRATION'],
+                    languageCode: 'en'
+                });
+
+                if (response.data && response.data.indexes) {
+                    const indexes = response.data.indexes;
+                    const chosenIndex = indexes.find(i => i.code !== 'uaqi') || indexes[0];
+
+                    console.log(`[AQI Proxy] Index: ${chosenIndex.code} = ${chosenIndex.aqi} (${chosenIndex.category})`);
+
+                    const pollutants = response.data.pollutants || [];
+                    return res.json({
+                        aqi: chosenIndex.aqi,
+                        aqiScale: 'UAQI (Google 0-100 scale — higher is worse)',
+                        quality: chosenIndex.category,
+                        dominantPollutant: chosenIndex.dominantPollutant,
+                        pm25: pollutants.find(p => p.code === 'pm25')?.concentration?.value ?? null,
+                        pm10: pollutants.find(p => p.code === 'pm10')?.concentration?.value ?? null,
+                        no2: pollutants.find(p => p.code === 'no2')?.concentration?.value ?? null,
+                        source: 'Google Air Quality API'
+                    });
+                }
+            } catch (err) {
+                const errMsg = err.response?.data?.error?.message || err.message;
+                global.lastGoogleError = errMsg;
+                console.error('[AQI Proxy] Google Error:', errMsg);
+                console.error('[AQI Proxy] Google Full Error:', JSON.stringify(err.response?.data || {}, null, 2));
+            }
+        }
+
+        // Fallback to WAQI
+        try {
+            const waqiUrl = `${WAQI_BASE_URL}/feed/geo:${lat};${lng}/?token=${WAQI_KEY}`;
+            const waqiRes = await axios.get(waqiUrl);
+            if (waqiRes.data.status === 'ok') {
+                const d = waqiRes.data.data;
+                return res.json({
+                    aqi: d.aqi,
+                    pm25: d.iaqi?.pm25?.v || null,
+                    pm10: d.iaqi?.pm10?.v || null,
+                    source: 'WAQI Proxy'
+                });
+            }
+        } catch (waqiErr) {
+            console.warn('[AQI Proxy] WAQI Fallback also failed:', waqiErr.message);
+        }
+
+        res.status(404).json({ 
+            error: 'AQI data not available',
+            details: 'Both Google and WAQI services failed.',
+            googleError: global.lastGoogleError || 'Unknown Google error'
+        });
+    } catch (error) {
+        console.error('Live AQI Proxy Error:', error);
+        res.status(500).json({ error: 'Failed to fetch live AQI' });
     }
 };
 

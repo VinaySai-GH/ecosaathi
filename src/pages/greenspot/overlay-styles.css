@@ -1,0 +1,88 @@
+/* Overlay Styling - Light Shade for Industrial, Traffic, Risk Zones */
+
+.greenspot-overlay-industrial {
+    opacity: 0.15;
+    fill-opacity: 0.15;
+    stroke-opacity: 0.5;
+}
+
+.greenspot-overlay-traffic {
+    opacity: 0.12;
+    fill-opacity: 0.12;
+    stroke-opacity: 0.4;
+}
+
+.greenspot-overlay-risk {
+    opacity: 0.18;
+    fill-opacity: 0.18;
+    stroke-opacity: 0.6;
+}
+
+/* AQI Info Window */
+.greenspot-aqi-tooltip {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 250, 240, 0.95));
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid;
+    max-width: 220px;
+}
+
+.greenspot-aqi-tooltip.good {
+    border-left-color: #2ecc71;
+}
+
+.greenspot-aqi-tooltip.satisfactory {
+    border-left-color: #f1c40f;
+}
+
+.greenspot-aqi-tooltip.moderate {
+    border-left-color: #e67e22;
+}
+
+.greenspot-aqi-tooltip.poor {
+    border-left-color: #e74c3c;
+}
+
+.greenspot-aqi-tooltip.very_poor {
+    border-left-color: #c0392b;
+}
+
+.greenspot-aqi-tooltip.severe {
+    border-left-color: #8b0000;
+}
+
+.greenspot-aqi-value {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.greenspot-aqi-quality {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.greenspot-aqi-details {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #555;
+}
+
+.greenspot-aqi-details-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.greenspot-aqi-details-item strong {
+    color: #333;
+}
+
+/* Marker hover effect for AQI */
+.greenspot-marker-hover {
+    filter: drop-shadow(0 0 8px rgba(110, 224, 127, 0.6));
+    transform: scale(1.1);
+}

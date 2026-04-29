@@ -9,4 +9,4 @@ export const SCORING = {
 };
 export const LEADERBOARD_REFRESH_HOURS = 6;
 // Use .env file with VITE_API_URL to override, perfectly resolves host IP for mobile testing
-export const API_BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:5000/api`;
+export const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : `http://${window.location.hostname}:5000/api`);

@@ -8,7 +8,7 @@ const insightsService = require('../services/insights.service');
 exports.getEcoInsight = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        const result = await insightsService.getOrGenerateInsight(userId, true);
+        const result = await insightsService.getOrGenerateInsight(userId, false);
         res.status(200).json(result);
     } catch (error) {
         console.error('[Insights] Error generating insight:', error.message);

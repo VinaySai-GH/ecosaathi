@@ -56,13 +56,23 @@ api/resetUsers.js
 TEST_OCR.sh
 
 # Temporary sprint documentation
+tirupati_water_bill (1).png
+IMPLEMENTATION_COMPLETE.md
+SESSION_IMPROVEMENTS_OCT.md
+TESTING_GUIDE.md
+UI_FIXES_COMPLETE.md
+PROGRESS_REPORT.md
+COMPLETION_REPORT.md
 PHASE_*.md
 *SUMMARY.md
 DEMO_READY.md
 QUICK_TEST.md
 WHAT_TO_SHARE.md
 GREEN_SPOT_SHARING_GUIDE.md
-/ios
+
+# Redundant assets
+assets/android-icon-*.png
+assets/splash-icon.png
 
 # logs and temp
 *.log
@@ -76,13 +86,6 @@ test_*.js
 test_features.*
 list_*.js
 purge_users.js
-PROGRESS_REPORT.md
-COMPLETION_REPORT.md
-tirupati_water_bill (1).png
-
-# Redundant assets
-assets/android-icon-*.png
-assets/splash-icon.png
 
 # IDE
 .vscode/

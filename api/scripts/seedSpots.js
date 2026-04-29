@@ -456,7 +456,7 @@ async function seedDatabase() {
         const spotsWithUser = seedSpots.map((spot) => ({
             ...spot,
             added_by: adminUser._id,
-            verified_by: [adminUser._id], // Pre-verify seed spots
+            verified_by: [], // Allow users to verify
         }));
 
         await Spot.insertMany(spotsWithUser);

@@ -1,14 +1,5 @@
 export const TIRUPATI_INDUSTRIES = [
     {
-        name: "NTPC Simhadri Power Plant",
-        type: "thermal_power",
-        lat: 17.6069,
-        lng: 83.1757,
-        riskLevel: "high",
-        pollutants: ["SO2", "NOx", "PM2.5"],
-        buffer_km: 3
-    },
-    {
         name: "Sri Venkateswara Cooperative Sugar Factory",
         type: "sugar_factory",
         lat: 13.6892,

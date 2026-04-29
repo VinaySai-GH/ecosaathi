@@ -1,0 +1,37 @@
+services:
+  # Monolith: Backend serves Frontend (Optimized for Render Free Tier)
+  - type: web
+    name: ecosaathi
+    env: node
+    plan: free
+    # Root directory is the repo root so we can build both
+    rootDir: .
+    # 1. Install root deps (Vite) -> Build Frontend -> Install API deps
+    buildCommand: npm install && npm run build && cd api && npm install
+    # Start the backend (which now serves the 'dist' folder)
+    startCommand: cd api && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_WEBHOOK_TOKEN
+        value: ecosaathi_prod_secret_2024
+      - key: VITE_GOOGLE_MAPS_API_KEY
+        sync: false
+      # For the monolith, VITE_API_URL should usually be empty 
+      # so the frontend calls relative paths (e.g., /api/...)
+      - key: VITE_API_URL
+        value: ""

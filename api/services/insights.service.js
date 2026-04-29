@@ -303,7 +303,9 @@ exports.getOrGenerateInsight = async (userId, force = false) => {
     if (!user) throw new Error('User not found');
 
     const now = new Date();
-    if (!force && user.next_insight_after && now < new Date(user.next_insight_after)) {
+    const hasCachedInsight = user.cached_insight && user.cached_insight.trim().length > 0;
+
+    if (!force && hasCachedInsight && user.next_insight_after && now < new Date(user.next_insight_after)) {
         console.log(`[Insights] Returning cached insight for ${user.name}`);
         return { insight: user.cached_insight, isNew: false, generatedAt: user.last_insight_at };
     }

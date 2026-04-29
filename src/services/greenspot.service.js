@@ -1,8 +1,14 @@
 import { apiFetch } from '../api/client.js';
 
+export const getCities = async () => {
+    const response = await apiFetch('/auth/cities');
+    return response;
+};
+
 export const getSpots = async (filters = {}) => {
     const params = new URLSearchParams();
     if (filters.category) params.append('category', filters.category);
+    if (filters.city) params.append('city', filters.city);
     if (filters.lat) params.append('lat', filters.lat);
     if (filters.lng) params.append('lng', filters.lng);
     if (filters.q) params.append('q', filters.q);

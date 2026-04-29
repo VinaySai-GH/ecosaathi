@@ -30,6 +30,11 @@ const spotSchema = new mongoose.Schema(
             required: [true, 'Address is required'],
             trim: true,
         },
+        city: {
+            type: String,
+            default: 'Tirupati',
+            trim: true,
+        },
         opening_hours: {
             type: String,
             default: '',

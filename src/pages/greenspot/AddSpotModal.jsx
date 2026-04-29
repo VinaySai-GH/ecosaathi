@@ -14,9 +14,10 @@ const CATEGORIES = [
     { id: 'refill', label: 'Refill Station', icon: '💧' },
 ];
 
-export default function AddSpotModal({ onClose, onSuccess }) {
+export default function AddSpotModal({ onClose, onSuccess, cities = ['Tirupati', 'Vijayawada'], defaultCity }) {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
+    const [city, setCity] = useState(defaultCity || cities[0] || 'Tirupati');
     const [address, setAddress] = useState('');
     const [tip, setTip] = useState('');
     const [openingHours, setOpeningHours] = useState('');
@@ -27,7 +28,16 @@ export default function AddSpotModal({ onClose, onSuccess }) {
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
     useEffect(() => {
-        if (!googleMapsApiKey || !window.google) return;
+        if (!googleMapsApiKey) {
+            console.warn('Google Maps API key not configured');
+            return;
+        }
+
+        // Check if Google Maps is loaded
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+            console.warn('Google Maps not loaded, autocomplete disabled');
+            return;
+        }
 
         const autocomplete = new window.google.maps.places.Autocomplete(autocompleteRef.current, {
             types: ['establishment', 'geocode'],
@@ -75,6 +85,7 @@ export default function AddSpotModal({ onClose, onSuccess }) {
             const spotData = {
                 name: name.trim(),
                 category,
+                city,
                 address: address.trim(),
                 lat: location.lat(),
                 lng: location.lng(),
@@ -142,6 +153,22 @@ export default function AddSpotModal({ onClose, onSuccess }) {
                             className="greenspot-form-input"
                             required
                         />
+                    </div>
+
+                    <div className="greenspot-form-group">
+                        <label className="greenspot-form-label">City *</label>
+                        <select
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            className="greenspot-form-input"
+                            required
+                        >
+                            {cities.map((c) => (
+                                <option key={c} value={c}>
+                                    {c}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="greenspot-form-group">

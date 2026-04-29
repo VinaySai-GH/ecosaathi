@@ -3,12 +3,18 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 
 exports.getSpots = async (filters = {}) => {
-    const { category, lat, lng, q, limit = 100 } = filters;
+    const { category, city, lat, lng, q, limit = 100 } = filters;
     const query = {};
 
     if (category) {
         query.category = category;
     }
+
+    if (city) {
+        query.city = city;
+    }
+
+    console.log(`[Spots] Fetching with query:`, JSON.stringify(query));
 
     if (q) {
         query.$or = [
@@ -36,13 +42,14 @@ exports.getSpots = async (filters = {}) => {
 };
 
 exports.createSpot = async (spotData, userId) => {
-    const { name, category, lat, lng, address, opening_hours, cost, tip, photoUrl, google_place_id, rating } = spotData;
+    const { name, category, city, lat, lng, address, opening_hours, cost, tip, photoUrl, google_place_id, rating } = spotData;
 
     const tips = tip ? [tip] : [];
 
     const spot = await Spot.create({
         name,
         category,
+        city: city || 'Tirupati',
         lat: parseFloat(lat),
         lng: parseFloat(lng),
         address,
@@ -76,11 +83,11 @@ exports.verifySpot = async (spotId, userId) => {
         spot.verified_by.push(userId);
         await spot.save();
         
-        // Award 5 points for verifying
-        await User.findByIdAndUpdate(userId, { $inc: { points: 5 } });
+        // Award 10 points for verifying
+        await User.findByIdAndUpdate(userId, { $inc: { points: 10 } });
         await Notification.create({
             user: userId,
-            message: `Thanks for helping the community! You earned 5 points for verifying a Green Spot.`,
+            message: `Thanks for helping the community! You earned 10 points for verifying a Green Spot.`,
             link: '/greenspot'
         });
     }

@@ -2,8 +2,8 @@ const greenspotService = require('../services/greenspot.service');
 
 exports.getSpots = async (req, res, next) => {
     try {
-        const { category, lat, lng, q } = req.query;
-        const spots = await greenspotService.getSpots({ category, lat, lng, q });
+        const { category, city, lat, lng, q } = req.query;
+        const spots = await greenspotService.getSpots({ category, city, lat, lng, q });
         res.status(200).json({ spots });
     } catch (error) {
         next(error);

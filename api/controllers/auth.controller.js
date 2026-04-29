@@ -6,8 +6,13 @@ const Spot = require('../models/Spot');
 
 exports.getCities = async (req, res, next) => {
     try {
-        const cities = await User.distinct('city');
-        const validCities = cities.filter(c => c && c.trim() !== '');
+        const userCities = await User.distinct('city');
+        const spotCities = await Spot.distinct('city');
+        
+        // Combine and deduplicate cities
+        const allCities = [...new Set([...userCities, ...spotCities])];
+        const validCities = allCities.filter(c => c && c.trim() !== '').sort();
+        
         res.status(200).json({ cities: validCities });
     } catch (error) {
         next(error);

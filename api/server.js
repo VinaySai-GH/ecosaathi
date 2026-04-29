@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 // Import Routes
 const authRoutes      = require('./routes/auth.routes');
@@ -16,6 +17,7 @@ const userRoutes      = require('./routes/user.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const ecoLearnRoutes  = require('./routes/ecolearn.routes');
 const ecoReportRoutes = require('./routes/ecoreport.routes');
+const pollutionRoutes = require('./routes/pollutionsense.routes');
 const scheduler       = require('./services/scheduler');
 
 const app = express();
@@ -39,6 +41,18 @@ app.use('/api/users',       userRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/ecolearn',  ecoLearnRoutes);
 app.use('/api/ecoreport', ecoReportRoutes);
+app.use('/api/pollution',   pollutionRoutes);
+
+// --- Production: Serve Frontend ---
+if (process.env.NODE_ENV === 'production') {
+    // Serve static files from Vite build
+    app.use(express.static(path.join(__dirname, '../dist')));
+
+    // Handle SPA routing: all non-API requests go to index.html
+    app.get(/^\/(?!api).*/, (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
+    });
+}
 
 // Error Handler (Simple centralized error handler)
 app.use((err, req, res, next) => {
