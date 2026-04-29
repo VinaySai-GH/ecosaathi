@@ -20,12 +20,18 @@ exports.sendTextMessage = async (to, text) => {
             return null;
         }
 
+        // Normalize 10-digit numbers to have the 91 prefix for India
+        let normalizedPhone = to.replace(/\D/g, '');
+        if (normalizedPhone.length === 10) {
+            normalizedPhone = '91' + normalizedPhone;
+        }
+
         const res = await axios.post(
             BASE_URL,
             {
                 messaging_product: 'whatsapp',
                 recipient_type:    'individual',
-                to:                to,
+                to:                normalizedPhone,
                 type:              'text',
                 text:              { body: text },
             },
