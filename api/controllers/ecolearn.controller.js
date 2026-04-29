@@ -4,12 +4,12 @@ const User = require('../models/User');
 // Module quiz answers — server-side source of truth
 // Matches modules.js on the frontend
 const QUIZ_ANSWERS = {
-    'air-quality':        [2, 0, 1, 3, 2],
-    'carbon-footprint':   [1, 2, 0, 3, 1],
-    'waste-management':   [0, 2, 1, 3, 0],
-    'water-conservation': [3, 1, 2, 0, 2],
-    'biodiversity':       [1, 0, 3, 2, 1],
-    'climate-change':     [2, 3, 0, 1, 2],
+    'air-quality':        [2, 1, 0, 2, 3],
+    'carbon-footprint':   [1, 1, 2, 3, 0],
+    'waste-management':   [0, 2, 2, 1, 1],
+    'water-conservation': [2, 1, 2, 3, 1],
+    'biodiversity':       [1, 2, 1, 0, 2],
+    'climate-change':     [2, 2, 2, 1, 2],
 };
 
 const POINTS_PER_MODULE = 30;

@@ -118,14 +118,14 @@ export const MODULES = [
         id: 'aq-q4',
         question: 'Which official Indian government app lets you check real-time AQI?',
         options: ['AQI India', 'SAFAR', 'Sameer', 'AirWatch'],
-        correctIndex: 3,
+        correctIndex: 2,
         explanation: 'Sameer is the official CPCB app for real-time AQI monitoring across Indian cities. SAFAR is a separate system run by MoES focused on weather + AQI in metro cities.'
       },
       {
         id: 'aq-q5',
         question: 'What is the WHO\'s recommended annual PM2.5 limit (µg/m³)?',
         options: ['40', '25', '10', '5'],
-        correctIndex: 2,
+        correctIndex: 3,
         explanation: 'The WHO 2021 Air Quality Guidelines recommend PM2.5 annual mean ≤ 5 µg/m³. India\'s national standard is 40 µg/m³ — 8× higher than WHO guidance.'
       }
     ]
@@ -221,14 +221,14 @@ export const MODULES = [
         id: 'cf-q2',
         question: 'Which food item has the highest carbon footprint per kilogram?',
         options: ['Rice', 'Beef', 'Vegetables', 'Chicken'],
-        correctIndex: 2,
+        correctIndex: 1,
         explanation: 'Beef produces approximately 60 kg CO₂e per kg — far higher than rice (2.7 kg), chicken (6.9 kg), or vegetables (0.4 kg).'
       },
       {
         id: 'cf-q3',
         question: 'India\'s NDC target is to achieve what percentage of electric power capacity from non-fossil sources by 2030?',
         options: ['30%', '40%', '50%', '60%'],
-        correctIndex: 0,
+        correctIndex: 2,
         explanation: 'India\'s updated NDC commits to achieving 50% cumulative electric power capacity from non-fossil sources by 2030.'
       },
       {
@@ -242,7 +242,7 @@ export const MODULES = [
         id: 'cf-q5',
         question: 'India\'s electricity grid emission factor is approximately:',
         options: ['0.82 kg CO₂/kWh', '0.20 kg CO₂/kWh', '1.5 kg CO₂/kWh', '0.50 kg CO₂/kWh'],
-        correctIndex: 1,
+        correctIndex: 0,
         explanation: 'India\'s grid emission factor is approximately 0.82 kg CO₂/kWh, reflecting the heavy reliance on coal-based thermal power plants, though this is decreasing as renewables grow.'
       }
     ]
@@ -345,21 +345,21 @@ export const MODULES = [
         id: 'wm-q3',
         question: 'India ranks ___ globally in e-waste generation.',
         options: ['5th', '1st', '3rd', '2nd'],
-        correctIndex: 1,
+        correctIndex: 2,
         explanation: 'India is the third-largest generator of e-waste globally, producing about 3.23 million tonnes per year (MoEFCC 2023).'
       },
       {
         id: 'wm-q4',
         question: 'When was India\'s nationwide ban on certain single-use plastics implemented?',
         options: ['January 2022', 'July 2022', 'January 2020', 'July 2020'],
-        correctIndex: 3,
+        correctIndex: 1,
         explanation: 'India\'s ban on specified single-use plastics came into effect on July 1, 2022. This included items like ear buds with plastic sticks, plastic straws, plates, cups, and cutlery.'
       },
       {
         id: 'wm-q5',
         question: 'What is the approximate daily MSW generation of Tirupati city?',
         options: ['100 tonnes', '350 tonnes', '1,000 tonnes', '50 tonnes'],
-        correctIndex: 0,
+        correctIndex: 1,
         explanation: 'Tirupati city generates approximately 350 tonnes per day. Andhra Pradesh as a whole generates about 3,300 tonnes per day.'
       }
     ]
@@ -448,7 +448,7 @@ export const MODULES = [
         id: 'wc-q1',
         question: 'What percentage of India\'s freshwater is used by agriculture?',
         options: ['50%', '65%', '78%', '90%'],
-        correctIndex: 3,
+        correctIndex: 2,
         explanation: 'Agriculture consumes approximately 78% of India\'s freshwater, primarily for irrigation of paddy, sugarcane, and wheat fields.'
       },
       {
@@ -469,14 +469,14 @@ export const MODULES = [
         id: 'wc-q4',
         question: 'Producing 1 kg of rice requires approximately how many litres of water?',
         options: ['500L', '1,000L', '1,800L', '2,500L'],
-        correctIndex: 0,
+        correctIndex: 3,
         explanation: 'Producing 1 kg of rice requires approximately 2,500 litres of water — this is called the "water footprint" or "virtual water" embedded in agriculture.'
       },
       {
         id: 'wc-q5',
         question: 'A standard Indian Class-1 city minimum water supply as per BIS standards is:',
         options: ['90 LPCD', '135 LPCD', '200 LPCD', '70 LPCD'],
-        correctIndex: 2,
+        correctIndex: 1,
         explanation: 'The Bureau of Indian Standards (BIS IS:1172) recommends 135 litres per capita per day (LPCD) as the minimum water supply standard for Class-1 cities in India.'
       }
     ]
@@ -572,28 +572,28 @@ export const MODULES = [
         id: 'bio-q2',
         question: 'Which of these is NOT one of India\'s four recognised Biodiversity Hotspots?',
         options: ['Western Ghats', 'Himalayas', 'Thar Desert', 'Indo-Burma region'],
-        correctIndex: 0,
+        correctIndex: 2,
         explanation: 'The Thar Desert is NOT a biodiversity hotspot. India\'s four hotspots are the Himalayas, Western Ghats, Indo-Burma region, and Sundaland (Nicobar Islands).'
       },
       {
         id: 'bio-q3',
         question: 'According to the 2022 tiger census, India\'s tiger population is approximately:',
         options: ['1,200', '3,167', '500', '5,000'],
-        correctIndex: 2,
+        correctIndex: 1,
         explanation: 'India\'s 2022 Tiger Census recorded 3,167 tigers — up from 1,827 in 2002, representing one of conservation\'s greatest success stories globally.'
       },
       {
         id: 'bio-q4',
         question: 'Which tree, found exclusively near Tirupati\'s Seshachalam Hills, is classified as Endangered by IUCN?',
         options: ['Red Sanders (Pterocarpus santalinus)', 'Sandalwood', 'Teak', 'Neem'],
-        correctIndex: 2,
+        correctIndex: 0,
         explanation: 'Red Sanders (Pterocarpus santalinus) is classified as Endangered on the IUCN Red List. It grows exclusively in the Seshachalam Hills and is illegally smuggled for its extremely valuable wood.'
       },
       {
         id: 'bio-q5',
         question: 'What Indian law requires Biodiversity Management Committees in each local government body?',
         options: ['Wildlife Protection Act 1972', 'Forest Conservation Act 1980', 'Biological Diversity Act 2002', 'National Biodiversity Policy 2014'],
-        correctIndex: 1,
+        correctIndex: 2,
         explanation: 'The Biological Diversity Act 2002 mandates Biodiversity Management Committees (BMCs) at the local body level and requires the maintenance of People\'s Biodiversity Registers.'
       }
     ]
@@ -689,14 +689,14 @@ export const MODULES = [
         id: 'cc-q2',
         question: 'Which of these is NOT one of India\'s 8 National Missions under the NAPCC?',
         options: ['Solar Mission', 'Green India Mission', 'Clean Ganga Mission', 'Sustainable Habitat Mission'],
-        correctIndex: 3,
+        correctIndex: 2,
         explanation: 'The Clean Ganga Mission (now Namami Gange) is a separate programme, not part of the 8 missions under NAPCC (2008). The 8 NAPCC missions focus on solar energy, energy efficiency, sustainable habitat, water, Himalayan ecosystem, afforestation, sustainable agriculture, and strategic knowledge.'
       },
       {
         id: 'cc-q3',
         question: 'The Gangotri Glacier (source of the Ganga) retreated how much in 2022?',
         options: ['5 metres', '10 metres', '22 metres', '50 metres'],
-        correctIndex: 0,
+        correctIndex: 2,
         explanation: 'The Gangotri Glacier retreated approximately 22 metres in 2022 alone, continuing a long-term trend that threatens the long-term water security of the Ganga basin.'
       },
       {
