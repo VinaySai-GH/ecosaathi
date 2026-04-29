@@ -4,6 +4,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// Public Health Check (for keeping the app awake on Render)
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', message: 'EcoSaathi is awake! 🌿' });
+});
+
 // Import Routes
 const authRoutes      = require('./routes/auth.routes');
 const neeruRoutes     = require('./routes/neeru.routes');
