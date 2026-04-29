@@ -95,10 +95,11 @@ export default function RegisterPage() {
             onChange={(e) => { setName(e.target.value); setError(''); }} autoFocus />
           <label className="auth-label" style={{ marginTop: 20 }}>Phone Number</label>
           <div className="phone-input-container" style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <div style={{ position: 'relative', width: '85px' }}>
+            <div style={{ position: 'relative', width: '95px' }}>
               <span style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent)', fontWeight: 'bold' }}>+</span>
               <input 
-                type="text" 
+                type="tel" 
+                inputMode="numeric"
                 value={countryCode} 
                 onChange={(e) => setCountryCode(e.target.value.replace(/\D/g, ''))}
                 maxLength={4}

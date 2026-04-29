@@ -134,10 +134,13 @@ exports.pushDailyRemindersManually = async () => {
     console.log('[Scheduler] Manual daily reminder push starting...');
     try {
         const botUsers = await BotUser.find({});
+        const questions = require('../data/questions').getDailyQuestions();
         const now = new Date();
 
+        console.log(`[Scheduler] Attempting to push to ${botUsers.length} users...`);
+
         for (const botUser of botUsers) {
-            const { questions } = await botService.getTodayQuestions(botUser.userId);
+            console.log(`[Scheduler] Sending manual push to: ${botUser.phone}`);
             const message =
                 `🌙 *Raat Ka Hisaab* — Nightly Reflection\n\n` +
                 `Here are your 3 questions for today:\n\n` +
@@ -149,10 +152,16 @@ exports.pushDailyRemindersManually = async () => {
                 `Send 3 letters like *YNY* or *Y N H*\n\n` +
                 `Example: *YYN* = Yes, Yes, No`;
 
-            await whatsappService.sendTextMessage(botUser.phone, message);
-            botUser.last_notified_at = now;
-            await botUser.save();
+            try {
+                await whatsappService.sendTextMessage(botUser.phone, message);
+                botUser.last_notified_at = now;
+                await botUser.save();
+                console.log(`[Scheduler] ✅ Successfully pushed to ${botUser.phone}`);
+            } catch (sendErr) {
+                console.error(`[Scheduler] ❌ Failed to push to ${botUser.phone}:`, sendErr.message);
+            }
         }
+        console.log('[Scheduler] Manual push process complete.');
         console.log(`[Scheduler] Manual push complete to ${botUsers.length} users.`);
     } catch (error) {
         console.error('[Scheduler] Manual push error:', error);
