@@ -127,3 +127,34 @@ exports.pushLeaderboardUpdate = async () => {
         console.error('[Scheduler] Leaderboard push error:', error);
     }
 };
+/**
+ * Manually push daily reflection questions to ALL users right now
+ */
+exports.pushDailyRemindersManually = async () => {
+    console.log('[Scheduler] Manual daily reminder push starting...');
+    try {
+        const botUsers = await BotUser.find({ preferred_time: { $ne: 'Off' } });
+        const now = new Date();
+
+        for (const botUser of botUsers) {
+            const { questions } = await botService.getTodayQuestions(botUser.userId);
+            const message =
+                `🌙 *Raat Ka Hisaab* — Nightly Reflection\n\n` +
+                `Here are your 3 questions for today:\n\n` +
+                `1️⃣ ${questions[0].text}\n\n` +
+                `2️⃣ ${questions[1].text}\n\n` +
+                `3️⃣ ${questions[2].text}\n\n` +
+                `━━━━━━━━━━━━━━━━━━━━\n` +
+                `*How to reply:*\n` +
+                `Send 3 letters like *YNY* or *Y N H*\n\n` +
+                `Example: *YYN* = Yes, Yes, No`;
+
+            await whatsappService.sendTextMessage(botUser.phone, message);
+            botUser.last_notified_at = now;
+            await botUser.save();
+        }
+        console.log(`[Scheduler] Manual push complete to ${botUsers.length} users.`);
+    } catch (error) {
+        console.error('[Scheduler] Manual push error:', error);
+    }
+};

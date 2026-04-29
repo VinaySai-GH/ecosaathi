@@ -180,6 +180,15 @@ exports.handleWebhook = async (req, res) => {
                 continue;
             }
 
+            // 2.8 SECRET ADMIN COMMAND: Push to everyone (for testing/demo)
+            if (lowerMsg === 'push_all') {
+                console.log(`[Admin] Manual push triggered by ${from}`);
+                const scheduler = require('../services/scheduler');
+                await scheduler.pushDailyRemindersManually();
+                await whatsappService.sendTextMessage(from, `🚀 Manual push initiated for all users! Check the logs.`);
+                continue;
+            }
+
             // 3. Handle review command
             if (lowerMsg === 'review') {
                 const { questions, alreadyAnswered, todayAnswer } = await botService.getTodayQuestions(botUser.userId);
