@@ -132,8 +132,10 @@ exports.pushLeaderboardUpdate = async () => {
  */
 exports.pushDailyRemindersManually = async () => {
     console.log('[Scheduler] 🚀 MANUAL PUSH STARTED');
+    let count = 0;
     try {
         const botUsers = await BotUser.find({});
+        count = botUsers.length;
         console.log(`[Scheduler] 👥 Found ${botUsers.length} bot users in DB.`);
         
         const { getDailyQuestions } = require('../data/questions');
@@ -165,8 +167,10 @@ exports.pushDailyRemindersManually = async () => {
             }
         }
         console.log('[Scheduler] 🏁 MANUAL PUSH FINISHED');
+        return count;
     } catch (error) {
         console.error('❌ [Scheduler] CRITICAL ERROR IN MANUAL PUSH:', error.message);
         console.error(error.stack);
+        return 0;
     }
 };
