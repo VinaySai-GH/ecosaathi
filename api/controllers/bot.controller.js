@@ -155,6 +155,31 @@ exports.handleWebhook = async (req, res) => {
                 continue;
             }
 
+            // 2.6 Handle "streak" or "stats" command
+            if (lowerMsg === 'streak' || lowerMsg === 'stats') {
+                const User = require('../models/User');
+                const user = await User.findById(botUser.userId);
+                await whatsappService.sendTextMessage(
+                    from, 
+                    `🔥 *Your Eco Stats*\n\n` +
+                    `Streak: *${botUser.streak} days*\n` +
+                    `Total Points: *${user ? user.points : 0}* 🌱\n\n` +
+                    `Keep it up! Visit the app for more details: ${webappUrl}/raatkahisaab`
+                );
+                continue;
+            }
+
+            // 2.7 Handle "tips" or "help" command
+            if (lowerMsg === 'tips' || lowerMsg === 'help') {
+                const tip = await insightsService.getOrGenerateInsight(botUser.userId);
+                await whatsappService.sendTextMessage(
+                    from,
+                    `💡 *Eco Tip of the Day*\n\n${tip}\n\n` +
+                    `Reply *"yes"* to answer today's questions!`
+                );
+                continue;
+            }
+
             // 3. Handle review command
             if (lowerMsg === 'review') {
                 const { questions, alreadyAnswered, todayAnswer } = await botService.getTodayQuestions(botUser.userId);
