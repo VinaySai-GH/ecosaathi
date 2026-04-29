@@ -36,9 +36,12 @@ exports.sendTextMessage = async (to, text) => {
                 },
             }
         );
+        console.log(`[WhatsApp] Message sent successfully to ${to}`);
         return res.data;
     } catch (error) {
-        console.error('[WhatsApp] Send error:', error.response?.data || error.message);
+        console.error('❌ [WhatsApp] SEND FAILED!');
+        console.error('To:', to);
+        console.error('Error Details:', error.response?.data || error.message);
         throw error;
     }
 };
