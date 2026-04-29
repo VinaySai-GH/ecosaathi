@@ -33,6 +33,10 @@ app.use(cors());
 
 // Global Request Logger
 app.use((req, res, next) => {
+    if (req.path.includes('webhook')) {
+        console.log(`[BOT-DEBUG] Received ${req.method} on ${req.path}`);
+        if (req.method === 'POST') console.log('[BOT-DEBUG] Body:', JSON.stringify(req.body, null, 2));
+    }
     console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.path}`);
     next();
 });
