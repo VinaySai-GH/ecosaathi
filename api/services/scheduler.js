@@ -131,16 +131,21 @@ exports.pushLeaderboardUpdate = async () => {
  * Manually push daily reflection questions to ALL users right now
  */
 exports.pushDailyRemindersManually = async () => {
-    console.log('[Scheduler] Manual daily reminder push starting...');
+    console.log('[Scheduler] 🚀 MANUAL PUSH STARTED');
     try {
         const botUsers = await BotUser.find({});
-        const questions = require('../data/questions').getDailyQuestions();
+        console.log(`[Scheduler] 👥 Found ${botUsers.length} bot users in DB.`);
+        
+        const { getDailyQuestions } = require('../data/questions');
+        const questions = getDailyQuestions();
+        
+        if (!questions || questions.length < 3) {
+            throw new Error('Daily questions are missing or incomplete!');
+        }
+
         const now = new Date();
-
-        console.log(`[Scheduler] Attempting to push to ${botUsers.length} users...`);
-
         for (const botUser of botUsers) {
-            console.log(`[Scheduler] Sending manual push to: ${botUser.phone}`);
+            console.log(`[Scheduler] 📤 Sending to ${botUser.phone}...`);
             const message =
                 `🌙 *Raat Ka Hisaab* — Nightly Reflection\n\n` +
                 `Here are your 3 questions for today:\n\n` +
@@ -154,16 +159,14 @@ exports.pushDailyRemindersManually = async () => {
 
             try {
                 await whatsappService.sendTextMessage(botUser.phone, message);
-                botUser.last_notified_at = now;
-                await botUser.save();
-                console.log(`[Scheduler] ✅ Successfully pushed to ${botUser.phone}`);
+                console.log(`[Scheduler] ✅ SENT to ${botUser.phone}`);
             } catch (sendErr) {
-                console.error(`[Scheduler] ❌ Failed to push to ${botUser.phone}:`, sendErr.message);
+                console.error(`[Scheduler] ❌ FAILED for ${botUser.phone}:`, sendErr.message);
             }
         }
-        console.log('[Scheduler] Manual push process complete.');
-        console.log(`[Scheduler] Manual push complete to ${botUsers.length} users.`);
+        console.log('[Scheduler] 🏁 MANUAL PUSH FINISHED');
     } catch (error) {
-        console.error('[Scheduler] Manual push error:', error);
+        console.error('❌ [Scheduler] CRITICAL ERROR IN MANUAL PUSH:', error.message);
+        console.error(error.stack);
     }
 };
