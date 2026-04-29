@@ -45,12 +45,19 @@ app.use('/api/pollution',   pollutionRoutes);
 
 // --- Production: Serve Frontend ---
 if (process.env.NODE_ENV === 'production') {
-    // Serve static files from Vite build
-    app.use(express.static(path.join(__dirname, '../dist')));
+    const distPath = path.resolve(__dirname, '../dist');
+    
+    // 1. Serve static files with high priority
+    app.use(express.static(distPath));
 
-    // Handle SPA routing: all non-API requests go to index.html
-    app.get(/^\/(?!api).*/, (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
+    // 2. Handle API routes (already handled above, but good to be safe)
+    // 3. Fallback: Serve index.html for any other route (SPA support)
+    app.get('*', (req, res) => {
+        // Skip API routes so they don't accidentally return index.html
+        if (req.path.startsWith('/api')) {
+            return res.status(404).json({ error: 'API route not found' });
+        }
+        res.sendFile(path.join(distPath, 'index.html'));
     });
 }
 
