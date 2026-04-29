@@ -133,7 +133,7 @@ exports.pushLeaderboardUpdate = async () => {
 exports.pushDailyRemindersManually = async () => {
     console.log('[Scheduler] Manual daily reminder push starting...');
     try {
-        const botUsers = await BotUser.find({ preferred_time: { $ne: 'Off' } });
+        const botUsers = await BotUser.find({});
         const now = new Date();
 
         for (const botUser of botUsers) {
