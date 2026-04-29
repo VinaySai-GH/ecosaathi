@@ -96,11 +96,17 @@ exports.handleWebhook = async (req, res) => {
             // 1. Find the user from phone number
             const BotUser = require('../models/BotUser');
             
-            // First, try to find the exact number from WhatsApp
+            // First, try exact match
             let botUser = await BotUser.findOne({ phone: from });
             
-            // Fallback: If not found, try normalizing 10-digit numbers to 91
-            if (!botUser) {
+            // Second, try last 10 digits raw (common in your DB)
+            if (!botUser && from.length >= 10) {
+                const last10 = from.slice(-10);
+                botUser = await BotUser.findOne({ phone: last10 });
+            }
+
+            // Third, try last 10 digits with '91' prefix
+            if (!botUser && from.length >= 10) {
                 const last10 = from.slice(-10);
                 botUser = await BotUser.findOne({ phone: '91' + last10 });
             }
