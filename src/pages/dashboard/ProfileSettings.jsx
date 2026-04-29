@@ -46,7 +46,14 @@ export default function ProfileSettings() {
 
     if (user?._id) {
       fetchUserProfile(user._id)
-        .then(data => setPosts(data.posts || []))
+        .then(data => {
+          setPosts(data.posts || []);
+          if (data.user?.bio && !bio) {
+             setBio(data.user.bio);
+             // Also optionally trigger signIn to update local context
+             signIn({ ...user, bio: data.user.bio });
+          }
+        })
         .catch(err => console.error(err));
     }
 
@@ -135,7 +142,7 @@ export default function ProfileSettings() {
                 {maskPhone(user?.phone)}
                 {user?.city && <> &nbsp;•&nbsp; <span className="profile-city">{user.city}</span></>}
               </p>
-              {user?.bio && <p className="profile-bio">{user.bio}</p>}
+              { (bio || user?.bio) && <p className="profile-bio">{bio || user?.bio}</p> }
 
               {/* Action buttons */}
               <div className="profile-action-row">

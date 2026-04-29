@@ -8,6 +8,7 @@ import { fetchPosts } from '../../api/postApi.js';
 import PostCard from './components/PostCard.jsx';
 import CreatePostModal from './components/CreatePostModal.jsx';
 import UserProfilePanel from './components/UserProfilePanel.jsx';
+import MobileReelsView from './components/MobileReelsView.jsx';
 import './dashboard.css';
 
 const FAB_OPTIONS = [
@@ -51,6 +52,7 @@ export default function Dashboard() {
   const [fabOpen, setFabOpen] = useState(false);
   const [modalType, setModalType] = useState(null); // 'news' | 'event' | 'issue'
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [reelsIndex, setReelsIndex] = useState(null);
 
   // Pull-to-refresh state
   const [pullY, setPullY] = useState(0);
@@ -180,12 +182,20 @@ export default function Dashboard() {
           )}
 
           <div className="feed-list">
-            {posts.map((post) => (
+            {posts.map((post, index) => (
               <PostCard
                 key={post._id}
                 post={post}
                 currentUserId={user?._id || user?.id}
                 onUserClick={(id) => id && setSelectedUserId(id)}
+                onImageClick={() => {
+                  if (window.innerWidth <= 768) {
+                    setReelsIndex(index);
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }}
               />
             ))}
           </div>
@@ -261,6 +271,21 @@ export default function Dashboard() {
           onClose={() => setSelectedUserId(null)}
         />
       )}
+      {/* Mobile Reels Viewer */}
+      {reelsIndex !== null && (
+        <MobileReelsView
+          posts={posts}
+          initialIndex={reelsIndex}
+          currentUserId={user?._id || user?.id}
+          onClose={() => setReelsIndex(null)}
+          onPostUpdated={(updatedPost) => {
+             const newPosts = posts.map(p => p._id === updatedPost._id ? updatedPost : p);
+             setPosts(newPosts);
+             cachedPosts = newPosts;
+          }}
+        />
+      )}
+
     </div>
   );
 }

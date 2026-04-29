@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Colors, Spacing, Radius } from '../../constants/theme.js';
 import { getSpots, verifySpot, getCities } from '../../services/greenspot.service.js';
 import { getAQI, getAQIQuality, getAQIRecommendation } from '../../services/aqi.service.js';
@@ -15,6 +16,13 @@ const CITY_COORDS = {
     'Tirupati': { lat: 13.6288, lng: 79.4192 },
     'Vijayawada': { lat: 16.5062, lng: 80.6480 }
 };
+
+// Module-level cache for EcoAtlas spots to prevent reloading on every visit
+const spotsCache = {
+    Tirupati: { data: null, timestamp: 0 },
+    Vijayawada: { data: null, timestamp: 0 }
+};
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 const CATEGORIES = [
     { id: 'all', label: 'All', icon: '📍', color: Colors.accent },
@@ -194,22 +202,40 @@ export default function GreenSpotHome() {
     const [isLoading, setIsLoading] = useState(true);
     const mapRef = useRef(null);
     const { user } = useAuth();
+    const routerLocation = useLocation();
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-    const loadSpots = useCallback(async () => {
+    const loadSpots = useCallback(async (forceRefresh = false) => {
         try {
-            const filters = {
-                lat: userLocation?.lat,
-                lng: userLocation?.lng,
-                city: selectedCity,
-            };
-            if (selectedCategory !== 'all') filters.category = selectedCategory;
-            if (searchQuery) filters.q = searchQuery;
+            const cacheEntry = spotsCache[selectedCity];
+            const isCacheValid = cacheEntry && cacheEntry.data && (Date.now() - cacheEntry.timestamp < CACHE_TTL_MS);
 
-            const response = await getSpots(filters);
+            let baseSpots = [];
 
-            const baseSpots = (response.spots || []).filter(s => !s.city || s.city === selectedCity);
-            
+            // If we have a valid cache and we aren't forcing a refresh (e.g. from a search/filter change that the backend handles)
+            // Wait, currently getSpots is queried WITH category and search query.
+            // If we want to use cache, we should fetch ALL spots for the city and do filtering completely locally!
+            // Let's check if the backend is doing heavy filtering.
+            // Actually, if category/query changes, we can just filter locally from the cached data.
+            if (isCacheValid && !forceRefresh && !searchQuery) {
+                baseSpots = cacheEntry.data;
+            } else {
+                const filters = {
+                    lat: userLocation?.lat,
+                    lng: userLocation?.lng,
+                    city: selectedCity,
+                };
+                
+                const response = await getSpots(filters);
+                baseSpots = (response.spots || []).filter(s => !s.city || s.city === selectedCity);
+                
+                // Update cache
+                spotsCache[selectedCity] = {
+                    data: baseSpots,
+                    timestamp: Date.now()
+                };
+            }
+
             // Build overlay items strictly for the selected city only
             const industries = buildIndustryItems(selectedCity);
             const riskZones = buildRiskZoneItems(selectedCity);
@@ -404,9 +430,39 @@ export default function GreenSpotHome() {
             mapInstance.panTo({ lat, lng });
         });
 
+        // Handle Deep Linking from URL
+        const queryParams = new URLSearchParams(routerLocation.search);
+        const linkLat = parseFloat(queryParams.get('lat'));
+        const linkLng = parseFloat(queryParams.get('lng'));
+
+        if (!isNaN(linkLat) && !isNaN(linkLng)) {
+            const deepLinkSpot = {
+                _id: 'deep-link-location',
+                name: 'Shared Location',
+                category: 'all',
+                lat: linkLat,
+                lng: linkLng,
+                address: `Lat: ${linkLat.toFixed(4)}, Lng: ${linkLng.toFixed(4)}`,
+                tips: ['Location shared from a post'],
+                verified_by: [],
+                isCustom: true
+            };
+            
+            // Wait briefly for markers to load if possible, then select
+            setTimeout(() => {
+                setSelectedSpot(deepLinkSpot);
+                mapInstance.panTo({ lat: linkLat, lng: linkLng });
+                mapInstance.setZoom(16);
+            }, 500);
+            
+            // Update mapInstance initial center
+            mapInstance.setCenter({ lat: linkLat, lng: linkLng });
+            mapInstance.setZoom(16);
+        }
+
         setMap(mapInstance);
         setIsLoading(false);
-    }, [userLocation]);
+    }, [userLocation, routerLocation.search]);
 
     // Load Google Maps script
     useEffect(() => {
@@ -471,10 +527,8 @@ export default function GreenSpotHome() {
 
     // Load spots when city/category/search changes (NOT when map changes)
     useEffect(() => {
-        if (userLocation) {
-            loadSpots();
-        }
-    }, [loadSpots, userLocation]);
+        loadSpots();
+    }, [loadSpots]);
 
     // Pan map to the selected city when city changes
     useEffect(() => {
@@ -488,6 +542,18 @@ export default function GreenSpotHome() {
     useEffect(() => {
         updateMarkers();
     }, [updateMarkers]);
+
+    // Background interval refresh
+    useEffect(() => {
+        if (!userLocation) return;
+        
+        // Refresh every 5 minutes in the background
+        const intervalId = setInterval(() => {
+            loadSpots(true); // force refresh quietly
+        }, CACHE_TTL_MS);
+
+        return () => clearInterval(intervalId);
+    }, [loadSpots, userLocation]);
 
     // Fetch AQI data when a spot is selected
     useEffect(() => {

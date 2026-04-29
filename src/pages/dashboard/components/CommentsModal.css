@@ -187,15 +187,18 @@
 
 /* ── Caption ── */
 .cm-caption {
-  padding: 10px 16px;
+  padding: 0 0 10px 0;
   font-size: 13px;
   line-height: 1.5;
   color: rgba(240, 240, 240, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   margin: 0;
   flex-shrink: 0;
-  max-height: 100px;
-  overflow-y: auto;
+}
+
+.cm-divider-inline {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-bottom: 14px;
 }
 
 .cm-caption-author {

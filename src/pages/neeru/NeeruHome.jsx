@@ -138,7 +138,7 @@ export default function NeeruHome() {
                 <label htmlFor="kl-input" className="neeru-label">Water used this month</label>
                 <div className="kl-row">
                   <input id="kl-input" type="number" placeholder="e.g. 8.5" value={kl} min="0" step="0.1"
-                    onChange={(e) => { setKl(e.target.value); setError(''); }} className="kl-input" autoFocus aria-label="Enter water usage in kiloliters" aria-invalid={error ? 'true' : 'false'} />
+                    onChange={(e) => { setKl(e.target.value); setError(''); }} className="kl-input" autoFocus={window.innerWidth > 768} aria-label="Enter water usage in kiloliters" aria-invalid={error ? 'true' : 'false'} />
                   <div className="unit-badge" aria-hidden="true"><span className="unit-text">KL</span></div>
                 </div>
                 <p className="neeru-hint">1 KL = 1000 litres. Check your bill for "units consumed" or "kl used".</p>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { addComment, deletePost, updatePostStatus } from '../../../api/postApi.js';
 import './CommentsModal.css';
 
-export default function CommentsModal({ post: initialPost, currentUserId, onClose, onPostUpdated, onPostDeleted }) {
+export default function CommentsModal({ post: initialPost, currentUserId, onClose, onPostUpdated, onPostDeleted, isBottomSheet = false }) {
   const [comments, setComments] = useState(initialPost.comments || []);
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -25,10 +25,12 @@ export default function CommentsModal({ post: initialPost, currentUserId, onClos
     commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [comments]);
 
-  // Focus input on mount
+  // Focus input on mount (desktop only, to prevent mobile keyboard pop-up)
   useEffect(() => {
-    setTimeout(() => inputRef.current?.focus(), 200);
-  }, []);
+    if (window.innerWidth > 768 && !isBottomSheet) {
+      setTimeout(() => inputRef.current?.focus(), 200);
+    }
+  }, [isBottomSheet]);
 
   // Close on Escape
   useEffect(() => {
@@ -93,7 +95,7 @@ export default function CommentsModal({ post: initialPost, currentUserId, onClos
   const hasCoords = initialPost.locationCoords?.lat != null;
 
   return (
-    <div className="cm-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className={`cm-overlay ${isBottomSheet ? 'bottom-sheet' : ''}`} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="cm-dialog" role="dialog" aria-modal="true">
 
         {/* ── CLOSE BUTTON (always top-right) ── */}
@@ -166,18 +168,18 @@ export default function CommentsModal({ post: initialPost, currentUserId, onClos
             </div>
           )}
 
-          {/* Caption (collapsible on mobile) */}
-          {initialPost.caption && (
-            <p className="cm-caption">
-              <span className="cm-caption-author">{initialPost.user?.name}</span>
-              {' '}{initialPost.caption}
-            </p>
-          )}
-
-          <div className="cm-divider" />
-
-          {/* Comments list */}
+          {/* Comments list (including caption at the top) */}
           <div className="cm-comments-list">
+            {/* Caption scrolls with comments */}
+            {initialPost.caption && (
+              <p className="cm-caption">
+                <span className="cm-caption-author">{initialPost.user?.name}</span>
+                {' '}{initialPost.caption}
+              </p>
+            )}
+
+            {/* Divider below caption if comments exist */}
+            {initialPost.caption && comments.length > 0 && <div className="cm-divider-inline" />}
             {comments.length === 0 && (
               <div className="cm-no-comments">
                 <span>💬</span>

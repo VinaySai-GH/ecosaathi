@@ -61,7 +61,7 @@ export default function NotificationsPage() {
                     rel="noopener noreferrer" 
                     className="notification-link-btn"
                   >
-                    View Link
+                    Visit site
                   </a>
                 )}
               </div>

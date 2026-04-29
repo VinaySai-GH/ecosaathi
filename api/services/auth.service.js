@@ -35,6 +35,7 @@ exports.registerUser = async (userData) => {
         name: user.name,
         phone: user.phone,
         city: user.city,
+        bio: user.bio || '',
         points: user.points,
         token: generateToken(user._id),
     };
@@ -72,6 +73,7 @@ exports.loginUser = async (phone, password) => {
         name: user.name,
         phone: user.phone,
         city: user.city,
+        bio: user.bio || '',
         points: user.points,
         token: generateToken(user._id),
     };

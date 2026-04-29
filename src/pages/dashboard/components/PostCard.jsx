@@ -10,7 +10,7 @@ const TYPE_META = {
   issue: { label: 'Issue', icon: '⚠️',  color: '#fb923c' },
 };
 
-export default function PostCard({ post: initialPost, currentUserId, onUserClick }) {
+export default function PostCard({ post: initialPost, currentUserId, onUserClick, onImageClick }) {
   const [post, setPost] = useState(initialPost);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -86,7 +86,14 @@ export default function PostCard({ post: initialPost, currentUserId, onUserClick
 
         {/* ── IMAGE ── */}
         {post.image && (
-          <div className="post-image-wrapper">
+          <div 
+            className="post-image-wrapper" 
+            onClick={() => {
+              if (onImageClick && onImageClick()) return;
+              setCommentsOpen(true);
+            }} 
+            style={{ cursor: 'pointer' }}
+          >
             <img src={post.image} alt="post" className="post-image" />
           </div>
         )}

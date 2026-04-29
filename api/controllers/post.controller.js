@@ -55,12 +55,12 @@ exports.createPost = async (req, res, next) => {
     await post.populate('user', 'name city phone');
 
     // Award points for posting
-    await User.findByIdAndUpdate(req.user._id, { $inc: { points: 3 } });
+    await User.findByIdAndUpdate(req.user._id, { $inc: { points: 30 } });
 
     // Send notification for points
     await Notification.create({
       user: req.user._id,
-      message: `You earned 3 points for creating a new ${type} post!`,
+      message: `You earned 30 points for creating a new ${type} post!`,
     });
 
     // Handle Grievance in background

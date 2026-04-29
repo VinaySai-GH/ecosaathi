@@ -14,7 +14,7 @@ exports.getLeaderboard = async () => {
         },
         {
             $project: {
-                hostel: '$_id', // using hostel field name as per schema requirements
+                city: '$_id', // mapping to city
                 total_points: 1,
                 member_count: 1,
                 avg_score: { 
