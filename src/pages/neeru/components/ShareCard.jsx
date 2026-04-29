@@ -4,7 +4,7 @@ import './components.css';
 
 const MONTHS = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export default function ShareCard({ kl, cityLabel, month, year, equivalency, benchmarkKl, status }) {
+export default function ShareCard({ kl, cityLabel, month, year, equivalencies = [], benchmarkKl, status, billText }) {
   const isOver = status === 'over';
   const diff = Math.abs(kl - benchmarkKl).toFixed(1);
   const statusLine = isOver
@@ -35,12 +35,15 @@ export default function ShareCard({ kl, cityLabel, month, year, equivalency, ben
         </div>
         <p className="sc-kl-label">water used this month</p>
 
-        {/* Equivalency Card */}
-        <div className="sc-eq-box">
-          <span className="sc-eq-icon">{equivalency ? equivalency.icon : '💧'}</span>
-          <p className="sc-eq-text">
-            {equivalency ? equivalency.compute(kl) : `That is equivalent to a lot of water!`}
-          </p>
+        {/* Impact Comparisons Section */}
+        <div className="sc-section-label">Your Impact</div>
+        <div className="sc-eq-grid">
+          {equivalencies.slice(0, 3).map((eq, i) => (
+            <div key={i} className="sc-eq-box-mini">
+              <span className="sc-eq-icon-mini">{eq.icon}</span>
+              <p className="sc-eq-text-mini">{eq.compute(kl)}</p>
+            </div>
+          ))}
         </div>
 
         {/* Status Pill */}
@@ -49,6 +52,14 @@ export default function ShareCard({ kl, cityLabel, month, year, equivalency, ben
             {statusLine}
           </span>
         </div>
+
+        {/* Bill Verification (if available) */}
+        {billText && (
+          <div className="sc-bill-verified">
+            <span className="sc-bill-icon">📜</span>
+            <span className="sc-bill-text">Bill Data Verified via EcoSaathi OCR</span>
+          </div>
+        )}
 
         <p className="sc-footer-cta">Track your water impact → EcoSaathi</p>
       </div>

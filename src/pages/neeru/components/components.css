@@ -279,41 +279,79 @@
 .sc-kl-label {
     font-size: 16px;
     color: var(--text-dim);
-    margin-bottom: 32px;
-}
-
-.sc-eq-box {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border: 1px solid var(--border);
     margin-bottom: 24px;
 }
 
-.sc-eq-icon {
-    font-size: 32px;
+.sc-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
 }
 
-.sc-eq-text {
-    font-size: 17px;
+.sc-eq-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.sc-eq-box-mini {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sc-eq-icon-mini {
+    font-size: 20px;
+}
+
+.sc-eq-text-mini {
+    font-size: 14px;
     color: var(--text);
     line-height: 1.4;
     flex: 1;
 }
 
 .sc-status-pill {
-    align-self: flex-start;
+    align-self: center;
     border-radius: 100px;
     padding: 8px 20px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
+    text-align: center;
 }
 
 .sc-status-text {
     font-size: 13px;
     font-weight: 700;
+}
+
+.sc-bill-verified {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(110, 224, 127, 0.1);
+    border: 1px solid rgba(110, 224, 127, 0.3);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 24px;
+}
+
+.sc-bill-icon {
+    font-size: 14px;
+}
+
+.sc-bill-text {
+    font-size: 12px;
+    color: #6ee07f;
+    font-weight: 600;
 }
 
 .sc-footer-cta {

@@ -169,8 +169,16 @@ export default function NeeruResult() {
       </div>
 
       <div ref={shareRef} style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
-        <ShareCard kl={kl} cityLabel={cityLabel} month={month} year={year}
-          equivalency={equivalencies[0]} benchmarkKl={city.benchmark_kl} status={status} />
+        <ShareCard 
+          kl={kl} 
+          cityLabel={cityLabel} 
+          month={month} 
+          year={year}
+          equivalencies={equivalencies} 
+          benchmarkKl={city.benchmark_kl} 
+          status={status} 
+          billText={billText}
+        />
       </div>
     </div>
   );
