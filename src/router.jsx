@@ -9,6 +9,7 @@ import { useAuth } from './context/AuthContext.jsx';
 import LoginScreen from './pages/auth/LoginPage.jsx';
 import RegisterScreen from './pages/auth/RegisterPage.jsx';
 import SidebarLayout from './layouts/SidebarLayout.jsx';
+import PrivacyPage from './pages/auth/PrivacyPage.jsx';
 import Dashboard from './pages/dashboard/Dashboard.jsx';
 import ProfileSettings from './pages/dashboard/ProfileSettings.jsx';
 import NeeruHomeScreen from './pages/neeru/NeeruHome.jsx';
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <PublicRoute><RegisterScreen /></PublicRoute>,
+  },
+  {
+    path: '/privacy',
+    element: <PrivacyPage />,
   },
   {
     path: '/',
