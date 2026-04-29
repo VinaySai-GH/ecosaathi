@@ -132,10 +132,12 @@ exports.pushLeaderboardUpdate = async () => {
  */
 exports.pushDailyRemindersManually = async () => {
     console.log('[Scheduler] 🚀 MANUAL PUSH STARTED');
-    let count = 0;
+    let successCount = 0;
+    let failCount = 0;
+    let errors = [];
+
     try {
         const botUsers = await BotUser.find({});
-        count = botUsers.length;
         console.log(`[Scheduler] 👥 Found ${botUsers.length} bot users in DB.`);
         
         const { getDailyQuestions } = require('../data/questions');
@@ -162,15 +164,17 @@ exports.pushDailyRemindersManually = async () => {
             try {
                 await whatsappService.sendTextMessage(botUser.phone, message);
                 console.log(`[Scheduler] ✅ SENT to ${botUser.phone}`);
+                successCount++;
             } catch (sendErr) {
                 console.error(`[Scheduler] ❌ FAILED for ${botUser.phone}:`, sendErr.message);
+                failCount++;
+                errors.push(`${botUser.phone}: ${sendErr.message}`);
             }
         }
         console.log('[Scheduler] 🏁 MANUAL PUSH FINISHED');
-        return count;
+        return { successCount, failCount, total: botUsers.length, errors: errors.slice(0, 3) };
     } catch (error) {
         console.error('❌ [Scheduler] CRITICAL ERROR IN MANUAL PUSH:', error.message);
-        console.error(error.stack);
-        return 0;
+        return { successCount: 0, failCount: 0, total: 0, error: error.message };
     }
 };

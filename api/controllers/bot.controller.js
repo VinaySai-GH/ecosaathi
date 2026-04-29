@@ -98,8 +98,21 @@ exports.handleWebhook = async (req, res) => {
             if (lowerMsg === 'push_all') {
                 console.log('[Webhook] ⚡ ADMIN TRIGGER: push_all');
                 const scheduler = require('../services/scheduler');
-                const count = await scheduler.pushDailyRemindersManually();
-                await whatsappService.sendTextMessage(from, `🚀 *Admin Control:* Manual push initiated for ${count} users.`);
+                const result = await scheduler.pushDailyRemindersManually();
+                
+                let report = `🚀 *Admin Control Summary*\n\n`;
+                report += `✅ *Sent:* ${result.successCount}\n`;
+                report += `❌ *Failed:* ${result.failCount}\n`;
+                report += `👥 *Total:* ${result.total}\n`;
+
+                if (result.failCount > 0) {
+                    report += `\n⚠️ *Recent Errors:*\n- ${result.errors.join('\n- ')}`;
+                }
+                if (result.error) {
+                    report += `\n❌ *Critical Error:* ${result.error}`;
+                }
+
+                await whatsappService.sendTextMessage(from, report);
                 continue;
             }
 
