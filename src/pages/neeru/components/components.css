@@ -200,73 +200,126 @@
 
 /* ── ShareCard (for html2canvas) ── */
 .share-card-root {
-    width: 540px;
-    padding: 60px;
-    border-radius: 28px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Inter', sans-serif;
+    width: 500px; /* Standard square-ish aspect for social sharing */
+    border-radius: 32px;
+    overflow: hidden;
+    background: #0a1f14;
+    border: 1px solid var(--border);
+    font-family: 'Outfit', 'Inter', sans-serif;
 }
 
-.sc-title {
-    font-size: 28px;
+.sc-gradient-overlay {
+    padding: 48px;
+    background: linear-gradient(135deg, #0f3b22 0%, #0a1f14 50%, #122d1e 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.sc-brand-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sc-brand-icon {
+    font-size: 24px;
+}
+
+.sc-brand-name {
+    font-size: 22px;
     font-weight: 800;
-    color: #eef5f0;
-    margin-bottom: 8px;
-    text-align: center;
+    color: var(--text);
+    flex: 1;
 }
 
-.sc-subtitle {
-    font-size: 18px;
-    color: #7aad8f;
-    margin-bottom: 40px;
-    text-align: center;
-}
-
-.sc-usage {
-    border-radius: 20px;
-    padding: 40px 60px;
-    border: 2px solid;
-    margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.sc-kl {
-    font-size: 80px;
-    font-weight: 900;
-}
-
-.sc-label {
-    font-size: 16px;
-    color: #7aad8f;
+.sc-brand-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 3px;
     text-transform: uppercase;
-    letter-spacing: 2px;
 }
 
-.sc-eq {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.sc-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+    opacity: 0.5;
 }
 
-.sc-eq-icon {
-    font-size: 48px;
+.sc-meta {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
     margin-bottom: 12px;
 }
 
-.sc-eq-text {
-    font-size: 22px;
-    color: #4a7a5c;
-    text-align: center;
-    line-height: 1.4;
+.sc-kl-row {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 4px;
 }
 
-.sc-branding {
-    font-size: 20px;
-    color: #6ee07f;
-    margin-top: 32px;
-    font-weight: 600;
+.sc-kl-number {
+    font-size: 84px;
+    font-weight: 900;
+    letter-spacing: -3px;
+    line-height: 1;
+}
+
+.sc-kl-unit {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-left: 8px;
+}
+
+.sc-kl-label {
+    font-size: 16px;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+}
+
+.sc-eq-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+}
+
+.sc-eq-icon {
+    font-size: 32px;
+}
+
+.sc-eq-text {
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.4;
+    flex: 1;
+}
+
+.sc-status-pill {
+    align-self: flex-start;
+    border-radius: 100px;
+    padding: 8px 20px;
+    margin-bottom: 32px;
+}
+
+.sc-status-text {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.sc-footer-cta {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
 }
