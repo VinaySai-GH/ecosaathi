@@ -109,7 +109,7 @@ export default function DashboardStats({ data, history, onRecalculate, onViewHis
     return tipsMap[category.toLowerCase()] || tipsMap['electricity'];
   };
 
-  const highestCategory = pieData.sort((a, b) => b.value - a.value)[0]?.name || 'Electricity';
+  const highestCategory = [...pieData].sort((a, b) => b.value - a.value)[0]?.name || 'Electricity';
   const personalizedTips = getTipsForCategory(highestCategory);
 
   return (
