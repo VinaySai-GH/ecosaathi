@@ -83,9 +83,10 @@ export default function CarbonPrintsPage() {
       await saveCarbonLog(unsavedFormData);
       setUnsavedFormData(null);
       await loadHistory(); // Puts viewMode back to 'dashboard' if success
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Failed to save log');
+      const errorMsg = e.details || e.message || 'Failed to save log';
+      alert(`Error: ${errorMsg}`);
     }
     setIsSaving(false);
   };

@@ -78,7 +78,11 @@ exports.saveCarbonLog = async (req, res) => {
         });
     } catch (error) {
         console.error('Error saving carbon log:', error);
-        res.status(500).json({ error: 'Failed to save carbon footprint' });
+        res.status(500).json({ 
+            error: 'Failed to save carbon footprint', 
+            details: error.message,
+            stack: error.stack?.split('\n').slice(0, 2).join(' ') 
+        });
     }
 };
 
