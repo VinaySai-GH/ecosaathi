@@ -93,15 +93,14 @@ exports.handleWebhook = async (req, res) => {
 
             console.log(`[Webhook] Incoming from: "${from}" | Message: "${messageText}"`);
 
-            // 1. Find the user from phone number (try with and without country code)
+            // 1. Find the user from phone number
             const BotUser = require('../models/BotUser');
-            // Normalize incoming number from WhatsApp (Ensure it starts with 91)
-            let searchPhone = from;
-            if (searchPhone.length === 10) searchPhone = '91' + searchPhone;
-
-            let botUser = await BotUser.findOne({ phone: searchPhone });
             
-            if (!botUser && from.length > 10) {
+            // First, try to find the exact number from WhatsApp
+            let botUser = await BotUser.findOne({ phone: from });
+            
+            // Fallback: If not found, try normalizing 10-digit numbers to 91
+            if (!botUser) {
                 const last10 = from.slice(-10);
                 botUser = await BotUser.findOne({ phone: '91' + last10 });
             }
