@@ -82,7 +82,7 @@ export default function LoginPage() {
         <div className="auth-header">
           <span className="auth-brand-icon">🌿</span>
           <h1 className="auth-title">Welcome Back</h1>
-          <p className="auth-subtitle">Enter your phone number to access EcoSaathi</p>
+          <p className="auth-subtitle">Continue your journey towards a greener campus.</p>
         </div>
         <form className="auth-form" onSubmit={handleLogin} noValidate>
           <label className="auth-label">Phone Number</label>

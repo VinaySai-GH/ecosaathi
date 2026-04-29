@@ -86,8 +86,8 @@ export default function RegisterPage() {
       <div className="auth-box anim-enter">
         <div className="auth-header">
           <span className="auth-brand-icon">🌱</span>
-          <h1 className="auth-title">Join EcoSaathi</h1>
-          <p className="auth-subtitle">Create an account to start tracking</p>
+          <h1 className="auth-title">Start Your Eco Journey</h1>
+          <p className="auth-subtitle">Make your impact tangible. Join the IIT Tirupati green movement.</p>
         </div>
         <form className="auth-form" onSubmit={handleRegister} noValidate>
           <label className="auth-label">Full Name</label>
