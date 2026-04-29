@@ -12,6 +12,11 @@ const MONTHS = [
     'January','February','March','April','May','June',
     'July','August','September','October','November','December',
 ];
+const FALLBACK_INSIGHTS = [
+    `You are doing great, {{NAME}}! With {{POINTS}} points and a {{STREAK}}-day streak, your commitment to the environment is truly inspiring. Keep up the amazing work!`,
+    `Consistent reflection is the key to a greener life. It's wonderful to see your {{STREAK}}-day streak, {{NAME}}. Let's try to reduce our water usage by just 1 KL this month!`,
+    `{{NAME}}, your dedication is making a real difference in {{CITY}}. Every drop of water and every vegetarian meal counts. Keep shining and inspiring your hostel mates!`
+];
 
 // Question text lookup (mirrors bot.service.js)
 const QUESTIONS = {
@@ -329,24 +334,33 @@ exports.getOrGenerateInsight = async (userId, force = false) => {
             console.error('[Insights] Groq fallback failed:', groqErr.message);
 
             // Beautiful hardcoded fallback insights if API limits are hit during demo
-            const fallbacks = [
-                `You are doing great, ${ctx.userName}! With ${ctx.totalPoints} points and a ${ctx.streak}-day streak, your commitment to the environment is truly inspiring. Keep up the amazing work!`,
-                `Consistent reflection is the key to a greener life. It's wonderful to see your ${ctx.streak}-day streak, ${ctx.userName}. Let's try to reduce our water usage by just 1 KL this month!`,
-                `${ctx.userName}, your dedication is making a real difference in ${ctx.city}. Every drop of water and every vegetarian meal counts. Keep shining and inspiring your hostel mates!`
-            ];
-            insight = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+            const raw = FALLBACK_INSIGHTS[Math.floor(Math.random() * FALLBACK_INSIGHTS.length)];
+            insight = raw
+                .replace(/{{NAME}}/g, ctx.userName)
+                .replace(/{{POINTS}}/g, ctx.totalPoints.toString())
+                .replace(/{{STREAK}}/g, ctx.streak.toString())
+                .replace(/{{CITY}}/g, ctx.city);
         }
     }
 
-    // Cache it on the user document
-    const next = pickNextInsightDate();
-    await User.findByIdAndUpdate(userId, {
-        cached_insight:     insight,
-        last_insight_at:    now,
-        next_insight_after: next,
+    // Cache it ONLY if it's a real AI insight (not a fallback)
+    const isFallback = FALLBACK_INSIGHTS.some(f => {
+        // Simple check: does it start with the same first 10 chars?
+        return insight.startsWith(f.split('{{')[0]);
     });
 
-    return { insight, isNew: true, generatedAt: now };
+    if (!isFallback) {
+        const next = pickNextInsightDate();
+        await User.findByIdAndUpdate(userId, {
+            cached_insight:     insight,
+            last_insight_at:    now,
+            next_insight_after: next,
+        });
+        return { insight, isNew: true, generatedAt: now };
+    }
+
+    // If it was a fallback, return it but don't save to DB (allows retry on refresh)
+    return { insight, isNew: false, generatedAt: user.last_insight_at };
 };
 
 /**
