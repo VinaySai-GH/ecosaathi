@@ -1,6 +1,6 @@
-const botService = require('../services/bot.service');
-const whatsappService = require('../services/whatsapp.service');
-const insightsService = require('../services/insights.service');
+const botService       = require('../services/bot.service');
+const whatsappService  = require('../services/whatsapp.service');
+const insightsService  = require('../services/insights.service');
 const { getDailyQuote } = require('../data/quotes');
 
 // Helper to get dynamic base URL from request (for clickable links in WhatsApp)
@@ -21,12 +21,12 @@ function parseMultiAnswer(text) {
 
     // Try full-word tokens first (e.g. "Y N HMM")
     const tokens = text.trim().toUpperCase().split(/[,|\s]+/);
-    if (tokens.length === 3 && tokens.every(t => ['Y', 'N', 'HMM', 'H'].includes(t))) {
+    if (tokens.length === 3 && tokens.every(t => ['Y','N','HMM','H'].includes(t))) {
         return tokens.map(t => MAP[t]);
     }
 
     // Try compact 3-char (e.g. "YNY")
-    if (raw.length === 3 && [...raw].every(c => ['Y', 'N', 'H'].includes(c))) {
+    if (raw.length === 3 && [...raw].every(c => ['Y','N','H'].includes(c))) {
         return [...raw].map(c => MAP[c]);
     }
 
@@ -87,7 +87,7 @@ exports.handleWebhook = async (req, res) => {
         }
 
         for (const message of messages) {
-            const from = message.from;
+            const from        = message.from;
             const messageText = message.text?.body || '';
             if (!messageText) continue;
 
@@ -98,17 +98,30 @@ exports.handleWebhook = async (req, res) => {
             if (lowerMsg === 'push_all') {
                 console.log('[Webhook] ⚡ ADMIN TRIGGER: push_all');
                 const scheduler = require('../services/scheduler');
-                const count = await scheduler.pushDailyRemindersManually();
-                await whatsappService.sendTextMessage(from, `🚀 *Admin Control:* Manual push initiated for ${count} users.`);
+                const result = await scheduler.pushDailyRemindersManually();
+                
+                let report = `🚀 *Admin Control Summary*\n\n`;
+                report += `✅ *Sent:* ${result.successCount}\n`;
+                report += `❌ *Failed:* ${result.failCount}\n`;
+                report += `👥 *Total:* ${result.total}\n`;
+
+                if (result.failCount > 0) {
+                    report += `\n⚠️ *Recent Errors:*\n- ${result.errors.join('\n- ')}`;
+                }
+                if (result.error) {
+                    report += `\n❌ *Critical Error:* ${result.error}`;
+                }
+
+                await whatsappService.sendTextMessage(from, report);
                 continue;
             }
 
             // 1. Find the user from phone number
             const BotUser = require('../models/BotUser');
-
+            
             // First, try exact match
             let botUser = await BotUser.findOne({ phone: from });
-
+            
             // Second, try last 10 digits raw (common in your DB)
             if (!botUser && from.length >= 10) {
                 const last10 = from.slice(-10);
@@ -156,7 +169,7 @@ exports.handleWebhook = async (req, res) => {
                 await whatsappService.sendTextMessage(from, `✅ Nightly messages set to 22:00.`);
                 continue;
             }
-
+            
             // 2.5 Handle "yes" / "ready" to get questions immediately
             if (lowerMsg === 'yes' || lowerMsg === 'ready' || lowerMsg === 'questions') {
                 const { questions, alreadyAnswered } = await botService.getTodayQuestions(botUser.userId);
@@ -165,7 +178,7 @@ exports.handleWebhook = async (req, res) => {
                 } else {
                     let qText = `Here are today's questions:\n\n`;
                     questions.forEach((q, i) => {
-                        qText += `*${i + 1}.* ${q.text}\n`;
+                        qText += `*${i+1}.* ${q.text}\n`;
                     });
                     qText += `\nReply with 3 letters (e.g., *YNY*) to log your reflection!`;
                     await whatsappService.sendTextMessage(from, qText);
@@ -178,7 +191,7 @@ exports.handleWebhook = async (req, res) => {
                 const User = require('../models/User');
                 const user = await User.findById(botUser.userId);
                 await whatsappService.sendTextMessage(
-                    from,
+                    from, 
                     `🔥 *Your Eco Stats*\n\n` +
                     `Streak: *${botUser.streak} days*\n` +
                     `Total Points: *${user ? user.points : 0}* 🌱\n\n` +
@@ -205,7 +218,7 @@ exports.handleWebhook = async (req, res) => {
                 if (alreadyAnswered && todayAnswer) {
                     let reviewText = `📝 *Today's Review*\n\n`;
                     questions.forEach((q, i) => {
-                        reviewText += `*Q${i + 1}:* ${q.text}\n*Your Answer:* ${todayAnswer.answers[i]}\n\n`;
+                        reviewText += `*Q${i+1}:* ${q.text}\n*Your Answer:* ${todayAnswer.answers[i]}\n\n`;
                     });
                     await whatsappService.sendTextMessage(from, reviewText.trim());
                 } else {
@@ -256,7 +269,7 @@ exports.handleWebhook = async (req, res) => {
             const quote = getDailyQuote();
             let reviewText = `\n\n📝 *Your Answers:*\n`;
             questions.forEach((q, i) => {
-                reviewText += `*Q${i + 1}:* ${q.text}\n*A:* ${answers[i]}\n\n`;
+                reviewText += `*Q${i+1}:* ${q.text}\n*A:* ${answers[i]}\n\n`;
             });
 
             let replyText = '';
@@ -287,10 +300,10 @@ exports.handleWebhook = async (req, res) => {
             try {
                 const User = require('../models/User');
                 const userDoc = await User.findById(botUser.userId);
-
+                
                 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
                 const lastInsightTime = userDoc && userDoc.last_insight_at ? userDoc.last_insight_at.getTime() : 0;
-
+                
                 if (Date.now() - lastInsightTime >= THREE_DAYS_MS) {
                     console.log(`[Webhook] 3 days passed. Generating new insight for ${from}...`);
                     await insightsService.getOrGenerateInsight(botUser.userId);
