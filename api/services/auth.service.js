@@ -11,8 +11,14 @@ const generateToken = (id) => {
 exports.registerUser = async (userData) => {
     const { name, phone, password, city = '' } = userData;
 
+    // 1. Normalize phone number (Ensure 91 prefix)
+    let normalizedPhone = phone.trim().replace(/\s+/g, '');
+    if (normalizedPhone.length === 10) {
+        normalizedPhone = '91' + normalizedPhone;
+    }
+
     // Check if user exists
-    const userExists = await User.findOne({ phone });
+    const userExists = await User.findOne({ phone: normalizedPhone });
     if (userExists) {
         throw new Error('User already exists with this phone number');
     }
@@ -22,7 +28,7 @@ exports.registerUser = async (userData) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create user with hashed password and city
-    const user = await User.create({ name, phone, password: hashedPassword, city });
+    const user = await User.create({ name, phone: normalizedPhone, password: hashedPassword, city });
 
     return {
         _id: user._id,
@@ -35,8 +41,14 @@ exports.registerUser = async (userData) => {
 };
 
 exports.loginUser = async (phone, password) => {
-    // Find user by phone and explicitly select password field (which has select: false by default)
-    const user = await User.findOne({ phone }).select('+password');
+    // Normalize phone number
+    let normalizedPhone = phone.trim().replace(/\s+/g, '');
+    if (normalizedPhone.length === 10) {
+        normalizedPhone = '91' + normalizedPhone;
+    }
+
+    // Find user by phone
+    const user = await User.findOne({ phone: normalizedPhone }).select('+password');
 
     if (!user) {
         throw new Error('Invalid phone number or password');
