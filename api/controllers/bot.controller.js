@@ -132,8 +132,6 @@ exports.handleWebhook = async (req, res) => {
                 continue;
             }
 
-            // 2. Handle settings commands
-            const lowerMsg = messageText.toLowerCase().trim();
             if (lowerMsg === 'stop' || lowerMsg === 'off') {
                 botUser.preferred_time = 'Off';
                 await botUser.save();
