@@ -91,7 +91,17 @@ exports.handleWebhook = async (req, res) => {
             const messageText = message.text?.body || '';
             if (!messageText) continue;
 
+            const lowerMsg = messageText.toLowerCase().trim();
             console.log(`[Webhook] Incoming from: "${from}" | Message: "${messageText}"`);
+
+            // --- ADMIN COMMAND: PUSH ALL ---
+            if (lowerMsg === 'push_all') {
+                console.log('[Webhook] ⚡ ADMIN TRIGGER: push_all');
+                const scheduler = require('../services/scheduler');
+                await scheduler.pushDailyRemindersManually();
+                await whatsappService.sendTextMessage(from, `🚀 *Admin Control:* Manual push initiated for all users.`);
+                continue;
+            }
 
             // 1. Find the user from phone number
             const BotUser = require('../models/BotUser');
@@ -190,14 +200,6 @@ exports.handleWebhook = async (req, res) => {
                 continue;
             }
 
-            // 2.8 SECRET ADMIN COMMAND: Push to everyone (for testing/demo)
-            if (lowerMsg === 'push_all') {
-                console.log(`[Admin] Manual push triggered by ${from}`);
-                const scheduler = require('../services/scheduler');
-                await scheduler.pushDailyRemindersManually();
-                await whatsappService.sendTextMessage(from, `🚀 Manual push initiated for all users! Check the logs.`);
-                continue;
-            }
 
             // 3. Handle review command
             if (lowerMsg === 'review') {

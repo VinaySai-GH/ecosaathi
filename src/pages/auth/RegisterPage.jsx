@@ -95,8 +95,16 @@ export default function RegisterPage() {
             onChange={(e) => { setName(e.target.value); setError(''); }} autoFocus />
           <label className="auth-label" style={{ marginTop: 20 }}>Phone Number</label>
           <div className="phone-input-container" style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <div style={{ position: 'relative', width: '95px' }}>
-              <span style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent)', fontWeight: 'bold', pointerEvents: 'none' }}>+</span>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              background: 'rgba(255,255,255,0.1)', 
+              borderRadius: '8px', 
+              border: '1px solid rgba(255,255,255,0.1)',
+              padding: '0 12px',
+              width: '100px'
+            }}>
+              <span style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '18px', marginRight: '4px' }}>+</span>
               <input 
                 type="tel" 
                 inputMode="numeric"
@@ -104,15 +112,15 @@ export default function RegisterPage() {
                 onChange={(e) => setCountryCode(e.target.value.replace(/\D/g, ''))}
                 maxLength={4}
                 style={{
-                  paddingLeft: '18px',
-                  textAlign: 'center',
-                  background: 'rgba(255,255,255,0.1)',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'transparent',
+                  border: 'none',
                   color: 'white',
                   fontWeight: 'bold',
                   width: '100%',
-                  fontSize: '16px'
+                  fontSize: '16px',
+                  padding: '12px 0',
+                  outline: 'none',
+                  textAlign: 'left'
                 }}
               />
             </div>
