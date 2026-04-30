@@ -21,7 +21,7 @@ This file tracks the current state of the EcoSaathi application. Use this as a r
 - [x] 6-month history visualization.
 - [x] Dynamic water-saving tips.
 
-### 2. Raat Ka Hisaab (Reflection Bot)
+### 2. EcoSandhya (Reflection Bot)
 - [x] WhatsApp bot registration with `preferred_time`.
 - [x] **100+ rotating questions** across 5 categories (Food, Water, Transport, Waste, Nature).
 - [x] **Personalized Questioning**: Adapts based on user data (high car usage → more transport questions).
@@ -57,7 +57,7 @@ This file tracks the current state of the EcoSaathi application. Use this as a r
 - `api/data/quotes.js`: 50-quote pool.
 - `api/services/insights.service.js`: Gemini logic.
 - `api/services/scheduler.js`: Cron jobs (Nightly Qs, Sunday Leaderboard).
-- `src/pages/raatkahisaab/RaatKaHisaab.jsx`: Reflection UI.
+- `src/pages/ecosandhya/ecosandhya.jsx`: Reflection UI.
 
 ---
 

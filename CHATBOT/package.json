@@ -1,7 +1,7 @@
 {
-  "name": "raatkahisaab-bot",
+  "name": "ecosandhya-bot",
   "version": "1.0.0",
-  "description": "Raat Ka Hisaab — Nightly WhatsApp Reflection Bot for EcoSaathi",
+  "description": "EcoSandhya — Nightly WhatsApp Reflection Bot for EcoSaathi",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

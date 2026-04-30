@@ -11,7 +11,7 @@ const SIDEBAR_LINKS = [
   { path: '/neeru', label: 'Neeru', icon: '💧' },
   { path: '/carbon', label: 'Carbon Footprint', icon: '🌱' },
   { path: '/greenspot', label: 'Eco Atlas', icon: '🗺️' },
-  { path: '/raatkahisaab', label: 'Raat Ka Hisaab', icon: '🌙' },
+  { path: '/ecosandhya', label: 'EcoSandhya', icon: '🌙' },
   { path: '/ecopulse', label: 'Eco Pulse', icon: '🏆' },
   { path: '/ecolearn', label: 'EcoLearn', icon: '📚' },
   { path: '/profile', label: 'Profile', icon: '👤' },

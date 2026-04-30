@@ -1,5 +1,5 @@
 # 📱 WhatsApp Bot Setup Guide
-**EcoSaathi Raat Ka Hisaab — Complete Integration**
+**EcoSaathi EcoSandhya — Complete Integration**
 
 ---
 
@@ -181,8 +181,8 @@ Instead:
 2. User opens WhatsApp
 3. User adds the **business number** to contacts (e.g., `+1 (123) 456-7890`)
 4. User texts the business number: `Hi` or `Start`
-5. Bot responds with: *"Sign up first on the EcoSaathi app to register for Raat Ka Hisaab"*
-6. User goes to app → clicks **"Join Raat Ka Hisaab"** → selects time
+5. Bot responds with: *"Sign up first on the EcoSaathi app to register for EcoSandhya"*
+6. User goes to app → clicks **"Join EcoSandhya"** → selects time
 7. Bot now recognizes them and sends nightly messages
 
 **Database mapping:**
@@ -247,7 +247,7 @@ Meta WhatsApp Cloud API has limits:
 - **Rate:** Max ~50 messages/second
 - **Messages must be within 24 hours** of last user message (otherwise marked as promotional)
 
-**For Raat Ka Hisaab:**
+**For EcoSandhya:**
 - Send at scheduled time (no response needed until user replies)
 - User has 24 hours to reply
 - Response will be within 24-hour window

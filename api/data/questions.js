@@ -1,5 +1,5 @@
 /**
- * 100 Rotating Questions for Raat Ka Hisaab
+ * 100 Rotating Questions for EcoSandhya
  * Organized by category. Each question has an id, text, category, and
  * optional "trigger" field — when set, the question is prioritized for
  * users whose app data matches the trigger condition.

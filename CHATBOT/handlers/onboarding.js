@@ -21,7 +21,7 @@ async function handleOnboarding(phone, text) {
   if (user.state === 'new') {
     await User.updateOne({ phone }, { state: 'waiting_name' });
     await sendMessage(phone,
-      `🌿 *Namaste! Welcome to Raat Ka Hisaab* 🌙\n\n` +
+      `🌿 *Namaste! Welcome to EcoSandhya* 🌙\n\n` +
       `Every night I'll send you 3 small questions about your day — food, water, transport, waste, and nature.\n\n` +
       `Just reply *Y / N / Hmm* for each question. That's it.\n\n` +
       `Your answers build into a personal eco-journal. After 30 days you get a report with real insights about your habits.\n\n` +
@@ -74,7 +74,7 @@ async function handleOnboarding(phone, text) {
     await sendMessage(phone,
       `✅ *All set, ${user.name}!*\n\n` +
       `I'll message you every night at *${chosenTime}*.\n\n` +
-      `Your first Raat Ka Hisaab arrives tonight 🌙\n\n` +
+      `Your first EcoSandhya arrives tonight 🌙\n\n` +
       `_Small daily reflections. Big changes over 30 days._`
     );
     return;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiFetch } from '../../api/client.js';
 import AnimatedCard from '../../components/animations/AnimatedCard.jsx';
-import './raatkahisaab.css';
+import './ecosandhya.css';
 
 const CATEGORY_EMOJI = {
   food: '🍽️',
@@ -109,24 +109,24 @@ function CountdownTimer({ preferredTime, forceTomorrow }) {
   const pad = (n) => String(n).padStart(2, '0');
 
   return (
-    <div className="rkh-countdown">
-      <p className="rkh-countdown-label">
+    <div className="es-countdown">
+      <p className="es-countdown-label">
         {forceTomorrow ? '📅 Next reflection tomorrow' : '⏰ Next set of questions in'}
       </p>
-      <div className="rkh-countdown-timer">
-        <div className="rkh-countdown-block">
-          <span className="rkh-countdown-num">{pad(time.hours)}</span>
-          <span className="rkh-countdown-unit">hrs</span>
+      <div className="es-countdown-timer">
+        <div className="es-countdown-block">
+          <span className="es-countdown-num">{pad(time.hours)}</span>
+          <span className="es-countdown-unit">hrs</span>
         </div>
-        <span className="rkh-countdown-sep">:</span>
-        <div className="rkh-countdown-block">
-          <span className="rkh-countdown-num">{pad(time.minutes)}</span>
-          <span className="rkh-countdown-unit">min</span>
+        <span className="es-countdown-sep">:</span>
+        <div className="es-countdown-block">
+          <span className="es-countdown-num">{pad(time.minutes)}</span>
+          <span className="es-countdown-unit">min</span>
         </div>
-        <span className="rkh-countdown-sep">:</span>
-        <div className="rkh-countdown-block">
-          <span className="rkh-countdown-num">{pad(time.seconds)}</span>
-          <span className="rkh-countdown-unit">sec</span>
+        <span className="es-countdown-sep">:</span>
+        <div className="es-countdown-block">
+          <span className="es-countdown-num">{pad(time.seconds)}</span>
+          <span className="es-countdown-unit">sec</span>
         </div>
       </div>
     </div>
@@ -136,10 +136,10 @@ function CountdownTimer({ preferredTime, forceTomorrow }) {
 function QuoteCard({ quote }) {
   if (!quote) return null;
   return (
-    <div className="rkh-quote-card">
-      <span className="rkh-quote-icon">💡</span>
-      <p className="rkh-quote-text">"{quote.text}"</p>
-      <p className="rkh-quote-author">— {quote.author}</p>
+    <div className="es-quote-card">
+      <span className="es-quote-icon">💡</span>
+      <p className="es-quote-text">"{quote.text}"</p>
+      <p className="es-quote-author">— {quote.author}</p>
     </div>
   );
 }
@@ -153,17 +153,17 @@ function QuestionCard({ question, index, selectedAnswer, onSelect, disabled }) {
   ];
 
   return (
-    <div className={`rkh-question-card ${selectedAnswer ? 'answered' : ''}`}>
-      <div className="rkh-q-header">
-        <span className="rkh-q-badge">{emoji} {question.category}</span>
-        <span className="rkh-q-number">Q{index + 1} of 3</span>
+    <div className={`es-question-card ${selectedAnswer ? 'answered' : ''}`}>
+      <div className="es-q-header">
+        <span className="es-q-badge">{emoji} {question.category}</span>
+        <span className="es-q-number">Q{index + 1} of 3</span>
       </div>
-      <p className="rkh-q-text">{question.text}</p>
-      <div className="rkh-answer-row">
+      <p className="es-q-text">{question.text}</p>
+      <div className="es-answer-row">
         {answers.map(({ key, label, cls }) => (
           <button
             key={key}
-            className={`rkh-answer-btn ${cls} ${selectedAnswer === key ? 'selected' : ''}`}
+            className={`es-answer-btn ${cls} ${selectedAnswer === key ? 'selected' : ''}`}
             onClick={() => onSelect(index, key)}
             disabled={disabled}
             aria-pressed={selectedAnswer === key}
@@ -178,7 +178,7 @@ function QuestionCard({ question, index, selectedAnswer, onSelect, disabled }) {
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 
-export default function RaatKaHisaab() {
+export default function EcoSandhya() {
   const [loading, setLoading]         = useState(true);
   const [questions, setQuestions]     = useState([]);
   const [streak, setStreak]           = useState(0);
@@ -281,7 +281,7 @@ export default function RaatKaHisaab() {
 
   if (loading) {
     return (
-      <div className="rkh-loading">
+      <div className="es-loading">
         <div className="spinner" />
         <span>Loading tonight's questions…</span>
       </div>
@@ -289,28 +289,28 @@ export default function RaatKaHisaab() {
   }
 
   return (
-    <div className="rkh-page">
+    <div className="es-page">
 
       {/* Hero */}
       <AnimatedCard delay={0}>
-        <div className="rkh-hero">
-          <span className="rkh-moon">🌙</span>
-          <h1 className="rkh-title">Raat Ka Hisaab</h1>
-          <p className="rkh-subtitle">3 questions · every night · track your eco habits</p>
+        <div className="es-hero">
+          <span className="es-moon">🌙</span>
+          <h1 className="es-title">EcoSandhya</h1>
+          <p className="es-subtitle">3 questions · every night · track your eco habits</p>
         </div>
       </AnimatedCard>
 
       {/* Stats row */}
       <AnimatedCard delay={80}>
-        <div className="rkh-stats-row">
-          <div className="rkh-stat-card">
-            <p className="rkh-stat-label">🔥 Streak</p>
-            <p className="rkh-stat-value">
-              {streak} <span className="rkh-stat-unit">days</span>
+        <div className="es-stats-row">
+          <div className="es-stat-card">
+            <p className="es-stat-label">🔥 Streak</p>
+            <p className="es-stat-value">
+              {streak} <span className="es-stat-unit">days</span>
             </p>
           </div>
-          <div className="rkh-stat-card">
-            <p className="rkh-stat-label">⚙️ Bot Settings</p>
+          <div className="es-stat-card">
+            <p className="es-stat-label">⚙️ Bot Settings</p>
             {preferredTime === 'Off' ? (
               <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <span style={{ color: '#ef4444', fontSize: '14px', flex: 1 }}>Turned Off</span>
@@ -327,7 +327,7 @@ export default function RaatKaHisaab() {
                   type="time"
                   value={preferredTime}
                   onChange={handleTimeChange}
-                  className="rkh-time-select"
+                  className="es-time-select"
                   style={{ flex: 1, margin: 0 }}
                 />
                 <button
@@ -348,7 +348,7 @@ export default function RaatKaHisaab() {
 
       {/* Date banner */}
       <AnimatedCard delay={160}>
-        <div className="rkh-date-banner">
+        <div className="es-date-banner">
           🌙 &nbsp;{getTodayLabel()}'s reflection
         </div>
       </AnimatedCard>
@@ -357,17 +357,17 @@ export default function RaatKaHisaab() {
       {alreadyAnswered ? (
         <>
           <AnimatedCard delay={240}>
-            <div className="rkh-done-banner">
-              <span className="rkh-done-icon">🌟</span>
-              <h2 className="rkh-done-title">
+            <div className="es-done-banner">
+              <span className="es-done-icon">🌟</span>
+              <h2 className="es-done-title">
                 {submitResult ? "Tonight's reflection done!" : "Already reflected today!"}
               </h2>
-              <p className="rkh-done-sub">
+              <p className="es-done-sub">
                 {submitResult
                   ? `You earned +${submitResult.pointsAwarded} points. Your streak is now ${submitResult.streak} days.`
                   : "You've already answered today's questions. Great job staying consistent!"}
               </p>
-              <div className="rkh-done-streak">
+              <div className="es-done-streak">
                 🔥 {streak}-day streak — come back tomorrow!
               </div>
             </div>
@@ -385,7 +385,7 @@ export default function RaatKaHisaab() {
         </>
       ) : (
         <>
-          <div className="rkh-whatsapp-prompt" style={{ textAlign: 'center', marginTop: '32px', padding: '24px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="es-whatsapp-prompt" style={{ textAlign: 'center', marginTop: '32px', padding: '24px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>📱</span>
             <h3 style={{ color: '#fff', marginBottom: '8px' }}>Time to reflect!</h3>
             <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: '1.5' }}>
@@ -398,7 +398,7 @@ export default function RaatKaHisaab() {
       )}
 
       {/* Toast */}
-      <div className={`rkh-toast ${toast.show ? 'show' : ''}`}>
+      <div className={`es-toast ${toast.show ? 'show' : ''}`}>
         {toast.msg}
       </div>
 

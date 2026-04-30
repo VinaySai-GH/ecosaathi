@@ -184,7 +184,7 @@ INSIGHTS:
 1. ☐ Create account in EcoSaathi app
 2. ☐ Log in with phone number
 3. ☐ Go to Dashboard
-4. ☐ Click "Join Raat Ka Hisaab"
+4. ☐ Click "Join EcoSandhya"
 5. ☐ Select preferred time
 6. ☐ Click Register
 7. ☐ Open WhatsApp

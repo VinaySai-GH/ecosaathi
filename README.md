@@ -23,7 +23,7 @@ A community-maintained map of eco-friendly places near you: e-waste drop-off cen
 ### 🌬️ Pollution Sense — Real-time Air Quality
 Stay informed with live Air Quality Index (AQI) monitoring. Uses OpenAQ integration to show accurate local pollution levels, combined with community-reported pollution hotspots on the map.
 
-### 🌙 Raat Ka Hisaab — Nightly Reflection Bot
+### 🌙 EcoSandhya — Nightly Reflection Bot
 A WhatsApp chatbot that messages you every night for reflection. Tracks daily streaks across eco-friendly habits. Reply quickly, and over time your answers become a personalised eco-journal with behavioural insights. No app download required — it meets you where you already are.
 
 ### 🏆 Eco Pulse — Campus Leaderboard

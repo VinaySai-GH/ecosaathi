@@ -15,7 +15,7 @@ college students, starting with IIT Tirupati as the pilot campus.
 - **Eco Atlas (Green Spot)** — Community-maintained map of eco-friendly places (e-waste, refills, etc.). Users add spots, upload photos, and verify each other's listings. Includes City Eco Score.
 - **Carbon Prints** — Multi-category carbon footprint tracking (food, transport, electricity, waste) with real-time emission calculations and history.
 - **Pollution Sense** — Real-time Air Quality Index (AQI) monitoring using OpenAQ integration and community pollution reports.
-- **Raat Ka Hisaab** — Nightly WhatsApp chatbot for reflection. Tracks streaks and generates personalized behavior insights.
+- **EcoSandhya** — Nightly WhatsApp chatbot for reflection. Tracks streaks and generates personalized behavior insights.
 - **Eco Pulse** — Live campus leaderboard aggregating points from all features.
 
 **Tech stack:**
@@ -126,8 +126,8 @@ PUT  /api/auth/profile  { name, bio, city, password }
 - Neeru 5% reduction vs last month: +10 bonus pts
 - Green Spot verified listing added: 30 pts
 - Green Spot verification given: 5 pts
-- Raat Ka Hisaab daily reply: 5 pts
-- Raat Ka Hisaab 30-day streak: +50 bonus pts
+- EcoSandhya daily reply: 5 pts
+- EcoSandhya 30-day streak: +50 bonus pts
 (hostel changed to cities)
 City score = sum of all member points ÷ number of members
 (prevents large cities from dominating)
@@ -215,7 +215,7 @@ Rules for the AI:
 - [x] **Eco Pulse**: Leaderboard and user ranking (100%)
 - [x] **Carbon Prints**: Multi-category tracking and trends (100%)
 - [x] **Green Spot**: Map integration, adding spots, and City Eco Score (100%)
-- [x] **Raat Ka Hisaab**: WhatsApp bot integration and insights (100%)
+- [x] **EcoSandhya**: WhatsApp bot integration and insights (100%)
 - [x] **Pollution Sense**: AQI map and community reports (100%)
 
 ### 🟡 In Progress

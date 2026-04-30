@@ -45,7 +45,7 @@
 ### User's steps:
 1. Open EcoSaathi app
 2. Sign up / Log in with phone number (e.g., `+919876543210`)
-3. Go to Dashboard → "Join Raat Ka Hisaab"
+3. Go to Dashboard → "Join EcoSandhya"
 4. Select preferred time (21:00, 21:30, 22:00)
 5. Click **Register**
 6. Open WhatsApp
@@ -126,7 +126,7 @@ Process answer → award points → send response
 2. User gets new phone: `+919999999999`
 3. User logs into app with NEW number
 4. App creates new User account
-5. User goes to Dashboard → clicks "Join Raat Ka Hisaab"
+5. User goes to Dashboard → clicks "Join EcoSandhya"
 6. Creates NEW BotUser with new phone number
 7. Old BotUser becomes inactive (optional: delete or archive)
 

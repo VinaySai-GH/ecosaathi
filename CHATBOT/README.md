@@ -1,4 +1,4 @@
-# 🌙 Raat Ka Hisaab — Nightly WhatsApp Reflection Bot
+# 🌙 EcoSandhya — Nightly WhatsApp Reflection Bot
 
 > Part of EcoSaathi | IIT Tirupati | BTech 2nd Year Project
 
@@ -10,7 +10,7 @@ Users reply Y / N / Hmm. After 30 days they get a personalised eco-journal repor
 ## Project Structure
 
 ```
-raatkahisaab/
+ecosandhya/
 ├── server.js               ← Entry point. Webhook + message routing
 ├── handlers/
 │   ├── whatsapp.js         ← sendMessage() utility

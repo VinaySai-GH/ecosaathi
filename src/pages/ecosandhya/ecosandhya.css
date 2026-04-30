@@ -1,8 +1,8 @@
 /* ========================================
-   Raat Ka Hisaab — Moon-lit Theme
+   EcoSandhya — Moon-lit Theme
    ======================================== */
 
-.rkh-page {
+.es-page {
   padding: 20px;
   max-width: 680px;
   margin: 0 auto;
@@ -10,12 +10,12 @@
 }
 
 /* ── Hero ── */
-.rkh-hero {
+.es-hero {
   text-align: center;
   padding: 32px 20px 20px;
 }
 
-.rkh-moon {
+.es-moon {
   font-size: 72px;
   display: block;
   animation: moonFloat 4s ease-in-out infinite;
@@ -27,7 +27,7 @@
   50%       { transform: translateY(-10px); }
 }
 
-.rkh-title {
+.es-title {
   color: #fff;
   font-size: 26px;
   font-weight: 800;
@@ -35,20 +35,20 @@
   letter-spacing: -0.5px;
 }
 
-.rkh-subtitle {
+.es-subtitle {
   color: #9ca3af;
   font-size: 14px;
   margin: 0;
 }
 
 /* ── Streak / Stats Row ── */
-.rkh-stats-row {
+.es-stats-row {
   display: flex;
   gap: 12px;
   margin: 20px 0;
 }
 
-.rkh-stat-card {
+.es-stat-card {
   flex: 1;
   background: linear-gradient(145deg, #1e1b4b, #16133a);
   border: 1px solid rgba(167, 139, 250, 0.2);
@@ -57,7 +57,7 @@
   text-align: center;
 }
 
-.rkh-stat-label {
+.es-stat-label {
   color: #9ca3af;
   font-size: 11px;
   text-transform: uppercase;
@@ -65,21 +65,21 @@
   margin: 0 0 8px 0;
 }
 
-.rkh-stat-value {
+.es-stat-value {
   color: #a78bfa;
   font-size: 28px;
   font-weight: 800;
   margin: 0;
 }
 
-.rkh-stat-unit {
+.es-stat-unit {
   color: #7c6db1;
   font-size: 12px;
   font-weight: 500;
 }
 
 /* ── Date Banner ── */
-.rkh-date-banner {
+.es-date-banner {
   background: rgba(167, 139, 250, 0.08);
   border: 1px solid rgba(167, 139, 250, 0.15);
   border-radius: 12px;
@@ -92,14 +92,14 @@
 }
 
 /* ── Question Cards ── */
-.rkh-questions-section {
+.es-questions-section {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: 24px;
 }
 
-.rkh-question-card {
+.es-question-card {
   background: linear-gradient(145deg, #1a1730, #130f2a);
   border: 1px solid rgba(167, 139, 250, 0.15);
   border-radius: 20px;
@@ -107,24 +107,24 @@
   transition: border-color 0.25s, transform 0.2s;
 }
 
-.rkh-question-card:hover {
+.es-question-card:hover {
   border-color: rgba(167, 139, 250, 0.35);
   transform: translateY(-2px);
 }
 
-.rkh-question-card.answered {
+.es-question-card.answered {
   border-color: rgba(167, 139, 250, 0.4);
   background: linear-gradient(145deg, #1e1b4b, #1a1730);
 }
 
-.rkh-q-header {
+.es-q-header {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 14px;
 }
 
-.rkh-q-badge {
+.es-q-badge {
   background: rgba(167, 139, 250, 0.15);
   color: #a78bfa;
   font-size: 11px;
@@ -135,12 +135,12 @@
   border-radius: 20px;
 }
 
-.rkh-q-number {
+.es-q-number {
   color: #6b7280;
   font-size: 12px;
 }
 
-.rkh-q-text {
+.es-q-text {
   color: #e5e7eb;
   font-size: 16px;
   font-weight: 600;
@@ -149,12 +149,12 @@
 }
 
 /* ── Y / N / Hmm Buttons ── */
-.rkh-answer-row {
+.es-answer-row {
   display: flex;
   gap: 10px;
 }
 
-.rkh-answer-btn {
+.es-answer-btn {
   flex: 1;
   padding: 12px 8px;
   border-radius: 12px;
@@ -166,70 +166,70 @@
   letter-spacing: 0.3px;
 }
 
-.rkh-answer-btn:disabled {
+.es-answer-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.rkh-answer-btn.yes {
+.es-answer-btn.yes {
   background: rgba(34, 197, 94, 0.1);
   border-color: rgba(34, 197, 94, 0.3);
   color: #4ade80;
 }
 
-.rkh-answer-btn.yes:hover:not(:disabled) {
+.es-answer-btn.yes:hover:not(:disabled) {
   background: rgba(34, 197, 94, 0.22);
   border-color: #4ade80;
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(34, 197, 94, 0.25);
 }
 
-.rkh-answer-btn.yes.selected {
+.es-answer-btn.yes.selected {
   background: rgba(34, 197, 94, 0.25);
   border-color: #4ade80;
   box-shadow: 0 0 12px rgba(34, 197, 94, 0.3);
 }
 
-.rkh-answer-btn.no {
+.es-answer-btn.no {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.3);
   color: #f87171;
 }
 
-.rkh-answer-btn.no:hover:not(:disabled) {
+.es-answer-btn.no:hover:not(:disabled) {
   background: rgba(239, 68, 68, 0.22);
   border-color: #f87171;
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(239, 68, 68, 0.25);
 }
 
-.rkh-answer-btn.no.selected {
+.es-answer-btn.no.selected {
   background: rgba(239, 68, 68, 0.25);
   border-color: #f87171;
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
 }
 
-.rkh-answer-btn.hmm {
+.es-answer-btn.hmm {
   background: rgba(251, 191, 36, 0.1);
   border-color: rgba(251, 191, 36, 0.3);
   color: #fbbf24;
 }
 
-.rkh-answer-btn.hmm:hover:not(:disabled) {
+.es-answer-btn.hmm:hover:not(:disabled) {
   background: rgba(251, 191, 36, 0.22);
   border-color: #fbbf24;
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(251, 191, 36, 0.25);
 }
 
-.rkh-answer-btn.hmm.selected {
+.es-answer-btn.hmm.selected {
   background: rgba(251, 191, 36, 0.25);
   border-color: #fbbf24;
   box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
 }
 
 /* ── Submit CTA ── */
-.rkh-submit-btn {
+.es-submit-btn {
   width: 100%;
   padding: 16px;
   background: linear-gradient(135deg, #7c3aed, #6d28d9);
@@ -244,19 +244,19 @@
   letter-spacing: 0.3px;
 }
 
-.rkh-submit-btn:hover:not(:disabled) {
+.es-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(124, 58, 237, 0.5);
 }
 
-.rkh-submit-btn:disabled {
+.es-submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
 /* ── Already Answered Banner ── */
-.rkh-done-banner {
+.es-done-banner {
   background: linear-gradient(135deg, #1e1b4b, #16133a);
   border: 1px solid rgba(167, 139, 250, 0.35);
   border-radius: 20px;
@@ -264,7 +264,7 @@
   text-align: center;
 }
 
-.rkh-done-icon {
+.es-done-icon {
   font-size: 56px;
   display: block;
   margin-bottom: 14px;
@@ -276,21 +276,21 @@
   100% { transform: scale(1);   opacity: 1; }
 }
 
-.rkh-done-title {
+.es-done-title {
   color: #a78bfa;
   font-size: 22px;
   font-weight: 800;
   margin: 0 0 8px;
 }
 
-.rkh-done-sub {
+.es-done-sub {
   color: #9ca3af;
   font-size: 14px;
   margin: 0 0 20px;
   line-height: 1.6;
 }
 
-.rkh-done-streak {
+.es-done-streak {
   display: inline-block;
   background: rgba(167, 139, 250, 0.12);
   border: 1px solid rgba(167, 139, 250, 0.25);
@@ -302,7 +302,7 @@
 }
 
 /* ── Toast ── */
-.rkh-toast {
+.es-toast {
   position: fixed;
   bottom: 32px;
   left: 50%;
@@ -319,12 +319,12 @@
   white-space: nowrap;
 }
 
-.rkh-toast.show {
+.es-toast.show {
   transform: translateX(-50%) translateY(0);
 }
 
 /* ── Loading ── */
-.rkh-loading {
+.es-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -336,7 +336,7 @@
 }
 
 /* ── Error ── */
-.rkh-error {
+.es-error {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 12px;
@@ -348,14 +348,14 @@
 }
 
 /* category emoji map */
-.rkh-cat-food    { color: #fb923c; }
-.rkh-cat-water   { color: #60a5fa; }
-.rkh-cat-transport { color: #a78bfa; }
-.rkh-cat-waste   { color: #34d399; }
-.rkh-cat-nature  { color: #86efac; }
+.es-cat-food    { color: #fb923c; }
+.es-cat-water   { color: #60a5fa; }
+.es-cat-transport { color: #a78bfa; }
+.es-cat-waste   { color: #34d399; }
+.es-cat-nature  { color: #86efac; }
 
 /* ── Countdown Timer ── */
-.rkh-countdown {
+.es-countdown {
   background: linear-gradient(145deg, #1e1b4b, #16133a);
   border: 1px solid rgba(167, 139, 250, 0.2);
   border-radius: 20px;
@@ -364,7 +364,7 @@
   margin: 16px 0;
 }
 
-.rkh-countdown-label {
+.es-countdown-label {
   color: #9ca3af;
   font-size: 13px;
   font-weight: 600;
@@ -373,20 +373,20 @@
   margin: 0 0 14px 0;
 }
 
-.rkh-countdown-timer {
+.es-countdown-timer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.rkh-countdown-block {
+.es-countdown-block {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.rkh-countdown-num {
+.es-countdown-num {
   font-size: 36px;
   font-weight: 800;
   color: #a78bfa;
@@ -396,7 +396,7 @@
   text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
 }
 
-.rkh-countdown-unit {
+.es-countdown-unit {
   font-size: 10px;
   color: #7c6db1;
   text-transform: uppercase;
@@ -404,7 +404,7 @@
   margin-top: 4px;
 }
 
-.rkh-countdown-sep {
+.es-countdown-sep {
   font-size: 28px;
   font-weight: 800;
   color: #4c1d95;
@@ -418,7 +418,7 @@
 }
 
 /* ── Motivational Quote Card ── */
-.rkh-quote-card {
+.es-quote-card {
   background: linear-gradient(145deg, rgba(30, 27, 75, 0.8), rgba(22, 19, 58, 0.9));
   border: 1px solid rgba(251, 191, 36, 0.2);
   border-radius: 20px;
@@ -429,7 +429,7 @@
   overflow: hidden;
 }
 
-.rkh-quote-card::before {
+.es-quote-card::before {
   content: '';
   position: absolute;
   top: -20px;
@@ -440,19 +440,19 @@
   border-radius: 50%;
 }
 
-.rkh-quote-icon {
+.es-quote-icon {
   font-size: 32px;
   display: block;
   margin-bottom: 12px;
 }
 
-.rkh-q-number {
+.es-q-number {
   font-size: 14px;
   color: #9ca3af;
   font-weight: 500;
 }
 
-.rkh-time-select {
+.es-time-select {
   margin-top: 8px;
   padding: 8px 12px;
   background-color: rgba(255, 255, 255, 0.05);
@@ -467,22 +467,22 @@
   width: 100%;
 }
 
-.rkh-time-select:hover {
+.es-time-select:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.rkh-time-select:focus {
+.es-time-select:focus {
   border-color: #8b5cf6;
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
 }
 
-.rkh-time-select option {
+.es-time-select option {
   background-color: #1a1a1a;
   color: #fff;
 }
 
-.rkh-quote-text {
+.es-quote-text {
   color: #e5e7eb;
   font-size: 15px;
   font-style: italic;
@@ -491,7 +491,7 @@
   margin: 0 0 10px 0;
 }
 
-.rkh-quote-author {
+.es-quote-author {
   color: #fbbf24;
   font-size: 13px;
   font-weight: 700;

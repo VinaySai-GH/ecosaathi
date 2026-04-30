@@ -69,7 +69,7 @@ User's WhatsApp phone
 
 **Option A: Add more users to existing business number**
 - User signs up in app with their personal phone
-- User clicks "Join Raat Ka Hisaab"
+- User clicks "Join EcoSandhya"
 - Bot recognizes them by phone number
 - Done! (No new number needed)
 

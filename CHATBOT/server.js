@@ -87,7 +87,7 @@ app.post('/webhook', async (req, res) => {
 // HEALTH CHECK
 // ─────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'Raat Ka Hisaab Bot' });
+  res.json({ status: 'ok', service: 'EcoSandhya Bot' });
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -95,5 +95,5 @@ app.get('/health', (req, res) => {
 // ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Raat Ka Hisaab Bot running on port ${PORT}`);
+  console.log(`🚀 EcoSandhya Bot running on port ${PORT}`);
 });

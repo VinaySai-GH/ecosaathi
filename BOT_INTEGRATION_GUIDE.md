@@ -80,7 +80,7 @@ const routes = [
 After adding both:
 
 1. ✅ Visit `/dashboard` → should see BotRegisterCard
-2. ✅ Click "Join Raat Ka Hisaab" → should register (if API works)
+2. ✅ Click "Join EcoSandhya" → should register (if API works)
 3. ✅ Visit `/insights` → should see insights page
 4. ✅ API calls in network tab should show `/api/bot/register`, `/api/bot/status`, etc.
 

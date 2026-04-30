@@ -46,7 +46,7 @@ export default function BotRegisterCard() {
 
             if (response.ok) {
                 setIsRegistered(true);
-                setMessage('✅ Registered for Raat Ka Hisaab! 🌙');
+                setMessage('✅ Registered for EcoSandhya! 🌙');
                 setTimeout(() => setMessage(''), 3000);
             } else {
                 const data = await response.json();
@@ -90,7 +90,7 @@ export default function BotRegisterCard() {
         <div style={styles.card}>
             <div style={styles.header}>
                 <span style={styles.icon}>🌙</span>
-                <h3 style={styles.title}>Raat Ka Hisaab</h3>
+                <h3 style={styles.title}>EcoSandhya</h3>
                 <span style={styles.subtitle}>Nightly Reflection Bot</span>
             </div>
 
@@ -123,7 +123,7 @@ export default function BotRegisterCard() {
                             opacity: loading ? 0.6 : 1,
                         }}
                     >
-                        {loading ? 'Registering...' : 'Join Raat Ka Hisaab'}
+                        {loading ? 'Registering...' : 'Join EcoSandhya'}
                     </button>
                 </div>
             ) : (

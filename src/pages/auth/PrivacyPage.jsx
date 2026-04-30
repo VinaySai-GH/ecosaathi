@@ -12,7 +12,7 @@ export default function PrivacyPage() {
             <p>We collect personal information such as your name, phone number, and city to provide personal eco-tracking features and leaderboard rankings. We also collect usage data (water usage, carbon footprints) to provide impact analysis.</p>
 
             <h2>2. WhatsApp Integration</h2>
-            <p>By registering for "Raat Ka Hisaab", you agree to receive nightly automated messages on WhatsApp. We use the Meta WhatsApp Cloud API to send these messages. Your phone number is only used for these notifications and reflection tracking.</p>
+            <p>By registering for "EcoSandhya", you agree to receive nightly automated messages on WhatsApp. We use the Meta WhatsApp Cloud API to send these messages. Your phone number is only used for these notifications and reflection tracking.</p>
 
             <h2>3. Data Storage</h2>
             <p>Your data is stored securely in MongoDB Atlas. We do not sell or share your personal data with third-party advertisers.</p>

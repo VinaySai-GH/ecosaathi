@@ -9,7 +9,7 @@
   - `src/pages/greenspot/components/CityEcoScoreBanner.jsx` (NEW)
   - Updated `GreenSpotHome.jsx` + backend routes
 
-### 2️⃣ Raat Ka Hisaab Bot
+### 2️⃣ EcoSandhya Bot
 - **Where:** Dashboard + new Insights page
 - **What:** Nightly WhatsApp bot with Q&A + 30-day insights
 - **Files:**
@@ -105,7 +105,7 @@ bash test_features.sh "your_token"
 ### City Eco Score:
 > "Real-time metric showing community engagement. As more students verify locations, the score increases. Gamifies sustainability at city-level."
 
-### Raat Ka Hisaab Bot:
+### EcoSandhya Bot:
 > "Meets users where they already are — WhatsApp. No app download needed. Questions are simple (Y/N/Hmm), answers build insights. After 30 days, you see your eco-behavior patterns."
 
 ---

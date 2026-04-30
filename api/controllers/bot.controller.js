@@ -53,7 +53,7 @@ exports.registerForBot = async (req, res, next) => {
         const botUser = await botService.registerBotUser(userId, phone, preferred_time);
 
         res.status(201).json({
-            message: 'Registered for Raat Ka Hisaab bot!',
+            message: 'Registered for EcoSandhya bot!',
             botUser: {
                 _id: botUser._id,
                 phone: botUser.phone,
@@ -195,7 +195,7 @@ exports.handleWebhook = async (req, res) => {
                     `🔥 *Your Eco Stats*\n\n` +
                     `Streak: *${botUser.streak} days*\n` +
                     `Total Points: *${user ? user.points : 0}* 🌱\n\n` +
-                    `Keep it up! Visit the app for more details: ${webappUrl}/raatkahisaab`
+                    `Keep it up! Visit the app for more details: ${webappUrl}/ecosandhya`
                 );
                 continue;
             }
@@ -236,7 +236,7 @@ exports.handleWebhook = async (req, res) => {
                     from,
                     `Hello! I am your EcoSaathi bot. 🌿\n\n` +
                     `_Are you ready to answer today's questions now? Reply *"yes"* to get them, or wait for your scheduled time._\n\n` +
-                    `⚙️ To update your reminder time or view your stats, visit the app:\n🔗 ${webappUrl}/raatkahisaab`
+                    `⚙️ To update your reminder time or view your stats, visit the app:\n🔗 ${webappUrl}/ecosandhya`
                 );
                 continue;
             }
@@ -248,7 +248,7 @@ exports.handleWebhook = async (req, res) => {
                     from,
                     `🌿 *High Five!* You've already done your part today.\n` +
                     `🔥 Your eco-streak is safe and sound.\n\n` +
-                    `📊 See your progress here → ${webappUrl}/raatkahisaab`
+                    `📊 See your progress here → ${webappUrl}/ecosandhya`
                 );
                 continue;
             }
@@ -282,7 +282,7 @@ exports.handleWebhook = async (req, res) => {
                     `+${result.pointsAwarded} points earned 🌱\n\n` +
                     `💡 _"${quote.text}"_\n— ${quote.author}` +
                     reviewText +
-                    `🏆 See your insights → ${webappUrl}/raatkahisaab`;
+                    `🏆 See your insights → ${webappUrl}/ecosandhya`;
             } else {
                 replyText =
                     `🌙 *Reflection saved!*\n\n` +
@@ -290,7 +290,7 @@ exports.handleWebhook = async (req, res) => {
                     `⭐ +${result.pointsAwarded} points\n\n` +
                     `💡 _"${quote.text}"_\n— ${quote.author}` +
                     reviewText +
-                    `📱 See your full eco profile → ${webappUrl}/raatkahisaab`;
+                    `📱 See your full eco profile → ${webappUrl}/ecosandhya`;
             }
 
             await whatsappService.sendTextMessage(from, replyText);

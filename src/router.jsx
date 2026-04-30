@@ -17,7 +17,7 @@ import NeeruResultScreen from './pages/neeru/NeeruResult.jsx';
 import CarbonHome from './pages/carbonprints/CarbonPrintsPage';
 import GreenSpotHome from './pages/greenspot/GreenSpotHome.jsx';
 import EcoPulseHome from './pages/ecopulse/EcoPulseHome.jsx';
-import RaatKaHisaab from './pages/raatkahisaab/RaatKaHisaab.jsx';
+import EcoSandhya from './pages/ecosandhya/EcoSandhya.jsx';
 import BotInsightsPage from './pages/dashboard/BotInsightsPage.jsx';
 import NotificationsPage from './pages/notifications/NotificationsPage.jsx';
 import EcoLearnHome from './pages/ecolearn/EcoLearnHome.jsx';
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
       { path: 'neeru/result', element: <NeeruResultScreen /> },
       { path: 'carbon', element: <CarbonHome /> },
       { path: 'greenspot', element: <GreenSpotHome /> },
-      { path: 'raatkahisaab', element: <RaatKaHisaab /> },
+      { path: 'ecosandhya', element: <EcoSandhya /> },
       { path: 'ecopulse', element: <EcoPulseHome /> },
       { path: 'insights', element: <BotInsightsPage /> },
       { path: 'notifications', element: <NotificationsPage /> },

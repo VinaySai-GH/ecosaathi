@@ -46,7 +46,7 @@ exports.initScheduler = () => {
                 const { questions } = await botService.getTodayQuestions(botUser.userId);
 
                 const message =
-                    `🌙 *Raat Ka Hisaab* — Nightly Reflection\n\n` +
+                    `🌙 *EcoSandhya* — Nightly Reflection\n\n` +
                     `Here are your 3 questions for today:\n\n` +
                     `1️⃣ ${questions[0].text}\n\n` +
                     `2️⃣ ${questions[1].text}\n\n` +
@@ -151,7 +151,7 @@ exports.pushDailyRemindersManually = async () => {
         for (const botUser of botUsers) {
             console.log(`[Scheduler] 📤 Sending to ${botUser.phone}...`);
             const message =
-                `🌙 *Raat Ka Hisaab* — Nightly Reflection\n\n` +
+                `🌙 *EcoSandhya* — Nightly Reflection\n\n` +
                 `Here are your 3 questions for today:\n\n` +
                 `1️⃣ ${questions[0].text}\n\n` +
                 `2️⃣ ${questions[1].text}\n\n` +

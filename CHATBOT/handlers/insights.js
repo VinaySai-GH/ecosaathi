@@ -91,7 +91,7 @@ async function send30DayInsights(user) {
 
     // ── Build the message ─────────────────────────────────
     const report =
-      `🌿 *Raat Ka Hisaab — Your 30-Day Eco Journal*\n` +
+      `🌿 *EcoSandhya — Your 30-Day Eco Journal*\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `*${user.name}*, you answered *${totalAnswers} questions* over 30 nights.\n\n` +
 

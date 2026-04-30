@@ -65,7 +65,7 @@ async function sendNightlyQuestions(user) {
     const dayNumber = user.streak + 1;
 
     const message =
-      `🌙 *Raat Ka Hisaab — Day ${dayNumber}*\n` +
+      `🌙 *EcoSandhya — Day ${dayNumber}*\n` +
       `━━━━━━━━━━━━━━━\n\n` +
       `Here are today's 3 questions:\n\n` +
       `1️⃣ ${questions[0].text}\n\n` +

@@ -147,7 +147,7 @@ exports.submitInAppAnswer = async (userId, question_ids, answers) => {
         message: bonusPoints > 0 
             ? `Incredible! You earned 50 points for reflecting today, plus a 50 point bonus for your ${botUser.streak}-day streak! 🌟`
             : `You earned 50 points for completing your daily reflection!`,
-        link: '/raatkahisaab'
+        link: '/ecosandhya'
     });
 
     // ─── TRIGGER INSIGHT PUSH (once every 2-3 days) ───────────────────────────
@@ -227,7 +227,7 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
     await Notification.create({
         user: userId,
         message: `You earned 50 points for completing your daily reflection!`,
-        link: '/raatkahisaab'
+        link: '/ecosandhya'
     });
 
     // ─── TRIGGER INSIGHT PUSH (once every 2-3 days) ───────────────────────────
@@ -247,7 +247,7 @@ exports.handleWebhookMessage = async (phoneNumber, messageText) => {
         await Notification.create({
             user: userId,
             message: `Incredible! You earned a 50 point bonus for your 30-day reflection streak! 🌟`,
-            link: '/raatkahisaab'
+            link: '/ecosandhya'
         });
         return {
             success: true,
