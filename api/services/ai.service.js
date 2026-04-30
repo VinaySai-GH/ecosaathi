@@ -1,17 +1,11 @@
 const insightsService = require('./insights.service');
 
-const GEMINI_URL =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-
 /**
  * AI Service for conversational bot responses
  */
 
 exports.getConversationalResponse = async (userId, userMessage) => {
     try {
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) throw new Error('GEMINI_API_KEY not set');
-
         // Build context from user's logs
         const ctx = await insightsService.buildContext(userId);
 
@@ -29,34 +23,69 @@ Keep your response short (max 3 sentences).
 Always be encouraging.
 Never mention you are an AI.`;
 
-        const body = {
-            contents: [
-                {
-                    role: 'user',
-                    parts: [{ text: `${systemPrompt}\n\nUser says: "${userMessage}"` }]
+        const groqApiKey = process.env.GROQ_API_KEY;
+        const geminiApiKey = process.env.GEMINI_API_KEY;
+
+        // --- TRY GROQ FIRST ---
+        if (groqApiKey) {
+            try {
+                const body = {
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        { role: 'user', content: userMessage }
+                    ],
+                    max_tokens: 150,
+                    temperature: 0.7
+                };
+
+                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${groqApiKey}`
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    return data?.choices?.[0]?.message?.content?.trim() || "I'm here to help! 🌿";
                 }
-            ],
-            generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 150
+                console.error(`[AI Service] Groq failed (${res.status})`);
+            } catch (err) {
+                console.error('[AI Service] Groq error:', err.message);
             }
-        };
-
-        const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
-
-        if (!res.ok) {
-            throw new Error(`Gemini Error: ${res.status}`);
         }
 
-        const data = await res.json();
-        return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "I'm here to help you live more sustainably! 🌿";
+        // --- FALLBACK TO GEMINI ---
+        if (geminiApiKey) {
+            try {
+                const url = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
+                const body = {
+                    contents: [{ parts: [{ text: `${systemPrompt}\n\nUser says: "${userMessage}"` }] }],
+                    generationConfig: { temperature: 0.7, maxOutputTokens: 150 }
+                };
+
+                const res = await fetch(`${url}?key=${geminiApiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "I'm here to help! 🌿";
+                }
+            } catch (err) {
+                console.error('[AI Service] Gemini fallback failed:', err.message);
+            }
+        }
+
+        return "Hey there! I'm your EcoSaathi assistant. How can I help you on your green journey today? 🌿";
 
     } catch (error) {
-        console.error('[AI Service] Error:', error.message);
+        console.error('[AI Service] Fatal Error:', error.message);
         return "Hey there! I'm your EcoSaathi assistant. How can I help you on your green journey today? 🌿";
     }
 };

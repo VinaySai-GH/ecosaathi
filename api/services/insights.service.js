@@ -1,16 +1,16 @@
-const User      = require('../models/User');
-const WaterLog  = require('../models/WaterLog');
+const User = require('../models/User');
+const WaterLog = require('../models/WaterLog');
 const CarbonLog = require('../models/CarbonLog');
-const Answer    = require('../models/Answer');
-const BotUser   = require('../models/BotUser');
+const Answer = require('../models/Answer');
+const BotUser = require('../models/BotUser');
 const whatsappService = require('./whatsapp.service');
 
 const GEMINI_URL =
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 const MONTHS = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December',
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
 ];
 const FALLBACK_INSIGHTS = [
     `You are doing great, {{NAME}}! With {{POINTS}} points and a {{STREAK}}-day streak, your commitment to the environment is truly inspiring. Keep up the amazing work!`,
@@ -20,30 +20,30 @@ const FALLBACK_INSIGHTS = [
 
 // Question text lookup (mirrors bot.service.js)
 const QUESTIONS = {
-    food:      [
-        { id: 'food_1',      text: 'Did you reduce food waste today?' },
-        { id: 'food_2',      text: 'Did you eat vegetarian meals today?' },
-        { id: 'food_3',      text: 'Did you compost food scraps today?' },
+    food: [
+        { id: 'food_1', text: 'Did you reduce food waste today?' },
+        { id: 'food_2', text: 'Did you eat vegetarian meals today?' },
+        { id: 'food_3', text: 'Did you compost food scraps today?' },
     ],
-    water:     [
-        { id: 'water_1',     text: 'Did you reduce water usage today?' },
-        { id: 'water_2',     text: 'Did you take a short shower today?' },
-        { id: 'water_3',     text: 'Did you fix any water leaks today?' },
+    water: [
+        { id: 'water_1', text: 'Did you reduce water usage today?' },
+        { id: 'water_2', text: 'Did you take a short shower today?' },
+        { id: 'water_3', text: 'Did you fix any water leaks today?' },
     ],
     transport: [
         { id: 'transport_1', text: 'Did you use public transport today?' },
         { id: 'transport_2', text: 'Did you walk/cycle today?' },
         { id: 'transport_3', text: 'Did you carpool or share a ride?' },
     ],
-    waste:     [
-        { id: 'waste_1',     text: 'Did you reduce single-use plastics today?' },
-        { id: 'waste_2',     text: 'Did you recycle items today?' },
-        { id: 'waste_3',     text: 'Did you reuse items instead of buying new?' },
+    waste: [
+        { id: 'waste_1', text: 'Did you reduce single-use plastics today?' },
+        { id: 'waste_2', text: 'Did you recycle items today?' },
+        { id: 'waste_3', text: 'Did you reuse items instead of buying new?' },
     ],
-    nature:    [
-        { id: 'nature_1',   text: 'Did you spend time in nature today?' },
-        { id: 'nature_2',   text: 'Did you plant/care for a plant today?' },
-        { id: 'nature_3',   text: 'Did you protect local wildlife today?' },
+    nature: [
+        { id: 'nature_1', text: 'Did you spend time in nature today?' },
+        { id: 'nature_2', text: 'Did you plant/care for a plant today?' },
+        { id: 'nature_3', text: 'Did you protect local wildlife today?' },
     ],
 };
 
@@ -73,7 +73,7 @@ async function buildContext(userId) {
         ? 'No water logs recorded yet.'
         : waterLogs.map(w =>
             `  ${MONTHS[w.month - 1]} ${w.year}: ${w.kl_used} KL (city: ${w.city})`
-          ).join('\n');
+        ).join('\n');
 
     // Water trend
     let waterTrend = '';
@@ -99,7 +99,7 @@ async function buildContext(userId) {
                 `    Plastic bottles: ${c.plastic_bottles} | Online orders: ${c.online_orders} | Electricity: ${c.electricity_units} units`,
             ];
             return lines.join('\n');
-          }).join('\n');
+        }).join('\n');
 
     // Carbon trend
     let carbonTrend = '';
@@ -121,19 +121,19 @@ async function buildContext(userId) {
                 `    Q: ${findQuestion(qid)} → ${a.answers[i] || '?'}`
             ).join('\n');
             return `  ${dateStr}:\n${qa}`;
-          }).join('\n');
+        }).join('\n');
 
     // ── Streak / gamification ─────────────────────────────────────────────────
-    const streak       = botUser?.streak ?? 0;
+    const streak = botUser?.streak ?? 0;
     const lastAnswered = botUser?.last_answered
         ? new Date(botUser.last_answered).toLocaleDateString('en-IN')
         : 'never';
 
     return {
-        userName:      user.name,
-        city:          user.city || 'unknown city',
-        bio:           user.bio || 'Not provided',
-        totalPoints:   user.points,
+        userName: user.name,
+        city: user.city || 'unknown city',
+        bio: user.bio || 'Not provided',
+        totalPoints: user.points,
         streak,
         lastAnswered,
         waterSection,
@@ -194,8 +194,8 @@ async function callGemini(prompt) {
         contents: [
             {
                 role: 'user',
-                parts: [{ 
-                    text: `SYSTEM: You are EcoSaathi AI. You MUST write a detailed, flowing paragraph of exactly 3 to 4 sentences. You MUST NOT cut off. You MUST end with a period.\n\nDATA:\n${prompt}` 
+                parts: [{
+                    text: `SYSTEM: You are EcoSaathi AI. You MUST write a detailed, flowing paragraph of exactly 3 to 4 sentences. You MUST NOT cut off. You MUST end with a period.\n\nDATA:\n${prompt}`
                 }]
             }
         ],
@@ -211,9 +211,9 @@ async function callGemini(prompt) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         try {
             const res = await fetch(url, {
-                method:  'POST',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify(body),
+                body: JSON.stringify(body),
             });
 
             if (!res.ok) {
@@ -229,7 +229,7 @@ async function callGemini(prompt) {
                 lastError = new Error(`Empty response from ${model}`);
                 continue;
             }
-            
+
             console.log(`[Gemini] Successfully generated using ${model}`);
             return text.trim();
         } catch (err) {
@@ -264,12 +264,12 @@ async function callGroq(prompt) {
     };
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method:  'POST',
-        headers: { 
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
         },
-        body:    JSON.stringify(body),
+        body: JSON.stringify(body),
     });
 
     if (!res.ok) {
@@ -280,7 +280,7 @@ async function callGroq(prompt) {
     const data = await res.json();
     const text = data?.choices?.[0]?.message?.content;
     if (!text) throw new Error('Empty response from Groq');
-    
+
     console.log('[Groq] Successfully generated insight');
     return text.trim();
 }
@@ -316,22 +316,23 @@ exports.getOrGenerateInsight = async (userId, force = false) => {
     }
 
     // Generate a fresh insight
-    const ctx    = await buildContext(userId);
+    const ctx = await buildContext(userId);
     const prompt = buildPrompt(ctx);
-    
+
     console.log(`[Insights] Generating fresh insight for ${ctx.userName}...`);
     let insight;
     try {
-        insight = await callGemini(prompt);
+        console.log(`[Insights] Attempting Groq primary for ${ctx.userName}...`);
+        insight = await callGroq(prompt);
     } catch (err) {
-        console.error('[Insights] Gemini call failed:', err.message);
+        console.error('[Insights] Groq call failed:', err.message);
         
-        // --- GROQ FALLBACK ---
+        // --- GEMINI FALLBACK ---
         try {
-            console.log(`[Insights] Attempting Groq fallback for ${ctx.userName}...`);
-            insight = await callGroq(prompt);
-        } catch (groqErr) {
-            console.error('[Insights] Groq fallback failed:', groqErr.message);
+            console.log(`[Insights] Attempting Gemini fallback for ${ctx.userName}...`);
+            insight = await callGemini(prompt);
+        } catch (geminiErr) {
+            console.error('[Insights] Gemini fallback failed:', geminiErr.message);
 
             // Beautiful hardcoded fallback insights if API limits are hit during demo
             const raw = FALLBACK_INSIGHTS[Math.floor(Math.random() * FALLBACK_INSIGHTS.length)];
@@ -352,8 +353,8 @@ exports.getOrGenerateInsight = async (userId, force = false) => {
     if (!isFallback) {
         const next = pickNextInsightDate();
         await User.findByIdAndUpdate(userId, {
-            cached_insight:     insight,
-            last_insight_at:    now,
+            cached_insight: insight,
+            last_insight_at: now,
             next_insight_after: next,
         });
         return { insight, isNew: true, generatedAt: now };
@@ -373,7 +374,7 @@ exports.pushToWhatsApp = async (userId, insight, userName) => {
             const message = `🌿 *Personal Eco-Insight for ${userName}*\n\n` +
                 `${insight}\n\n` +
                 `_Generated by EcoSaathi AI based on your recent habits._`;
-            
+
             await whatsappService.sendTextMessage(botUser.phone, message);
             console.log(`[Insights] WhatsApp push sent to ${botUser.phone}`);
             return true;
